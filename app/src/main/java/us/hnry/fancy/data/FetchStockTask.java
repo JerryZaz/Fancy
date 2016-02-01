@@ -82,6 +82,7 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
                 return null;
             }
             mStockJSONString = buffer.toString();
+            Log.v(LOG_TAG, "Fetched data");
             Thread parse = new Thread(new JSONParser());
             parse.start();
 
