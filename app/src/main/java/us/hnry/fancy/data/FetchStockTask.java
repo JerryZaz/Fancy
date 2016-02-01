@@ -1,8 +1,8 @@
 package us.hnry.fancy.data;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -17,24 +17,29 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import us.hnry.fancy.MainActivity;
+
+//import android.util.Log;
+
 /**
  * Created by Henry on 1/31/2016.
  *
  */
-public class FetchStockTask extends AsyncTask<Void, Void, Void> {
+public class FetchStockTask extends AsyncTask<Void, Void, ArrayList<Stock>> {
 
     private final String LOG_TAG = FetchStockTask.class.getSimpleName();
-    private Context mContext;
+    private MainActivity mActivity;
     private String mStockJSONString;
+    private android.os.Handler mHandler = new Handler();
 
 
     private ArrayList<Stock> quotes = new ArrayList<>();
 
-    public FetchStockTask(Context context){
-        mContext = context;
+    public FetchStockTask(MainActivity activity){
+        mActivity = activity;
     }
 
-    protected Void doInBackground(Void... params) {
+    protected ArrayList<Stock> doInBackground(Void... params) {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -99,7 +104,13 @@ public class FetchStockTask extends AsyncTask<Void, Void, Void> {
             }
         }
 
-        return null;
+        return quotes;
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<Stock> stocks) {
+        super.onPostExecute(stocks);
+        //mActivity.drawListView(stocks);
     }
 
     public class JSONParser implements Runnable{
@@ -155,6 +166,14 @@ public class FetchStockTask extends AsyncTask<Void, Void, Void> {
 
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+            finally {
+                /*mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mActivity.drawListView(quotes);
+                    }
+                });*/
             }
         }
     }

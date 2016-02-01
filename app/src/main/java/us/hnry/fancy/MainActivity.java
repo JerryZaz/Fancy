@@ -2,9 +2,8 @@ package us.hnry.fancy;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,19 +11,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import us.hnry.fancy.data.FetchStockTask;
+import us.hnry.fancy.data.Stock;
+import us.hnry.fancy.data.StockAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private ListView mStockListView;
+    private ArrayList<Stock> mQuotes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FetchStockTask task = new FetchStockTask(this);
-        task.execute();
+
+
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,7 +56,24 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mStockListView = (ListView) findViewById(R.id.content_main_list_view);
+        FetchStockTask task = new FetchStockTask(this);
+        task.execute();
+        try {
+            mQuotes = task.get();
+            StockAdapter adapter = new StockAdapter(this, mQuotes);
+            mStockListView.setAdapter(adapter);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
+
+    /*public void drawListView(ArrayList<Stock> resultsArrayList){
+        mQuotes = resultsArrayList;
+        StockAdapter adapter = new StockAdapter(this, mQuotes);
+        mStockListView.setAdapter(adapter);
+    }*/
 
     @Override
     public void onBackPressed() {
