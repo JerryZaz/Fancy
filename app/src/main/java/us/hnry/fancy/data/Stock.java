@@ -11,7 +11,7 @@ public class Stock implements Parcelable {
 
     static final String QUOTE_SYMBOL = "symbol";
     static final String QUOTE_ASK = "Ask";
-    static final String QUOTE_VERAGE_DAILY_VOLUME = "AverageDailyVolume";
+    static final String QUOTE_AVERAGE_DAILY_VOLUME = "AverageDailyVolume";
     static final String QUOTE_BID = "Bid";
     static final String QUOTE_ASK_REALTIME = "AskRealtime";
     static final String QUOTE_BID_REALTIME = "BidRealtime";
