@@ -32,10 +32,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -57,23 +53,29 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        /*
+        * --START--
+        */
+        //Get a reference to the list view
         mStockListView = (ListView) findViewById(R.id.content_main_list_view);
+        //Instantiate the async task
         FetchStockTask task = new FetchStockTask(this);
+        //Execute the task
         task.execute();
         try {
+            //Fetch the result of the background thread
             mQuotes = task.get();
-            StockAdapter adapter = new StockAdapter(this, mQuotes);
-            mStockListView.setAdapter(adapter);
+            if(mQuotes != null) {
+                //Instantiate adapter
+                StockAdapter adapter = new StockAdapter(this, mQuotes);
+                //Set the adapter to the list view
+                mStockListView.setAdapter(adapter);
+            }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+        /*--END--*/
     }
-
-    /*public void drawListView(ArrayList<Stock> resultsArrayList){
-        mQuotes = resultsArrayList;
-        StockAdapter adapter = new StockAdapter(this, mQuotes);
-        mStockListView.setAdapter(adapter);
-    }*/
 
     @Override
     public void onBackPressed() {

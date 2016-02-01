@@ -19,8 +19,6 @@ import java.util.ArrayList;
 
 import us.hnry.fancy.MainActivity;
 
-//import android.util.Log;
-
 /**
  * Created by Henry on 1/31/2016.
  *
@@ -49,7 +47,7 @@ public class FetchStockTask extends AsyncTask<Void, Void, ArrayList<Stock>> {
         try {
             final String BASE_URL = "http://query.yahooapis.com/v1/public/yql?";
             //TODO: Create query builder method to hax the api
-            final String QUERY = "select * from yahoo.finance.quotes where symbol in (\"YHOO\",\"AAPL\",\"GOOG\",\"MSFT\")";
+            final String QUERY = "select * from yahoo.finance.quotes where symbol in (\"AMZN\",\"FB\",\"TSLA\", \"T\", \"TMUS\",\"YHOO\",\"AAPL\",\"GOOG\",\"NFLX\",\"EXPE\",\"MSFT\")";
 
             Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                     .appendQueryParameter("q", QUERY)
@@ -58,7 +56,6 @@ public class FetchStockTask extends AsyncTask<Void, Void, ArrayList<Stock>> {
                     .build();
 
             URL url = new URL(builtUri.toString());
-            Log.v(LOG_TAG, url.toString());
 
             //Create the request to the API
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -75,9 +72,7 @@ public class FetchStockTask extends AsyncTask<Void, Void, ArrayList<Stock>> {
             reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             while ((line = reader.readLine()) != null) {
-                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                // But it does make debugging a *lot* easier if you print out the completed
-                // buffer for debugging.
+                //For debugging purposes
                 buffer.append(line + "\n");
             }
 
@@ -110,7 +105,6 @@ public class FetchStockTask extends AsyncTask<Void, Void, ArrayList<Stock>> {
     @Override
     protected void onPostExecute(ArrayList<Stock> stocks) {
         super.onPostExecute(stocks);
-        //mActivity.drawListView(stocks);
     }
 
     public class JSONParser implements Runnable{
@@ -166,14 +160,6 @@ public class FetchStockTask extends AsyncTask<Void, Void, ArrayList<Stock>> {
 
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
-            finally {
-                /*mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mActivity.drawListView(quotes);
-                    }
-                });*/
             }
         }
     }
