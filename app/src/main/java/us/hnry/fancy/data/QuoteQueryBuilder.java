@@ -18,9 +18,6 @@ public class QuoteQueryBuilder {
     }
 
     private String arrangeSymbols(){
-        /* Required output
-        ("AMZN","FB","TSLA", "T", "TMUS","YHOO","AAPL","GOOG","NFLX","EXPE","MSFT")
-        */
 
         StringBuilder builder = new StringBuilder("(");
 

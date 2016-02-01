@@ -23,7 +23,7 @@ import us.hnry.fancy.MainActivity;
  * Created by Henry on 1/31/2016.
  *
  */
-public class FetchStockTask extends AsyncTask<Void, Void, ArrayList<Stock>> {
+public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
 
     private final String LOG_TAG = FetchStockTask.class.getSimpleName();
     private MainActivity mActivity;
@@ -37,7 +37,7 @@ public class FetchStockTask extends AsyncTask<Void, Void, ArrayList<Stock>> {
         mActivity = activity;
     }
 
-    protected ArrayList<Stock> doInBackground(Void... params) {
+    protected ArrayList<Stock> doInBackground(String... params) {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -47,7 +47,8 @@ public class FetchStockTask extends AsyncTask<Void, Void, ArrayList<Stock>> {
         try {
             final String BASE_URL = "http://query.yahooapis.com/v1/public/yql?";
             //TODO: Create query builder method to hax the api
-            final String QUERY = "select * from yahoo.finance.quotes where symbol in (\"AMZN\",\"FB\",\"TSLA\", \"T\", \"TMUS\",\"YHOO\",\"AAPL\",\"GOOG\",\"NFLX\",\"EXPE\",\"MSFT\")";
+            //final String QUERY = "select * from yahoo.finance.quotes where symbol in (\"AMZN\",\"FB\",\"TSLA\", \"T\", \"TMUS\",\"YHOO\",\"AAPL\",\"GOOG\",\"NFLX\",\"EXPE\",\"MSFT\")";
+            final String QUERY = params[0];
 
             Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                     .appendQueryParameter("q", QUERY)
@@ -155,7 +156,6 @@ public class FetchStockTask extends AsyncTask<Void, Void, ArrayList<Stock>> {
                             singleQuote.getString(Stock.QUOTE_TICKER_TREND)
                     );
                     quotes.add(quote);
-                    Log.v(LOG_TAG, "Quote added");
                 }
 
             } catch (JSONException e) {

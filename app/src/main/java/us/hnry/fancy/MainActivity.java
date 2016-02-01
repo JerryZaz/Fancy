@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import us.hnry.fancy.data.FetchStockTask;
+import us.hnry.fancy.data.QuoteQueryBuilder;
 import us.hnry.fancy.data.Stock;
 import us.hnry.fancy.data.StockAdapter;
 
@@ -60,8 +61,22 @@ public class MainActivity extends AppCompatActivity
         mStockListView = (ListView) findViewById(R.id.content_main_list_view);
         //Instantiate the async task
         FetchStockTask task = new FetchStockTask(this);
+        String[] symbolsToQuery = new String[]{
+                "GOOG",
+                "MSFT",
+                "AAPL",
+                "AMZN",
+                "FB",
+                "TSLA",
+                "T",
+                "TMUS",
+                "YHOO",
+                "NFLX",
+                "EXPE"
+        };
+        QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
         //Execute the task
-        task.execute();
+        task.execute(queryBuilder.build());
         try {
             //Fetch the result of the background thread
             mQuotes = task.get();
