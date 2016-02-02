@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Henry on 1/31/2016.
+ *
  */
 public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
 
@@ -144,8 +145,9 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
                     singleQuote.getString(Stock.QUOTE_PREVIOUS_CLOSE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_PREVIOUS_CLOSE)),
                     singleQuote.getString(Stock.QUOTE_TICKER_TREND)
             );
-        } catch (JSONException e) {
+        } catch (JSONException | NumberFormatException e) {
             e.printStackTrace();
+            Log.w(LOG_TAG, "Exception handled: " + e);
         }
         return quote;
     }

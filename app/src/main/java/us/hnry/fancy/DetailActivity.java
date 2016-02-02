@@ -108,7 +108,8 @@ public class DetailActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         } else {
-            Toast.makeText(this, "FAILED!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Something went wrong while fetching data", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 }

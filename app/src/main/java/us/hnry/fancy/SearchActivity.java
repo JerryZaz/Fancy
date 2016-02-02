@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -53,16 +52,12 @@ public class SearchActivity extends AppCompatActivity {
                         .build());
                 try {
                     ArrayList<Stock> quotes = task.get();
-                    Log.v(SearchActivity.class.getSimpleName(), String.valueOf(quotes.size()));
                     if (quotes != null) {
                         if (quotes.size() > 0) {
-                            Log.v(SearchActivity.class.getSimpleName(), String.valueOf(quotes.size()));
                             Intent launchDetail = new Intent(SearchActivity.this, DetailActivity.class);
                             launchDetail.putExtra(Utility.STOCK_INTENT, quotes.get(0));
-                            Log.v(SearchActivity.class.getSimpleName(), String.valueOf(quotes.size()));
                             startActivity(launchDetail);
                         } else {
-                            /*Toast.makeText(SearchActivity.this, "Failed", Toast.LENGTH_SHORT).show();*/
 
                             Toast.makeText(SearchActivity.this, "Added", Toast.LENGTH_SHORT).show();
                             SharedPreferences preferences = getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
