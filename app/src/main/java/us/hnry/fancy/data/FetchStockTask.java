@@ -3,7 +3,6 @@ package us.hnry.fancy.data;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -28,8 +27,6 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
 
     private String mStockJSONString;
     private int mResultsCount;
-    private android.os.Handler mHandler = new Handler();
-
 
     private ArrayList<Stock> quotes = new ArrayList<>();
 
@@ -47,7 +44,6 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
         try {
             final String BASE_URL = "http://query.yahooapis.com/v1/public/yql?";
 
-            //final String QUERY = "select * from yahoo.finance.quotes where symbol in (\"AMZN\",\"FB\",\"TSLA\", \"T\", \"TMUS\",\"YHOO\",\"AAPL\",\"GOOG\",\"NFLX\",\"EXPE\",\"MSFT\")";
             final String QUERY = params[0];
 
             Uri builtUri = Uri.parse(BASE_URL).buildUpon()
@@ -84,8 +80,6 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
             }
             mStockJSONString = buffer.toString();
             Log.v(LOG_TAG, "Fetched data");
-            /*Thread parse = new Thread(new JSONParser());
-            parse.start();*/
             run();
 
         } catch (IOException e) {
@@ -102,7 +96,6 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
                 }
             }
         }
-        Log.v(LOG_TAG, "Number of items in array: " + quotes.size());
         return quotes;
     }
 
@@ -110,9 +103,6 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
     protected void onPostExecute(ArrayList<Stock> stocks) {
         super.onPostExecute(stocks);
     }
-
-    //public class JSONParser implements Runnable {
-
 
     private Stock getStockFromJson(JSONObject singleQuote) {
 
@@ -160,14 +150,12 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
         return quote;
     }
 
-    //@Override
     public void run() {
         try {
             JSONObject jsonObject = new JSONObject(mStockJSONString);
             JSONObject queryObject = jsonObject.getJSONObject("query");
             mResultsCount = queryObject.getInt("count");
             JSONObject resultsObject = queryObject.getJSONObject("results");
-            //if (mContext.getClass().getSimpleName().equals("SearchActivity")) {
             if (mResultsCount < 2) {
                 JSONObject quoteObject = resultsObject.getJSONObject("quote");
                 Stock quote = getStockFromJson(quoteObject);
@@ -183,9 +171,6 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-        } finally {
-            Log.v(FetchStockTask.class.getSimpleName(), "Number of quotes sent back: " + mResultsCount);
         }
     }
-    //}
 }

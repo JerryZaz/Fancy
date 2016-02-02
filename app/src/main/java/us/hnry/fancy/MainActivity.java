@@ -1,9 +1,7 @@
 package us.hnry.fancy;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +11,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,19 +31,13 @@ import us.hnry.fancy.utils.Utility;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    IntentFilter filterTimeTick = new IntentFilter(Intent.ACTION_TIME_TICK);
+    /*IntentFilter filterTimeTick = new IntentFilter(Intent.ACTION_TIME_TICK);*/
     private ListView mStockListView;
     private ArrayList<Stock> mQuotes;
     private StockAdapter mStockAdapter;
     private Intent mLaunchDetail;
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
-    BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            refreshMain();
-        }
-    };
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,8 +54,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, SearchActivity.class));
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
             }
         });
 
@@ -95,25 +84,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(receiver, filterTimeTick);
-        Log.v(MainActivity.class.getSimpleName(), "Receiver Registered");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(receiver);
-        Log.v(MainActivity.class.getSimpleName(), "Receiver unregistered");
+        refreshMain();
     }
 
     public void refreshMain() {
-
-        /*if(mStockListView.getAdapter() != null){
-            mStockListView.setAdapter(null);
-            mStockAdapter.clear();
-            *//*mStockListView = null;
-            mStockListView = (ListView) findViewById(R.id.content_main_list_view);*//*
-        }*/
 
         //Instantiate the async task
         FetchStockTask task = new FetchStockTask(this);
@@ -130,15 +104,7 @@ public class MainActivity extends AppCompatActivity
             //Fetch the result of the background thread
             mQuotes = task.get();
             if (mQuotes != null) {
-
-                /*if(mStockAdapter == null) {*/
-                //Instantiate adapter
                 mStockAdapter = new StockAdapter(this, mQuotes);
-                /*} else {
-                    mStockAdapter.setQuotes(mQuotes);
-                    mStockAdapter.notifyDataSetChanged();
-                }*/
-
                 //Set the adapter to the list view
                 mStockListView.setAdapter(mStockAdapter);
                 mEditor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,

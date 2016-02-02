@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -74,13 +75,15 @@ public class DetailActivity extends AppCompatActivity {
                         .setAction("Action", null).show();*/
                 if(isTracked){
                     mSetOfStocks.remove(fromIntent.getSymbol());
-                    fab.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                    fab.setImageResource(R.drawable.ic_favorite_white_24dp);
                     isTracked = false;
+                    Snackbar.make(view, "Removed from Favorites", Snackbar.LENGTH_SHORT).show();
                 }
                 else {
                     mSetOfStocks.add(fromIntent.getSymbol());
-                    fab.setImageResource(R.drawable.ic_favorite_black_24dp);
+                    fab.setImageResource(R.drawable.ic_check_circle_white_24dp);
                     isTracked = true;
+                    Snackbar.make(view, "Added to Favorites", Snackbar.LENGTH_SHORT).show();
                 }
                 editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET, mSetOfStocks);
                 editor.apply();
@@ -95,7 +98,7 @@ public class DetailActivity extends AppCompatActivity {
             mSetOfStocks = preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
                     new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS)));
             if (mSetOfStocks.contains(fromIntent.getSymbol())) {
-                fab.setImageResource(R.drawable.ic_favorite_black_24dp);
+                fab.setImageResource(R.drawable.ic_check_circle_white_24dp);
                 isTracked = true;
             }
             try {
