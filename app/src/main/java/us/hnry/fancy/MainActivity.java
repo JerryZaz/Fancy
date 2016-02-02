@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mLaunchDetail = new Intent(MainActivity.this, DetailActivity.class);
-                mLaunchDetail.putExtra("intent_parcelable_stock", mQuotes.get(position));
+                mLaunchDetail.putExtra(Utility.STOCK_INTENT, mQuotes.get(position));
                 startActivity(mLaunchDetail);
             }
         });
