@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,13 +63,14 @@ public class SearchActivity extends AppCompatActivity {
                             startActivity(launchDetail);
                         } else {
                             /*Toast.makeText(SearchActivity.this, "Failed", Toast.LENGTH_SHORT).show();*/
-                            Snackbar.make(view, "Added", Snackbar.LENGTH_SHORT).show();
+
+                            Toast.makeText(SearchActivity.this, "Added", Toast.LENGTH_SHORT).show();
                             SharedPreferences preferences = getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = preferences.edit();
                             Set<String> persistentSymbolsSet =
                                     preferences
                                             .getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                                                    new HashSet<String>(Arrays.asList(Utility.DEFAULT_SYMBOLS)));
+                                                    new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS)));
                             persistentSymbolsSet.add(mResults.get(position).getSymbol());
                             editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET, persistentSymbolsSet);
                             editor.apply();

@@ -13,9 +13,9 @@
     tools:context="us.hnry.fancy.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <ListView
+    <us.hnry.fancy.views.CustomListView
         android:id="@+id/content_main_list_view"
-        android:clickable="false"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:clickable="false"/>
 </RelativeLayout>

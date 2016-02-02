@@ -27,6 +27,10 @@ public class StockAdapter extends ArrayAdapter {
         this.context = context;
     }
 
+    public void setQuotes(ArrayList<Stock> quotes) {
+        this.quotes = quotes;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;

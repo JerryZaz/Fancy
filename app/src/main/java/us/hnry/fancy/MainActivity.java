@@ -1,7 +1,9 @@
 package us.hnry.fancy;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,11 +13,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,21 +29,31 @@ import us.hnry.fancy.data.FetchStockTask;
 import us.hnry.fancy.data.Stock;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
+import us.hnry.fancy.views.CustomListView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private ListView mStockListView;
+    IntentFilter filterTimeTick = new IntentFilter(Intent.ACTION_TIME_TICK);
+    private CustomListView mStockListView;
     private ArrayList<Stock> mQuotes;
+    private StockAdapter mStockAdapter;
     private Intent mLaunchDetail;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            refreshMain();
+        }
+    };
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SharedPreferences preferences = getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
+        mPreferences = getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
+        mEditor = mPreferences.edit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -65,37 +77,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        /*
-        * --START--
-        */
+
         //Get a reference to the list view
-        mStockListView = (ListView) findViewById(R.id.content_main_list_view);
-        //Instantiate the async task
-        FetchStockTask task = new FetchStockTask(this);
-
-        String[] symbolsToQuery =
-                Utility.getSymbols(
-                        preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                                new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS))));
-
-        QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
-        //Execute the task
-        task.execute(queryBuilder.build());
-        try {
-            //Fetch the result of the background thread
-            mQuotes = task.get();
-            if (mQuotes != null) {
-                //Instantiate adapter
-                StockAdapter adapter = new StockAdapter(this, mQuotes);
-                //Set the adapter to the list view
-                mStockListView.setAdapter(adapter);
-                editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                        new HashSet<>(Arrays.asList(symbolsToQuery)));
-                editor.apply();
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        mStockListView = (CustomListView) findViewById(R.id.content_main_list_view);
 
         mStockListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -105,7 +89,65 @@ public class MainActivity extends AppCompatActivity
                 startActivity(mLaunchDetail);
             }
         });
-        /*--END--*/
+        refreshMain();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(receiver, filterTimeTick);
+        Log.v(MainActivity.class.getSimpleName(), "Receiver Registered");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
+        Log.v(MainActivity.class.getSimpleName(), "Receiver unregistered");
+    }
+
+    public void refreshMain() {
+
+        if(mStockListView.getAdapter() != null){
+            mStockListView.setAdapter(null);
+            mStockAdapter.clear();
+            /*mStockListView = null;
+            mStockListView = (ListView) findViewById(R.id.content_main_list_view);*/
+        }
+
+        //Instantiate the async task
+        FetchStockTask task = new FetchStockTask(this);
+
+        String[] symbolsToQuery =
+                Utility.getSymbols(
+                        mPreferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                                new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS))));
+
+        QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
+        //Execute the task
+        task.execute(queryBuilder.build());
+        try {
+            //Fetch the result of the background thread
+            mQuotes = task.get();
+            if (mQuotes != null) {
+
+                if(mStockAdapter == null) {
+                    //Instantiate adapter
+                    mStockAdapter = new StockAdapter(this, mQuotes);
+                } else {
+                    mStockAdapter.setQuotes(mQuotes);
+                    mStockAdapter.notifyDataSetChanged();
+                }
+
+                //Set the adapter to the list view
+                mStockListView.setAdapter(mStockAdapter);
+                mEditor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                        new HashSet<>(Arrays.asList(symbolsToQuery)));
+                mEditor.apply();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -135,6 +177,9 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        if (id == R.id.action_refresh) {
+            refreshMain();
         }
 
         return super.onOptionsItemSelected(item);
