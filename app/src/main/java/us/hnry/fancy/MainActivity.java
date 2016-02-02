@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(mLaunchDetail);
             }
         });
-        refreshMain();
+        //refreshMain();
     }
 
     @Override
@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity
                 mStockAdapter = new StockAdapter(this, mQuotes);
                 //Set the adapter to the list view
                 mStockListView.setAdapter(mStockAdapter);
+                mEditor.clear();
                 mEditor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
                         new HashSet<>(Arrays.asList(symbolsToQuery)));
                 mEditor.apply();

@@ -62,6 +62,7 @@ public class SearchActivity extends AppCompatActivity {
                             Toast.makeText(SearchActivity.this, "Added", Toast.LENGTH_SHORT).show();
                             SharedPreferences preferences = getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = preferences.edit();
+                            editor.clear();
                             Set<String> persistentSymbolsSet =
                                     preferences
                                             .getStringSet(Utility.PERSISTENT_SYMBOLS_SET,

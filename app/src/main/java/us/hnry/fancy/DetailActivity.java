@@ -85,6 +85,7 @@ public class DetailActivity extends AppCompatActivity {
                     isTracked = true;
                     Snackbar.make(view, "Added to Favorites", Snackbar.LENGTH_SHORT).show();
                 }
+                editor.clear();
                 editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET, mSetOfStocks);
                 editor.apply();
             }
