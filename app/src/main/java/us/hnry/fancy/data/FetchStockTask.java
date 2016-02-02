@@ -1,5 +1,6 @@
 package us.hnry.fancy.data;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -17,24 +18,23 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-import us.hnry.fancy.MainActivity;
-
 /**
  * Created by Henry on 1/31/2016.
- *
  */
 public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
 
     private final String LOG_TAG = FetchStockTask.class.getSimpleName();
-    private MainActivity mActivity;
+    private final Context mContext;
+
     private String mStockJSONString;
+    private int mResultsCount;
     private android.os.Handler mHandler = new Handler();
 
 
     private ArrayList<Stock> quotes = new ArrayList<>();
 
-    public FetchStockTask(MainActivity activity){
-        mActivity = activity;
+    public FetchStockTask(Context context) {
+        this.mContext = context;
     }
 
     protected ArrayList<Stock> doInBackground(String... params) {
@@ -46,7 +46,7 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
 
         try {
             final String BASE_URL = "http://query.yahooapis.com/v1/public/yql?";
-            //TODO: Create query builder method to hax the api
+
             //final String QUERY = "select * from yahoo.finance.quotes where symbol in (\"AMZN\",\"FB\",\"TSLA\", \"T\", \"TMUS\",\"YHOO\",\"AAPL\",\"GOOG\",\"NFLX\",\"EXPE\",\"MSFT\")";
             final String QUERY = params[0];
 
@@ -66,7 +66,7 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
             // Read the input stream into a string
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
-            if(inputStream == null){
+            if (inputStream == null) {
                 Log.v(LOG_TAG, "Empty input stream");
                 return null;
             }
@@ -100,7 +100,7 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
                 }
             }
         }
-
+        Log.v(LOG_TAG, "Number of items in array: " + quotes.size());
         return quotes;
     }
 
@@ -109,58 +109,79 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
         super.onPostExecute(stocks);
     }
 
-    public class JSONParser implements Runnable{
+    public class JSONParser implements Runnable {
+
+        private Stock getStockFromJson(JSONObject singleQuote){
+
+            final String DEFAULT_STRING = "null";
+            final double DEFAULT_DOUBLE = -1.0;
+            final long DEFAULT_LONG = -1;
+
+            Stock quote = null;
+
+            try {
+                quote = new Stock(
+                        singleQuote.getString(Stock.QUOTE_SYMBOL),
+                        singleQuote.getString(Stock.QUOTE_ASK).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_ASK)),
+                        singleQuote.getString(Stock.QUOTE_AVERAGE_DAILY_VOLUME).equals(DEFAULT_STRING) ? DEFAULT_LONG : Long.parseLong(singleQuote.getString(Stock.QUOTE_AVERAGE_DAILY_VOLUME)),
+                        singleQuote.getString(Stock.QUOTE_BID).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_BID)),
+                        singleQuote.getString(Stock.QUOTE_ASK_REALTIME).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_ASK_REALTIME)),
+                        singleQuote.getString(Stock.QUOTE_BID_REALTIME).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_BID_REALTIME)),
+                        singleQuote.getString(Stock.QUOTE_BOOK_VALUE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_BOOK_VALUE)),
+                        singleQuote.getString(Stock.QUOTE_CHANGE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_CHANGE)),
+                        singleQuote.getString(Stock.QUOTE_CURRENCY),
+                        singleQuote.getString(Stock.QUOTE_CHANGE_REALTIME).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_CHANGE_REALTIME)),
+                        singleQuote.getString(Stock.QUOTE_LAST_TRADE_DATE),
+                        singleQuote.getString(Stock.QUOTE_EARNINGS_SHARE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_EARNINGS_SHARE)),
+                        singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_CURRENT_YEAR).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_CURRENT_YEAR)),
+                        singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_NEXT_YEAR).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_NEXT_YEAR)),
+                        singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_NEXT_QUARTER).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_NEXT_QUARTER)),
+                        singleQuote.getString(Stock.QUOTE_DAYS_LOW).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_DAYS_LOW)),
+                        singleQuote.getString(Stock.QUOTE_DAYS_HIGH).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_DAYS_HIGH)),
+                        singleQuote.getString(Stock.QUOTE_YEAR_LOW).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_YEAR_LOW)),
+                        singleQuote.getString(Stock.QUOTE_YEAR_HIGH).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_YEAR_HIGH)),
+                        singleQuote.getString(Stock.QUOTE_CHANGE_FROM_YEAR_LOW).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_CHANGE_FROM_YEAR_LOW)),
+                        singleQuote.getString(Stock.QUOTE_PERCENT_CHANGE_FROM_YEAR_LOW),
+                        singleQuote.getString(Stock.QUOTE_PERCENT_CHANGE_FROM_YEAR_HIGH),
+                        singleQuote.getString(Stock.QUOTE_LAST_TRADE_PRICE_ONLY).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_LAST_TRADE_PRICE_ONLY)),
+                        singleQuote.getString(Stock.QUOTE_FIFTY_DAY_MOVING_AVERAGE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_FIFTY_DAY_MOVING_AVERAGE)),
+                        singleQuote.getString(Stock.QUOTE_TWO_HUNDRED_DAY_MOVING_AVERAGE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_TWO_HUNDRED_DAY_MOVING_AVERAGE)),
+                        singleQuote.getString(Stock.QUOTE_NAME),
+                        singleQuote.getString(Stock.QUOTE_OPEN).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_OPEN)),
+                        singleQuote.getString(Stock.QUOTE_PREVIOUS_CLOSE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_PREVIOUS_CLOSE)),
+                        singleQuote.getString(Stock.QUOTE_TICKER_TREND)
+                );
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return quote;
+        }
 
         @Override
         public void run() {
             try {
                 JSONObject jsonObject = new JSONObject(mStockJSONString);
                 JSONObject queryObject = jsonObject.getJSONObject("query");
+                mResultsCount = queryObject.getInt("count");
                 JSONObject resultsObject = queryObject.getJSONObject("results");
-                JSONArray quoteArray = resultsObject.getJSONArray("quote");
-
-                final String DEFAULT_STRING = "null";
-                final double DEFAULT_DOUBLE = -1.0;
-                final long DEFAULT_LONG = -1;
-
-                for(int i = 0; i < quoteArray.length(); i++){
-                    JSONObject singleQuote = quoteArray.getJSONObject(i);
-                    Stock quote = new Stock(
-                            singleQuote.getString(Stock.QUOTE_SYMBOL),
-                            singleQuote.getString(Stock.QUOTE_ASK).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_ASK)),
-                            singleQuote.getString(Stock.QUOTE_AVERAGE_DAILY_VOLUME).equals(DEFAULT_STRING) ? DEFAULT_LONG : Long.parseLong(singleQuote.getString(Stock.QUOTE_AVERAGE_DAILY_VOLUME)),
-                            singleQuote.getString(Stock.QUOTE_BID).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_BID)),
-                            singleQuote.getString(Stock.QUOTE_ASK_REALTIME).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_ASK_REALTIME)),
-                            singleQuote.getString(Stock.QUOTE_BID_REALTIME).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_BID_REALTIME)),
-                            singleQuote.getString(Stock.QUOTE_BOOK_VALUE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_BOOK_VALUE)),
-                            singleQuote.getString(Stock.QUOTE_CHANGE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_CHANGE)),
-                            singleQuote.getString(Stock.QUOTE_CURRENCY),
-                            singleQuote.getString(Stock.QUOTE_CHANGE_REALTIME).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_CHANGE_REALTIME)),
-                            singleQuote.getString(Stock.QUOTE_LAST_TRADE_DATE),
-                            singleQuote.getString(Stock.QUOTE_EARNINGS_SHARE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_EARNINGS_SHARE)),
-                            singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_CURRENT_YEAR).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_CURRENT_YEAR)),
-                            singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_NEXT_YEAR).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_NEXT_YEAR)),
-                            singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_NEXT_QUARTER).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_EPS_ESTIMATE_NEXT_QUARTER)),
-                            singleQuote.getString(Stock.QUOTE_DAYS_LOW).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_DAYS_LOW)),
-                            singleQuote.getString(Stock.QUOTE_DAYS_HIGH).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_DAYS_HIGH)),
-                            singleQuote.getString(Stock.QUOTE_YEAR_LOW).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_YEAR_LOW)),
-                            singleQuote.getString(Stock.QUOTE_YEAR_HIGH).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_YEAR_HIGH)),
-                            singleQuote.getString(Stock.QUOTE_CHANGE_FROM_YEAR_LOW).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_CHANGE_FROM_YEAR_LOW)),
-                            singleQuote.getString(Stock.QUOTE_PERCENT_CHANGE_FROM_YEAR_LOW),
-                            singleQuote.getString(Stock.QUOTE_PERCENT_CHANGE_FROM_YEAR_HIGH),
-                            singleQuote.getString(Stock.QUOTE_LAST_TRADE_PRICE_ONLY).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_LAST_TRADE_PRICE_ONLY)),
-                            singleQuote.getString(Stock.QUOTE_FIFTY_DAY_MOVING_AVERAGE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_FIFTY_DAY_MOVING_AVERAGE)),
-                            singleQuote.getString(Stock.QUOTE_TWO_HUNDRED_DAY_MOVING_AVERAGE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_TWO_HUNDRED_DAY_MOVING_AVERAGE)),
-                            singleQuote.getString(Stock.QUOTE_NAME),
-                            singleQuote.getString(Stock.QUOTE_OPEN).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_OPEN)),
-                            singleQuote.getString(Stock.QUOTE_PREVIOUS_CLOSE).equals(DEFAULT_STRING) ? DEFAULT_DOUBLE : Double.parseDouble(singleQuote.getString(Stock.QUOTE_PREVIOUS_CLOSE)),
-                            singleQuote.getString(Stock.QUOTE_TICKER_TREND)
-                    );
+                //if (mContext.getClass().getSimpleName().equals("SearchActivity")) {
+                if(mResultsCount < 2){
+                    JSONObject quoteObject = resultsObject.getJSONObject("quote");
+                    Stock quote = getStockFromJson(quoteObject);
                     quotes.add(quote);
-                }
+                } else {
+                    JSONArray quoteArray = resultsObject.getJSONArray("quote");
 
+                    for (int i = 0; i < quoteArray.length(); i++) {
+                        JSONObject singleQuote = quoteArray.getJSONObject(i);
+                        Stock quote = getStockFromJson(singleQuote);
+                        quotes.add(quote);
+                    }
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
+            } finally {
+                Log.v(FetchStockTask.class.getSimpleName(), "Number of quotes sent back: " + mResultsCount);
             }
         }
     }

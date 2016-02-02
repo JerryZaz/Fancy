@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,10 +22,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
+import us.hnry.fancy.adapters.StockAdapter;
 import us.hnry.fancy.data.FetchStockTask;
-import us.hnry.fancy.data.QuoteQueryBuilder;
 import us.hnry.fancy.data.Stock;
-import us.hnry.fancy.data.StockAdapter;
+import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
 public class MainActivity extends AppCompatActivity
@@ -51,13 +50,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (mLaunchDetail != null) {
-                    startActivity(mLaunchDetail);
-                } else {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
             }
         });
 

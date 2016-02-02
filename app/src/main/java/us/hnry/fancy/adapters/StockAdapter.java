@@ -1,4 +1,4 @@
-package us.hnry.fancy.data;
+package us.hnry.fancy.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import us.hnry.fancy.R;
+import us.hnry.fancy.data.Stock;
 
 /**
  * Created by Henry on 1/31/2016.

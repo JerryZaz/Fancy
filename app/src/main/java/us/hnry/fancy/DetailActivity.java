@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import us.hnry.fancy.data.DetailAdapter;
+import us.hnry.fancy.adapters.DetailAdapter;
 import us.hnry.fancy.data.Stock;
 import us.hnry.fancy.utils.Utility;
 

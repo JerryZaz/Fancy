@@ -1,4 +1,4 @@
-package us.hnry.fancy.data;
+package us.hnry.fancy.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -23,7 +23,7 @@ public class DetailAdapter extends ArrayAdapter {
     private Map<String, String> mMap;
 
     public DetailAdapter(Context context, ArrayList<String> keys, Map<String, String> map) {
-        super(context, R.layout.detail_single_item, keys);
+        super(context, R.layout.single_row_detail, keys);
         mContext = context;
         mKeys = keys;
         mMap = map;
@@ -37,7 +37,7 @@ public class DetailAdapter extends ArrayAdapter {
 
         if(row == null){
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.detail_single_item, parent, false);
+            row = inflater.inflate(R.layout.single_row_detail, parent, false);
             holder = new DetailViewHolder(row);
             row.setTag(holder);
         }
