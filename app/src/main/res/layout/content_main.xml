@@ -13,7 +13,7 @@
     tools:context="us.hnry.fancy.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <us.hnry.fancy.views.CustomListView
+    <ListView
         android:id="@+id/content_main_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

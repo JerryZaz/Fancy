@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,13 +30,12 @@ import us.hnry.fancy.data.FetchStockTask;
 import us.hnry.fancy.data.Stock;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
-import us.hnry.fancy.views.CustomListView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     IntentFilter filterTimeTick = new IntentFilter(Intent.ACTION_TIME_TICK);
-    private CustomListView mStockListView;
+    private ListView mStockListView;
     private ArrayList<Stock> mQuotes;
     private StockAdapter mStockAdapter;
     private Intent mLaunchDetail;
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity
 
 
         //Get a reference to the list view
-        mStockListView = (CustomListView) findViewById(R.id.content_main_list_view);
+        mStockListView = (ListView) findViewById(R.id.content_main_list_view);
 
         mStockListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -108,12 +108,12 @@ public class MainActivity extends AppCompatActivity
 
     public void refreshMain() {
 
-        if(mStockListView.getAdapter() != null){
+        /*if(mStockListView.getAdapter() != null){
             mStockListView.setAdapter(null);
             mStockAdapter.clear();
-            /*mStockListView = null;
-            mStockListView = (ListView) findViewById(R.id.content_main_list_view);*/
-        }
+            *//*mStockListView = null;
+            mStockListView = (ListView) findViewById(R.id.content_main_list_view);*//*
+        }*/
 
         //Instantiate the async task
         FetchStockTask task = new FetchStockTask(this);
@@ -131,13 +131,13 @@ public class MainActivity extends AppCompatActivity
             mQuotes = task.get();
             if (mQuotes != null) {
 
-                if(mStockAdapter == null) {
-                    //Instantiate adapter
-                    mStockAdapter = new StockAdapter(this, mQuotes);
-                } else {
+                /*if(mStockAdapter == null) {*/
+                //Instantiate adapter
+                mStockAdapter = new StockAdapter(this, mQuotes);
+                /*} else {
                     mStockAdapter.setQuotes(mQuotes);
                     mStockAdapter.notifyDataSetChanged();
-                }
+                }*/
 
                 //Set the adapter to the list view
                 mStockListView.setAdapter(mStockAdapter);
