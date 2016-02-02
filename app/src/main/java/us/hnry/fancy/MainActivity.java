@@ -78,12 +78,6 @@ public class MainActivity extends AppCompatActivity
         //Instantiate the async task
         FetchStockTask task = new FetchStockTask(this);
 
-        //if(preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET) == null)
-
-
-        //Set<String> symbolsSet = new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS));
-
-
         String[] symbolsToQuery =
                 Utility.getSymbols(
                         preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
@@ -102,6 +96,7 @@ public class MainActivity extends AppCompatActivity
                 mStockListView.setAdapter(adapter);
                 editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
                         new HashSet<>(Arrays.asList(symbolsToQuery)));
+                editor.apply();
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
