@@ -1,9 +1,12 @@
 package us.hnry.fancy;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,23 +19,30 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
 import us.hnry.fancy.data.FetchStockTask;
 import us.hnry.fancy.data.QuoteQueryBuilder;
 import us.hnry.fancy.data.Stock;
 import us.hnry.fancy.data.StockAdapter;
+import us.hnry.fancy.utils.Utility;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private ListView mStockListView;
     private ArrayList<Stock> mQuotes;
+    private Intent mLaunchDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SharedPreferences preferences = getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -41,9 +51,13 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-                startActivity(new Intent(MainActivity.this, DetailActivity.class));
+
+                if (mLaunchDetail != null) {
+                    startActivity(mLaunchDetail);
+                } else {
+                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         });
 
@@ -63,30 +77,31 @@ public class MainActivity extends AppCompatActivity
         mStockListView = (ListView) findViewById(R.id.content_main_list_view);
         //Instantiate the async task
         FetchStockTask task = new FetchStockTask(this);
-        String[] symbolsToQuery = new String[]{
-                "GOOG",
-                "MSFT",
-                "AAPL",
-                "AMZN",
-                "FB",
-                "TSLA",
-                "T",
-                "TMUS",
-                "YHOO",
-                "NFLX",
-                "EXPE"
-        };
+
+        //if(preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET) == null)
+
+
+        //Set<String> symbolsSet = new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS));
+
+
+        String[] symbolsToQuery =
+                Utility.getSymbols(
+                        preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                                new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS))));
+
         QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
         //Execute the task
         task.execute(queryBuilder.build());
         try {
             //Fetch the result of the background thread
             mQuotes = task.get();
-            if(mQuotes != null) {
+            if (mQuotes != null) {
                 //Instantiate adapter
                 StockAdapter adapter = new StockAdapter(this, mQuotes);
                 //Set the adapter to the list view
                 mStockListView.setAdapter(adapter);
+                editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                        new HashSet<>(Arrays.asList(symbolsToQuery)));
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -95,9 +110,9 @@ public class MainActivity extends AppCompatActivity
         mStockListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent launchDetail = new Intent(MainActivity.this, DetailActivity.class);
-                launchDetail.putExtra("intent_parcelable_stock", mQuotes.get(position));
-                startActivity(launchDetail);
+                mLaunchDetail = new Intent(MainActivity.this, DetailActivity.class);
+                mLaunchDetail.putExtra("intent_parcelable_stock", mQuotes.get(position));
+                startActivity(mLaunchDetail);
             }
         });
         /*--END--*/
