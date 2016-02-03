@@ -1,5 +1,6 @@
 package us.hnry.fancy;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -91,6 +92,13 @@ public class DetailActivity extends AppCompatActivity {
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Fetching data");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
+
         mDetailListView = (ListView) findViewById(R.id.content_detail_list_view);
         fromIntent = getIntent().getParcelableExtra(Utility.STOCK_INTENT);
         if (fromIntent != null) {
@@ -101,12 +109,24 @@ public class DetailActivity extends AppCompatActivity {
                 fab.setImageResource(R.drawable.ic_check_circle_white_24dp);
                 isTracked = true;
             }
-            try {
-                DetailAdapter detailAdapter = consumeParcelableStockFromIntent(fromIntent);
-                mDetailListView.setAdapter(detailAdapter);
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            new Thread(){
+                @Override
+                public void run() {
+                    try {
+                        final DetailAdapter detailAdapter = consumeParcelableStockFromIntent(fromIntent);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mDetailListView.setAdapter(detailAdapter);
+                                progressDialog.dismiss();
+                            }
+                        });
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+
         } else {
             Toast.makeText(this,
                     "Selection returned invalid results from the server.",
