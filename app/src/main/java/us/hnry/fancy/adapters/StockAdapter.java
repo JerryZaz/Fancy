@@ -1,6 +1,7 @@
 package us.hnry.fancy.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,11 @@ public class StockAdapter extends ArrayAdapter {
         holder.closeTextView.setText(Utility.formatDouble(quote.getPreviousClose()));
         holder.openTextView.setText(Utility.formatDouble(quote.getOpen()));
         holder.askTextView.setText(Utility.formatDouble(quote.getAsk()));
+
+        double change = quote.getAsk() - quote.getOpen();
+        holder.askTextView.setTextColor(
+                change > 0 ? context.getResources().getColor(R.color.currentAskGreen) :
+                        change < 0 ? Color.RED : Color.BLACK);
 
         return row;
     }

@@ -73,13 +73,12 @@ public class DetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
-                if(isTracked){
+                if (isTracked) {
                     mSetOfStocks.remove(fromIntent.getSymbol());
                     fab.setImageResource(R.drawable.ic_favorite_white_24dp);
                     isTracked = false;
                     Snackbar.make(view, "Removed from Favorites", Snackbar.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     mSetOfStocks.add(fromIntent.getSymbol());
                     fab.setImageResource(R.drawable.ic_check_circle_white_24dp);
                     isTracked = true;

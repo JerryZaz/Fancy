@@ -31,13 +31,34 @@ public class Utility {
         return String.format("%#,.2f", original);
     }
 
-    public static String getStringBeforeBlank(String original){
+    public static String formatDouble(String original)
+            throws NumberFormatException {
+        double fetched = Double.parseDouble(original);
+        if (fetched == -1.23) return "N/A";
+        return String.format("%#,.2f", fetched);
+    }
+
+    public static String getStringBeforeBlank(String original) {
         try {
             int indexOfBlank = original.indexOf(" ");
             return original.substring(0, indexOfBlank);
-        } catch (StringIndexOutOfBoundsException e){
+        } catch (StringIndexOutOfBoundsException e) {
             return original;
         }
+    }
+
+    public static String splitCamelCase(String camelCase) {
+        char[] chars = camelCase.toCharArray();
+        StringBuilder builder = new StringBuilder(String.valueOf(Character.toUpperCase(chars[0])));
+        for (int i = 1; i < chars.length; i++) {
+            char singleChar = chars[i];
+            if (Character.isUpperCase(singleChar)) {
+                builder.append(" ").append(String.valueOf(singleChar));
+            } else {
+                builder.append(String.valueOf(singleChar));
+            }
+        }
+        return builder.toString();
     }
 
     public static String consumeParcelableStock(Stock stock)
@@ -60,9 +81,14 @@ public class Utility {
 
         StringBuilder builder = new StringBuilder();
 
-        for(Map.Entry<String, String> entry : map.entrySet()){
-            String key = entry.getKey();
-            String value = entry.getValue();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            String key = splitCamelCase(entry.getKey());
+            String value;
+            try {
+                value = formatDouble(entry.getValue());
+            } catch (NumberFormatException e){
+                value = entry.getValue();
+            }
             builder.append(key).append(": ").append(value).append("\n");
         }
 
