@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity
                     PackageManager packageManager = getPackageManager();
                     List<ResolveInfo> appList = packageManager.queryIntentActivities(mShareDetail, PackageManager.MATCH_ALL);
                     if (appList.size() > 0) {
+                        fab.setImageResource(R.drawable.ic_search_white_48dp);
                         startActivity(mShareDetail);
                     }
                 } else {
@@ -92,13 +93,14 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
+                fab.setImageResource(R.drawable.ic_search_white_48dp);
             }
         });
 
         mStockListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                fab.setImageResource(R.drawable.ic_search_white_48dp);
                 mLaunchDetail = new Intent(MainActivity.this, DetailActivity.class);
                 mLaunchDetail.putExtra(Utility.STOCK_INTENT, mQuotes.get(position));
                 startActivity(mLaunchDetail);
@@ -106,22 +108,43 @@ public class MainActivity extends AppCompatActivity
         });
         mStockListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                mShareDetail = new Intent(Intent.ACTION_SEND);
-                mShareDetail.setData(Uri.parse("mailto:"));
-                mShareDetail.putExtra(Intent.EXTRA_SUBJECT, "Market Stalker - Shared Stock Data");
-                //mShareDetail.putExtra("intent.share", mQuotes.get(position));
-                try {
-                    mShareDetail.putExtra(Intent.EXTRA_TEXT, Utility.consumeParcelableStock(mQuotes.get(position)));
-                    mShareDetail.setType("message/rfc822");
-                    mShareIntentLoaded = true;
-                    Snackbar.make(view, "Now click on the Share button.", Snackbar.LENGTH_LONG).show();
-                    fab.setImageResource(R.drawable.ic_share_white_24dp);
-                } catch (InvocationTargetException | IllegalAccessException e) {
-                    e.printStackTrace();
-                    Snackbar.make(view, "Something went wrong.", Snackbar.LENGTH_LONG).show();
-                }
+            public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
+                final ProgressDialog shareIntentProgressBar = new ProgressDialog(MainActivity.this);
+                shareIntentProgressBar.setMessage("Putting your data in a nice envelope");
+                shareIntentProgressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                shareIntentProgressBar.setCancelable(false);
+                shareIntentProgressBar.setIndeterminate(true);
+                shareIntentProgressBar.show();
 
+                new Thread(){
+                    @Override
+                    public void run() {
+                        mShareDetail = new Intent(Intent.ACTION_SEND);
+                        mShareDetail.setData(Uri.parse("mailto:"));
+                        mShareDetail.putExtra(Intent.EXTRA_SUBJECT, "Market Stalker - Shared Stock Data");
+                        try {
+                            mShareDetail.putExtra(Intent.EXTRA_TEXT, Utility.consumeParcelableStock(mQuotes.get(position)));
+                            mShareDetail.setType("message/rfc822");
+                            mShareIntentLoaded = true;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    shareIntentProgressBar.dismiss();
+                                    Snackbar.make(view, "Now click on the Share button.", Snackbar.LENGTH_LONG).show();
+                                    fab.setImageResource(R.drawable.ic_share_white_24dp);
+                                }
+                            });
+                        } catch (InvocationTargetException | IllegalAccessException e) {
+                            e.printStackTrace();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Snackbar.make(view, "Something went wrong.", Snackbar.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    }
+                }.start();
                 return true;
             }
         });
@@ -134,6 +157,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void refreshMain() {
+        mShareIntentLoaded = false;
+        mShareDetail = null;
 
         if (preferences == null) {
             preferences = getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
