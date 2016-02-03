@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity
             editor = preferences.edit();
         }
 
-        ProgressDialog progressDialog = new ProgressDialog(this);
+        final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Refreshing your data");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
@@ -136,33 +136,47 @@ public class MainActivity extends AppCompatActivity
         progressDialog.show();
 
         //Instantiate the async task
-        FetchStockTask task = new FetchStockTask(this);
+        final FetchStockTask task = new FetchStockTask(this);
 
-        String[] symbolsToQuery =
+                final String[] symbolsToQuery =
                 Utility.getSymbols(
                         preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
                                 new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS))));
 
-        QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
-        //Execute the task
-        task.execute(queryBuilder.build());
-        try {
-            //Fetch the result of the background thread
-            mQuotes = task.get();
-            if (mQuotes != null) {
-                StockAdapter stockAdapter = new StockAdapter(this, mQuotes);
-                //Set the adapter to the list view
-                mStockListView.setAdapter(stockAdapter);
-                editor.clear();
-                editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                        new HashSet<>(Arrays.asList(symbolsToQuery)));
-                editor.apply();
+        final QuoteQueryBuilder[] queryBuilder = {null};
+        new Thread(){
+            @Override
+            public void run() {
+                queryBuilder[0] = new QuoteQueryBuilder(symbolsToQuery);
+                //Execute the task
+                task.execute(queryBuilder[0].build());
+                try {
+                    //Fetch the result of the background thread
+                    mQuotes = task.get();
+                    if (mQuotes != null) {
+                        final StockAdapter stockAdapter = new StockAdapter(MainActivity.this, mQuotes);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //Set the adapter to the list view
+                                mStockListView.setAdapter(stockAdapter);
+                                editor.clear();
+                                editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                                        new HashSet<>(Arrays.asList(symbolsToQuery)));
+                                editor.apply();
+                                progressDialog.dismiss();
+                            }
+                        });
+
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        } finally {
-            progressDialog.dismiss();
-        }
+        }.start();
+
+
     }
 
     @Override
