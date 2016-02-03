@@ -1,5 +1,6 @@
 package us.hnry.fancy;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -88,6 +89,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void refreshMain() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Refreshing your data");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
 
         //Instantiate the async task
         FetchStockTask task = new FetchStockTask(this);
@@ -114,6 +121,8 @@ public class MainActivity extends AppCompatActivity
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+        } finally {
+            progressDialog.dismiss();
         }
     }
 

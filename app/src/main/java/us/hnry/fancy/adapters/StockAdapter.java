@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import us.hnry.fancy.R;
 import us.hnry.fancy.data.Stock;
+import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 1/31/2016.
@@ -49,9 +50,9 @@ public class StockAdapter extends ArrayAdapter {
         Stock quote = quotes.get(position);
         holder.symbolTextView.setText(quote.getSymbol());
         holder.nameTextView.setText(quote.getName());
-        holder.closeTextView.setText("Previous Close: " + String.valueOf(quote.getPreviousClose()));
-        holder.openTextView.setText("Open: " + String.valueOf(quote.getOpen()));
-        holder.askTextView.setText("Current: " + String.valueOf(quote.getAsk()));
+        holder.closeTextView.setText(Utility.formatDouble(quote.getPreviousClose()));
+        holder.openTextView.setText(Utility.formatDouble(quote.getOpen()));
+        holder.askTextView.setText(Utility.formatDouble(quote.getAsk()));
 
         return row;
     }

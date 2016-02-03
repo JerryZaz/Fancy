@@ -17,6 +17,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import us.hnry.fancy.utils.Utility;
+
 /**
  * Created by Henry on 1/31/2016.
  *
@@ -108,8 +110,8 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
     private Stock getStockFromJson(JSONObject singleQuote) {
 
         final String DEFAULT_STRING = "null";
-        final double DEFAULT_DOUBLE = -1.0;
-        final long DEFAULT_LONG = -1;
+        final double DEFAULT_DOUBLE = Utility.DEFAULT_DOUBLE;
+        final long DEFAULT_LONG = Utility.DEFAULT_LONG;
 
         Stock quote = null;
 

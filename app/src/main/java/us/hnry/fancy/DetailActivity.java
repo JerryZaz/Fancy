@@ -109,8 +109,16 @@ public class DetailActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         } else {
-            Toast.makeText(this, "Something went wrong while fetching data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    "Selection returned invalid results from the server.",
+                    Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }
