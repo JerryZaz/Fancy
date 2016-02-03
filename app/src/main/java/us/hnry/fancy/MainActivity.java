@@ -59,14 +59,13 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mShareIntentLoaded) {
+                if (mShareIntentLoaded) {
                     PackageManager packageManager = getPackageManager();
                     List<ResolveInfo> appList = packageManager.queryIntentActivities(mShareDetail, PackageManager.MATCH_ALL);
-                    if(appList.size() > 0) {
+                    if (appList.size() > 0) {
                         startActivity(mShareDetail);
                     }
-                }
-                else {
+                } else {
                     startActivity(new Intent(MainActivity.this, SearchActivity.class));
                 }
             }
@@ -138,13 +137,13 @@ public class MainActivity extends AppCompatActivity
         //Instantiate the async task
         final FetchStockTask task = new FetchStockTask(this);
 
-                final String[] symbolsToQuery =
+        final String[] symbolsToQuery =
                 Utility.getSymbols(
                         preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
                                 new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS))));
 
         final QuoteQueryBuilder[] queryBuilder = {null};
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 queryBuilder[0] = new QuoteQueryBuilder(symbolsToQuery);

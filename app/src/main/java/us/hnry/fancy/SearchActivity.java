@@ -91,31 +91,42 @@ public class SearchActivity extends AppCompatActivity {
         mButtonSearch = (Button) findViewById(R.id.search_button);
         mButtonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 hideSoftKeyBoard();
 
-                String search = Utility.getStringBeforeBlank(mEditTextSearch.getText().toString());
+                final String search = Utility.getStringBeforeBlank(mEditTextSearch.getText().toString());
                 mEditTextSearch.setText(search);
                 if (!search.equals("")) {
                     progressDialog.show();
-                    SymbolSearchTask searchTask = new SymbolSearchTask();
-                    searchTask.execute(search);
-                    try {
-                        mResults = searchTask.get();
-                        if (mResults != null) {
-                            if (mResults.size() > 0) {
-                                SearchAdapter adapter = new SearchAdapter(SearchActivity.this, mResults);
-                                mListViewSearch.setAdapter(adapter);
-                            } else {
+                    final SymbolSearchTask searchTask = new SymbolSearchTask();
+
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            searchTask.execute(search);
+                            try {
+                                mResults = searchTask.get();
+                                if (mResults != null) {
+                                    if (mResults.size() > 0) {
+                                        final SearchAdapter adapter = new SearchAdapter(SearchActivity.this, mResults);
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mListViewSearch.setAdapter(adapter);
+                                                progressDialog.dismiss();
+                                            }
+                                        });
+
+                                    } else {
+                                        Snackbar.make(v, "Your search returned no results.", Snackbar.LENGTH_LONG).show();
+                                    }
+                                }
+                            } catch (InterruptedException | ExecutionException e) {
+                                e.printStackTrace();
                                 Snackbar.make(v, "Your search returned no results.", Snackbar.LENGTH_LONG).show();
                             }
                         }
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                        Snackbar.make(v, "Your search returned no results.", Snackbar.LENGTH_LONG).show();
-                    } finally {
-                        progressDialog.dismiss();
-                    }
+                    }.start();
                 } else {
                     Snackbar.make(v, "Please enter a search term", Snackbar.LENGTH_SHORT).show();
                 }
@@ -126,10 +137,10 @@ public class SearchActivity extends AppCompatActivity {
     private void hideSoftKeyBoard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
-        if(imm.isAcceptingText()) { // verify if the soft keyboard is open
+        if (imm.isAcceptingText()) { // verify if the soft keyboard is open
             try {
                 imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-            } catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
         }
