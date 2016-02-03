@@ -48,37 +48,64 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                final FetchStockTask task = new FetchStockTask(SearchActivity.this);
-                task.execute(new QuoteQueryBuilder(mResults
-                        .get(position)
-                        .getSymbol())
-                        .build());
-                try {
-                    ArrayList<Stock> quotes = task.get();
-                    if (quotes != null) {
-                        if (quotes.size() > 0) {
-                            Intent launchDetail = new Intent(SearchActivity.this, DetailActivity.class);
-                            launchDetail.putExtra(Utility.STOCK_INTENT, quotes.get(0));
-                            startActivity(launchDetail);
-                        } else {
+                final ProgressDialog listItemClickProgressDialog = new ProgressDialog(SearchActivity.this);
+                listItemClickProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                listItemClickProgressDialog.setMessage("Processing your request");
+                listItemClickProgressDialog.setCancelable(false);
+                listItemClickProgressDialog.setIndeterminate(true);
+                listItemClickProgressDialog.show();
 
-                            Toast.makeText(SearchActivity.this, "Added", Toast.LENGTH_SHORT).show();
-                            SharedPreferences preferences = getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.clear();
-                            Set<String> persistentSymbolsSet =
-                                    preferences
-                                            .getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                                                    new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS)));
-                            persistentSymbolsSet.add(mResults.get(position).getSymbol());
-                            editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET, persistentSymbolsSet);
-                            editor.apply();
-                            finish();
+                new Thread(){
+                    @Override
+                    public void run() {
+                        final FetchStockTask task = new FetchStockTask(SearchActivity.this);
+                        task.execute(new QuoteQueryBuilder(mResults
+                                .get(position)
+                                .getSymbol())
+                                .build());
+                        try {
+                            ArrayList<Stock> quotes = task.get();
+                            if (quotes != null) {
+                                if (quotes.size() > 0) {
+                                    final Intent launchDetail = new Intent(SearchActivity.this, DetailActivity.class);
+                                    launchDetail.putExtra(Utility.STOCK_INTENT, quotes.get(0));
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            listItemClickProgressDialog.dismiss();
+                                            startActivity(launchDetail);
+                                        }
+                                    });
+                                } else {
+                                    SharedPreferences preferences = getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = preferences.edit();
+                                    editor.clear();
+                                    Set<String> persistentSymbolsSet =
+                                            preferences
+                                                    .getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                                                            new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS)));
+                                    persistentSymbolsSet.add(mResults.get(position).getSymbol());
+                                    editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET, persistentSymbolsSet);
+                                    editor.apply();
+
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(SearchActivity.this, "Added", Toast.LENGTH_SHORT).show();
+                                            listItemClickProgressDialog.dismiss();
+                                        }
+                                    });
+
+                                    finish();
+                                }
+                            }
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
                         }
                     }
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
+                }.start();
+
+
             }
         });
 
