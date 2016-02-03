@@ -4,9 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,10 +21,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import us.hnry.fancy.adapters.StockAdapter;
@@ -32,29 +39,36 @@ import us.hnry.fancy.utils.Utility;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    /*IntentFilter filterTimeTick = new IntentFilter(Intent.ACTION_TIME_TICK);*/
     private ListView mStockListView;
     private ArrayList<Stock> mQuotes;
-    private StockAdapter mStockAdapter;
     private Intent mLaunchDetail;
-    private SharedPreferences mPreferences;
-    private SharedPreferences.Editor mEditor;
+    private Intent mShareDetail;
+    private boolean mShareIntentLoaded;
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPreferences = getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
-        mEditor = mPreferences.edit();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        mShareIntentLoaded = false;
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+                if(mShareIntentLoaded) {
+                    PackageManager packageManager = getPackageManager();
+                    List<ResolveInfo> appList = packageManager.queryIntentActivities(mShareDetail, PackageManager.MATCH_ALL);
+                    if(appList.size() > 0) {
+                        startActivity(mShareDetail);
+                    }
+                }
+                else {
+                    startActivity(new Intent(MainActivity.this, SearchActivity.class));
+                }
             }
         });
 
@@ -67,7 +81,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         //Get a reference to the list view
         mStockListView = (ListView) findViewById(R.id.content_main_list_view);
 
@@ -79,7 +92,27 @@ public class MainActivity extends AppCompatActivity
                 startActivity(mLaunchDetail);
             }
         });
-        //refreshMain();
+        mStockListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                mShareDetail = new Intent(Intent.ACTION_SEND);
+                mShareDetail.setData(Uri.parse("mailto:"));
+                mShareDetail.putExtra(Intent.EXTRA_SUBJECT, "Market Stalker - Shared Stock Data");
+                //mShareDetail.putExtra("intent.share", mQuotes.get(position));
+                try {
+                    mShareDetail.putExtra(Intent.EXTRA_TEXT, Utility.consumeParcelableStock(mQuotes.get(position)));
+                    mShareDetail.setType("message/rfc822");
+                    mShareIntentLoaded = true;
+                    Snackbar.make(view, "Now click on the Share button.", Snackbar.LENGTH_LONG).show();
+                    fab.setImageResource(R.drawable.ic_share_white_24dp);
+                } catch (InvocationTargetException | IllegalAccessException e) {
+                    e.printStackTrace();
+                    Snackbar.make(view, "Something went wrong.", Snackbar.LENGTH_LONG).show();
+                }
+
+                return true;
+            }
+        });
     }
 
     @Override
@@ -89,6 +122,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void refreshMain() {
+
+        if (preferences == null) {
+            preferences = getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
+            editor = preferences.edit();
+        }
+
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Refreshing your data");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -101,7 +140,7 @@ public class MainActivity extends AppCompatActivity
 
         String[] symbolsToQuery =
                 Utility.getSymbols(
-                        mPreferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                        preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
                                 new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS))));
 
         QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
@@ -111,13 +150,13 @@ public class MainActivity extends AppCompatActivity
             //Fetch the result of the background thread
             mQuotes = task.get();
             if (mQuotes != null) {
-                mStockAdapter = new StockAdapter(this, mQuotes);
+                StockAdapter stockAdapter = new StockAdapter(this, mQuotes);
                 //Set the adapter to the list view
-                mStockListView.setAdapter(mStockAdapter);
-                mEditor.clear();
-                mEditor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                mStockListView.setAdapter(stockAdapter);
+                editor.clear();
+                editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
                         new HashSet<>(Arrays.asList(symbolsToQuery)));
-                mEditor.apply();
+                editor.apply();
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -170,9 +209,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_manage) {
-
+            startActivity(new Intent(MainActivity.this, SearchActivity.class));
         } else if (id == R.id.nav_share) {
-
+            Toast.makeText(this, "Long-click and item on the list", Toast.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

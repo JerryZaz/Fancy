@@ -56,7 +56,6 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
                     .build();
 
             URL url = new URL(builtUri.toString());
-            Log.v(LOG_TAG, url.toString());
 
             //Create the request to the API
             urlConnection = (HttpURLConnection) url.openConnection();

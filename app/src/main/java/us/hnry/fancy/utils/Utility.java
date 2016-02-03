@@ -1,6 +1,13 @@
 package us.hnry.fancy.utils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+
+import us.hnry.fancy.data.Stock;
 
 /**
  * Created by Henry on 2/1/2016.
@@ -31,5 +38,34 @@ public class Utility {
         } catch (StringIndexOutOfBoundsException e){
             return original;
         }
+    }
+
+    public static String consumeParcelableStock(Stock stock)
+            throws InvocationTargetException, IllegalAccessException {
+
+        ArrayList<String> keys = new ArrayList<>();
+        Method[] methods = stock.getClass().getMethods();
+        Map<String, String> map = new HashMap<>();
+
+        for (Method m : methods) {
+            if (m.getName().startsWith("get")) {
+                String value = String.valueOf(m.invoke(stock));
+                String name = m.getName().substring(3);
+                if (!name.equals("Class")) {
+                    map.put(name, value);
+                    keys.add(name);
+                }
+            }
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        for(Map.Entry<String, String> entry : map.entrySet()){
+            String key = entry.getKey();
+            String value = entry.getValue();
+            builder.append(key).append(": ").append(value).append("\n");
+        }
+
+        return builder.toString();
     }
 }
