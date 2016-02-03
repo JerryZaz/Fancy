@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -82,6 +83,18 @@ public class MainActivity extends AppCompatActivity
 
         //Get a reference to the list view
         mStockListView = (ListView) findViewById(R.id.content_main_list_view);
+
+        mStockListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
 
         mStockListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

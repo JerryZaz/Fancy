@@ -35,7 +35,6 @@ public class SearchActivity extends AppCompatActivity {
     private Button mButtonSearch;
     private ListView mListViewSearch;
     private ArrayList<Symbol> mResults;
-    //    private ArrayList<Stock> mQuotes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
