@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     private boolean mShareIntentLoaded;
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
+    private boolean mShareSnackBarShown;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,19 +94,24 @@ public class MainActivity extends AppCompatActivity
                 }
                 switch (view.getId()) {
                     case R.id.content_main_list_view:
+
                         final int lastItem = firstVisibleItem + visibleItemCount;
                         if (totalItemCount > visibleItemCount) {
                             if (lastItem == totalItemCount) {
                                 int preLast = lastItem - 1;
                                 if (preLast != lastItem) { //to avoid multiple calls for last item
                                     fab.setVisibility(View.GONE);
-                                    Snackbar.make(view, "Tap and hold and item to Share",
-                                            Snackbar.LENGTH_SHORT).show();
+                                    if (!mShareSnackBarShown) {
+                                        Snackbar.make(view, "Tap and hold and item to Share",
+                                                Snackbar.LENGTH_LONG).show();
+                                        mShareSnackBarShown = true;
+                                    }
                                 }
                             } else {
                                 fab.setVisibility(View.VISIBLE);
                             }
                         }
+
                 }
             }
         });
@@ -183,6 +189,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void refreshMain() {
+        mShareSnackBarShown = false;
         mShareIntentLoaded = false;
         mShareDetail = null;
 
