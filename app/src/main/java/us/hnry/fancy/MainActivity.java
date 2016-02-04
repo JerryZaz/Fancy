@@ -61,12 +61,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 if (mShareIntentLoaded) {
-                    PackageManager packageManager = getPackageManager();
-                    List<ResolveInfo> appList = packageManager.queryIntentActivities(mShareDetail, PackageManager.MATCH_ALL);
-                    if (appList.size() > 0) {
-                        fab.setImageResource(R.drawable.ic_search_white_48dp);
-                        startActivity(mShareDetail);
-                    }
+                    share();
+                    fab.setImageResource(R.drawable.ic_search_white_48dp);
                 } else {
                     startActivity(new Intent(MainActivity.this, SearchActivity.class));
                 }
@@ -92,8 +88,22 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if(!mShareIntentLoaded) {
+                if (!mShareIntentLoaded) {
                     fab.setImageResource(R.drawable.ic_search_white_48dp);
+                }
+                switch (view.getId()) {
+                    case R.id.content_main_list_view:
+                        final int lastItem = firstVisibleItem + visibleItemCount;
+                        if (totalItemCount > visibleItemCount) {
+                            if (lastItem == totalItemCount) {
+                                int preLast = lastItem - 1;
+                                if (preLast != lastItem) { //to avoid multiple calls for last item
+                                    fab.setVisibility(View.GONE);
+                                }
+                            } else {
+                                fab.setVisibility(View.VISIBLE);
+                            }
+                        }
                 }
             }
         });
@@ -117,7 +127,7 @@ public class MainActivity extends AppCompatActivity
                 shareIntentProgressBar.setIndeterminate(true);
                 shareIntentProgressBar.show();
 
-                new Thread(){
+                new Thread() {
                     @Override
                     public void run() {
                         mShareDetail = new Intent(Intent.ACTION_SEND);
@@ -131,8 +141,13 @@ public class MainActivity extends AppCompatActivity
                                 @Override
                                 public void run() {
                                     shareIntentProgressBar.dismiss();
-                                    Snackbar.make(view, "Now click on the Share button.", Snackbar.LENGTH_LONG).show();
-                                    fab.setImageResource(R.drawable.ic_share_white_24dp);
+                                    if (fab.getVisibility() == View.GONE) {
+                                        fab.setImageResource(R.drawable.ic_search_white_48dp);
+                                        share();
+                                    } else {
+                                        Snackbar.make(view, "Now click on the Share button.", Snackbar.LENGTH_LONG).show();
+                                        fab.setImageResource(R.drawable.ic_share_white_24dp);
+                                    }
                                 }
                             });
                         } catch (InvocationTargetException | IllegalAccessException e) {
@@ -149,6 +164,14 @@ public class MainActivity extends AppCompatActivity
                 return true;
             }
         });
+    }
+
+    private void share() {
+        PackageManager packageManager = getPackageManager();
+        List<ResolveInfo> appList = packageManager.queryIntentActivities(mShareDetail, PackageManager.MATCH_ALL);
+        if (appList.size() > 0) {
+            startActivity(mShareDetail);
+        }
     }
 
     @Override
