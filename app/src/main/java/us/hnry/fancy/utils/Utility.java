@@ -21,7 +21,7 @@ public class Utility {
     public static final String SEARCH_INTENT = "intent_search_type_selector";
 
     public static final String[] DEFAULT_SYMBOLS = new String[]{"GOOG", "MSFT", "AAPL", "AMZN",
-            "FB","TSLA", "T", "TMUS", "YHOO", "NFLX"};
+            "FB", "TSLA", "T", "TMUS", "YHOO", "NFLX"};
     public static final double DEFAULT_DOUBLE = -1.23;
     public static final long DEFAULT_LONG = -1;
     public static final int THOR_SEARCH = 0;
@@ -33,6 +33,7 @@ public class Utility {
 
     public static String formatDouble(double original) {
         if (original == DEFAULT_DOUBLE) return "N/A";
+        if (original > 999999) return String.format("%#,.2f", (original / 1000000)) + "M";
         return String.format("%#,.2f", original);
     }
 
@@ -40,6 +41,7 @@ public class Utility {
             throws NumberFormatException {
         double fetched = Double.parseDouble(original);
         if (fetched == -1.23) return "N/A";
+        if (fetched > 999999) return String.format("%#,.2f", (fetched / 1000000)) + "M";
         return String.format("%#,.2f", fetched);
     }
 
@@ -91,7 +93,7 @@ public class Utility {
             String value;
             try {
                 value = formatDouble(entry.getValue());
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 value = entry.getValue();
             }
             builder.append(key).append(": ").append(value).append("\n");
