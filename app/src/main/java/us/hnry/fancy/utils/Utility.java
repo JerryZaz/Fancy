@@ -16,11 +16,16 @@ public class Utility {
 
     public static final String PERSISTENT = "savedData";
     public static final String PERSISTENT_SYMBOLS_SET = "key.symbols.set";
-    public static final String[] DEFAULT_SYMBOLS = new String[]{"GOOG", "MSFT", "AAPL", "AMZN", "FB",
-            "TSLA", "T", "TMUS", "YHOO", "NFLX"};
+
     public static final String STOCK_INTENT = "intent_parcelable_stock";
+    public static final String SEARCH_INTENT = "intent_search_type_selector";
+
+    public static final String[] DEFAULT_SYMBOLS = new String[]{"GOOG", "MSFT", "AAPL", "AMZN",
+            "FB","TSLA", "T", "TMUS", "YHOO", "NFLX"};
     public static final double DEFAULT_DOUBLE = -1.23;
     public static final long DEFAULT_LONG = -1;
+    public static final int THOR_SEARCH = 0;
+    public static final int SYMBOL_SEARCH = 1;
 
     public static String[] getSymbols(Set<String> fromSharedPreferences) {
         return fromSharedPreferences.toArray(new String[fromSharedPreferences.size()]);

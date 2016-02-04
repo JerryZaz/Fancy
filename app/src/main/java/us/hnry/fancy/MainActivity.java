@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity
                     share();
                     fab.setImageResource(R.drawable.ic_search_white_48dp);
                 } else {
-                    startActivity(new Intent(MainActivity.this, SearchActivity.class));
+                    startActivity(new Intent(MainActivity.this, SearchActivity.class).putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
                 }
             }
         });
@@ -283,10 +283,10 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_tracking) {
-            // TODO: something something at some point
-        } else if (id == R.id.nav_manage) {
-            startActivity(new Intent(MainActivity.this, SearchActivity.class));
+        if (id == R.id.nav_search_symbol) {
+            startActivity(new Intent(MainActivity.this, SearchActivity.class).putExtra(Utility.SEARCH_INTENT, Utility.SYMBOL_SEARCH));
+        } else if (id == R.id.nav_search_thor) {
+            startActivity(new Intent(MainActivity.this, SearchActivity.class).putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
         } else if (id == R.id.nav_share) {
             Toast.makeText(this, "Tap and hold an item on the list", Toast.LENGTH_SHORT).show();
         }
