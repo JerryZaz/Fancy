@@ -88,12 +88,13 @@ public class MainActivity extends AppCompatActivity
         mStockListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                fab.setImageResource(R.drawable.ic_search_white_48dp);
+                if(!mShareIntentLoaded) {
+                    fab.setImageResource(R.drawable.ic_search_white_48dp);
+                }
             }
         });
 
