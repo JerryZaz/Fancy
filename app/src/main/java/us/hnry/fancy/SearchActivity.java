@@ -144,11 +144,23 @@ public class SearchActivity extends AppCompatActivity {
                                         });
 
                                     } else {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                progressDialog.dismiss();
+                                            }
+                                        });
                                         Snackbar.make(v, "Your search returned no results.", Snackbar.LENGTH_LONG).show();
                                     }
                                 }
                             } catch (InterruptedException | ExecutionException e) {
                                 e.printStackTrace();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+                                    }
+                                });
                                 Snackbar.make(v, "Your search returned no results.", Snackbar.LENGTH_LONG).show();
                             }
                         }
