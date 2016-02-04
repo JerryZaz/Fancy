@@ -1,5 +1,9 @@
 package us.hnry.fancy.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 /**
  * Created by Henry on 2/1/2016.
  * Hax to customize queries to the yahoo.finance.quotes database
@@ -18,6 +22,10 @@ public class QuoteQueryBuilder {
     }
 
     private String arrangeSymbols(){
+
+        ArrayList<String> temp = new ArrayList<>(Arrays.asList(symbols));
+        Collections.sort(temp);
+        symbols = temp.toArray(new String[temp.size()]);
 
         StringBuilder builder = new StringBuilder("(");
 
