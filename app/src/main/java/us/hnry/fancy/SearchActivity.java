@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,24 +55,19 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    /*private void hideSoftKeyBoard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-
-        if (imm.isAcceptingText()) { // verify if the soft keyboard is open
-            try {
-                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
-
     public static class ThorSearch extends Fragment {
 
         private EditText mEditTextSearch;
         private Button mButtonSearch;
         private ListView mListViewSearch;
         private ArrayList<Symbol> mResults;
+        private InputMethodManager mInputMethodManager;
+
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            mInputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        }
 
         @Nullable
         @Override
@@ -153,6 +149,8 @@ public class SearchActivity extends AppCompatActivity {
                 @Override
                 public void onClick(final View v) {
 
+                    mInputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
                     final String search = Utility.getStringBeforeBlank(mEditTextSearch.getText().toString());
                     mEditTextSearch.setText(search);
                     if (!search.equals("")) {
@@ -216,6 +214,13 @@ public class SearchActivity extends AppCompatActivity {
         private ListView mListViewSearch;
         private ArrayList<Stock> mQuotes;
         private Intent mLaunchDetail;
+        private InputMethodManager mInputMethodManager;
+
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            mInputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        }
 
         @Nullable
         @Override
@@ -246,6 +251,9 @@ public class SearchActivity extends AppCompatActivity {
             mButtonSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
+
+                    mInputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
                     final ProgressDialog progressDialog = new ProgressDialog(getActivity());
                     progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     progressDialog.setMessage("Collecting Results");
