@@ -22,7 +22,6 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -100,7 +99,7 @@ public class MainActivity extends AppCompatActivity
                             if (lastItem == totalItemCount) {
                                 int preLast = lastItem - 1;
                                 if (preLast != lastItem) { //to avoid multiple calls for last item
-                                    fab.setVisibility(View.GONE);
+                                    fab.getBackground().setAlpha(40);
                                     if (!mShareSnackBarShown) {
                                         Snackbar.make(view, "Tap and hold and item to Share",
                                                 Snackbar.LENGTH_LONG).show();
@@ -108,7 +107,7 @@ public class MainActivity extends AppCompatActivity
                                     }
                                 }
                             } else {
-                                fab.setVisibility(View.VISIBLE);
+                                fab.getBackground().setAlpha(255);
                             }
                         }
 
@@ -149,13 +148,9 @@ public class MainActivity extends AppCompatActivity
                                 @Override
                                 public void run() {
                                     shareIntentProgressBar.dismiss();
-                                    if (fab.getVisibility() == View.GONE) {
-                                        fab.setImageResource(R.drawable.ic_search_white_48dp);
-                                        share();
-                                    } else {
-                                        Snackbar.make(view, "Now click on the Share button.", Snackbar.LENGTH_LONG).show();
-                                        fab.setImageResource(R.drawable.ic_share_white_24dp);
-                                    }
+                                    fab.getBackground().setAlpha(255);
+                                    Snackbar.make(view, "Now click on the Share button.", Snackbar.LENGTH_LONG).show();
+                                    fab.setImageResource(R.drawable.ic_share_white_24dp);
                                 }
                             });
                         } catch (InvocationTargetException | IllegalAccessException e) {
@@ -294,8 +289,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, SearchActivity.class).putExtra(Utility.SEARCH_INTENT, Utility.SYMBOL_SEARCH));
         } else if (id == R.id.nav_search_thor) {
             startActivity(new Intent(MainActivity.this, SearchActivity.class).putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
-        } else if (id == R.id.nav_share) {
-            Toast.makeText(this, "Tap and hold an item on the list", Toast.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
