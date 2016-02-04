@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity
                                 int preLast = lastItem - 1;
                                 if (preLast != lastItem) { //to avoid multiple calls for last item
                                     fab.setVisibility(View.GONE);
+                                    Snackbar.make(view, "Tap and hold and item to Share",
+                                            Snackbar.LENGTH_SHORT).show();
                                 }
                             } else {
                                 fab.setVisibility(View.VISIBLE);
