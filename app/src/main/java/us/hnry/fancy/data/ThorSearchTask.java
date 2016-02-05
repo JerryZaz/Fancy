@@ -23,7 +23,7 @@ import us.hnry.fancy.MainActivity;
  *
  * Created by Henry on 2/1/2016.
  */
-public class SymbolSearchTask extends AsyncTask<String, Void, ArrayList<Symbol>> {
+public class ThorSearchTask extends AsyncTask<String, Void, ArrayList<Symbol>> {
 
     private final String LOG_TAG = FetchStockTask.class.getSimpleName();
     private MainActivity mActivity;

@@ -30,7 +30,7 @@ import us.hnry.fancy.adapters.SearchAdapter;
 import us.hnry.fancy.data.FetchStockTask;
 import us.hnry.fancy.data.Stock;
 import us.hnry.fancy.data.Symbol;
-import us.hnry.fancy.data.SymbolSearchTask;
+import us.hnry.fancy.data.ThorSearchTask;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
@@ -155,7 +155,7 @@ public class SearchActivity extends AppCompatActivity {
                     mEditTextSearch.setText(search);
                     if (!search.equals("")) {
                         progressDialog.show();
-                        final SymbolSearchTask searchTask = new SymbolSearchTask();
+                        final ThorSearchTask searchTask = new ThorSearchTask();
 
                         new Thread() {
                             @Override
