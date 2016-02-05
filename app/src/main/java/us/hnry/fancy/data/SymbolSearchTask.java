@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.MainActivity;
 
 /**
@@ -38,7 +39,7 @@ public class SymbolSearchTask extends AsyncTask<String, Void, ArrayList<Symbol>>
         mSymbolJSONString = null;
 
         try{
-            final String BASE_URL = "http://chstocksearch.herokuapp.com/api";
+            final String BASE_URL = BuildConfig.THOR_BASE_URL;
             final String QUERY = params[0];
 
             Uri builtUri = Uri.parse(BASE_URL).buildUpon()

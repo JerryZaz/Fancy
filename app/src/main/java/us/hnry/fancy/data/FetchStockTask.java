@@ -17,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.utils.Utility;
 
 /**
@@ -45,13 +46,13 @@ public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
 
 
         try {
-            final String BASE_URL = "http://query.yahooapis.com/v1/public/yql?";
+            final String BASE_URL = BuildConfig.BASE_URL;
 
             final String QUERY = params[0];
 
             Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                     .appendQueryParameter("q", QUERY)
-                    .appendQueryParameter("env", "http://datatables.org/alltables.env")
+                    .appendQueryParameter("env", BuildConfig.ENV)
                     .appendQueryParameter("format", "json")
                     .build();
 
