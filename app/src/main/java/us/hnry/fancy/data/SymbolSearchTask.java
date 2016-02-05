@@ -83,6 +83,18 @@ public class SymbolSearchTask extends AsyncTask<String, Void, ArrayList<Symbol>>
 
         } catch (IOException | JSONException e) {
             e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(LOG_TAG, "Error closing stream", e);
+            }
         }
 
         return mResults;
