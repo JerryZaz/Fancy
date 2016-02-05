@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static final String FRAGMENT_TAG_MAIN_LIST = "fragment_main_list";
+    private MainListFragment mListFragment;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        mListFragment = (MainListFragment) getFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN_LIST);
     }
 
     @Override
@@ -89,19 +91,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                if (mListFragment != null) {
+                    mListFragment.refreshMain();
+                }
+                break;
         }
-        if (id == R.id.action_refresh) {
-            //TODO: fix so that refreshMain(); can be called from the overflow menu
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
