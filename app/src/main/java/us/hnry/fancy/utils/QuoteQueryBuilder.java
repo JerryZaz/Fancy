@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+import us.hnry.fancy.BuildConfig;
+
 /**
  * Created by Henry on 2/1/2016.
- * Hax to customize queries to the yahoo.finance.quotes database
+ * Hax to customize queries to the API.
  */
 public class QuoteQueryBuilder {
 
-    final String BASE_QUERY = "select * from yahoo.finance.quotes where symbol in ";
+    final String BASE_QUERY = BuildConfig.BASE_QUERY;
     private String[] symbols;
 
     public QuoteQueryBuilder(String... toQuery){
@@ -31,7 +33,7 @@ public class QuoteQueryBuilder {
 
         for(int i = 0; i < symbols.length; i++){
             builder.append("\"");
-            builder.append(symbols[i]);
+            builder.append(symbols[i].toUpperCase());
             builder.append("\"");
             if(i < symbols.length - 1){
                 builder.append(",");
