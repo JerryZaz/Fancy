@@ -10,6 +10,4 @@
     tools:context="us.hnry.fancy.DetailActivity"
     tools:showIn="@layout/activity_detail">
 
-
-
 </android.support.v4.widget.SlidingPaneLayout>
