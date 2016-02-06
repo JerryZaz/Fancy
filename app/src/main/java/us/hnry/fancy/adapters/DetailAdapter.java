@@ -15,7 +15,9 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/1/2016.
+ *
  */
+@Deprecated
 public class DetailAdapter extends ArrayAdapter {
 
     private ArrayList<String> mKeys;

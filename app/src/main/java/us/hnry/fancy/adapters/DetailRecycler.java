@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -32,7 +33,12 @@ public class DetailRecycler extends RecyclerView.Adapter<DetailRecycler.DetailRe
     public DetailRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_detail, parent, false);
-        return new DetailRecyclerViewHolder(v);
+        return new DetailRecyclerViewHolder(v, new DetailRecyclerViewHolder.DetailViewHolderClicks() {
+            @Override
+            public void onItemClick(View caller) {
+                Toast.makeText(caller.getContext(), "Worked", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -56,14 +62,26 @@ public class DetailRecycler extends RecyclerView.Adapter<DetailRecycler.DetailRe
         return mKeys.size();
     }
 
-    public class DetailRecyclerViewHolder extends RecyclerView.ViewHolder {
-        TextView keyTextView;
-        TextView valueTextView;
+    public static class DetailRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public TextView keyTextView;
+        public TextView valueTextView;
+        public DetailViewHolderClicks mListener;
 
-        public DetailRecyclerViewHolder(View itemView) {
+        public DetailRecyclerViewHolder(View itemView, DetailViewHolderClicks listener) {
             super(itemView);
             keyTextView = (TextView) itemView.findViewById(R.id.detail_single_item_key);
             valueTextView = (TextView) itemView.findViewById(R.id.detail_single_item_value);
+            mListener = listener;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mListener.onItemClick(v);
+        }
+
+        public interface DetailViewHolderClicks {
+            void onItemClick(View caller);
         }
     }
 }
