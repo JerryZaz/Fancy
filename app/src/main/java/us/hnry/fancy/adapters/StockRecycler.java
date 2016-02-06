@@ -38,7 +38,7 @@ public class StockRecycler extends RecyclerView.Adapter<StockRecycler.StockRecyc
     @Override
     public StockRecyclerViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.single_row, parent, false);
+                .inflate(R.layout.single_row_main_card, parent, false);
         final StockRecyclerViewHolder holder = new StockRecyclerViewHolder(itemView, new StockRecyclerViewHolder.StockViewHolderClicks() {
             @Override
             public void onItemClick(View caller) {
