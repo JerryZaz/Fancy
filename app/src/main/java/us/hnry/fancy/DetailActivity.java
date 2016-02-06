@@ -9,11 +9,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,7 +26,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import us.hnry.fancy.adapters.DetailAdapter;
+import us.hnry.fancy.adapters.DetailRecycler;
 import us.hnry.fancy.data.Stock;
 import us.hnry.fancy.utils.Utility;
 
@@ -59,7 +60,7 @@ public class DetailActivity extends AppCompatActivity {
         Map<String, String> map;
         private ArrayList<String> keys;
         private Method[] methods;
-        private ListView mDetailListView;
+        private RecyclerView mDetailRecyclerView;
         private FloatingActionButton fab;
 
         private Stock fromIntent;
@@ -111,7 +112,9 @@ public class DetailActivity extends AppCompatActivity {
                 }
             });
 
-            mDetailListView = (ListView) layout.findViewById(R.id.content_detail_list_view);
+            mDetailRecyclerView = (RecyclerView) layout.findViewById(R.id.content_detail_list_view);
+            mDetailRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
             fromIntent = getActivity().getIntent().getParcelableExtra(Utility.STOCK_INTENT);
             if (fromIntent != null) {
                 getActivity().setTitle(fromIntent.getName());
@@ -125,11 +128,11 @@ public class DetailActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            final DetailAdapter detailAdapter = consumeParcelableStockFromIntent(fromIntent);
+                            final DetailRecycler detailAdapter = consumeParcelableStockFromIntent(fromIntent);
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mDetailListView.setAdapter(detailAdapter);
+                                    mDetailRecyclerView.setAdapter(detailAdapter);
                                     mProgressDialog.dismiss();
                                 }
                             });
@@ -148,7 +151,7 @@ public class DetailActivity extends AppCompatActivity {
             return layout;
         }
 
-        private DetailAdapter consumeParcelableStockFromIntent(Stock stock)
+        private DetailRecycler consumeParcelableStockFromIntent(Stock stock)
                 throws InvocationTargetException, IllegalAccessException {
 
             keys = new ArrayList<>();
@@ -165,7 +168,7 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 }
             }
-            return new DetailAdapter(getActivity(), keys, map);
+            return new DetailRecycler(getActivity(), keys, map);
         }
     }
 }
