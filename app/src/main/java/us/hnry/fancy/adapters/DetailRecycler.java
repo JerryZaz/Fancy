@@ -1,6 +1,5 @@
 package us.hnry.fancy.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,15 +15,14 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/5/2016.
+ *
  */
 public class DetailRecycler extends RecyclerView.Adapter<DetailRecycler.DetailRecyclerViewHolder> {
 
     private ArrayList<String> mKeys;
-    private Context mContext;
     private Map<String, String> mMap;
 
-    public DetailRecycler(Context context, ArrayList<String> keys, Map<String, String> map) {
-        mContext = context;
+    public DetailRecycler(ArrayList<String> keys, Map<String, String> map) {
         mKeys = keys;
         mMap = map;
     }

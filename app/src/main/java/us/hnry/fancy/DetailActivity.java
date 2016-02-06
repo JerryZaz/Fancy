@@ -168,7 +168,7 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 }
             }
-            return new DetailRecycler(getActivity(), keys, map);
+            return new DetailRecycler(keys, map);
         }
     }
 }

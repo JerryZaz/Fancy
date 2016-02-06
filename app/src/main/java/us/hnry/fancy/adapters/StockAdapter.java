@@ -18,6 +18,7 @@ import us.hnry.fancy.utils.Utility;
  * Created by Henry on 1/31/2016.
  *
  */
+@Deprecated
 public class StockAdapter extends ArrayAdapter {
 
     ArrayList<Stock> quotes;
