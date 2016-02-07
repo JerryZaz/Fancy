@@ -1,4 +1,4 @@
-package us.hnry.fancy.data;
+package us.hnry.fancy.models;
 
 /**
  * Created by Henry on 1/31/2016.

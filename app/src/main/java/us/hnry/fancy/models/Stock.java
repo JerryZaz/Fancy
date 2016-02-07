@@ -1,4 +1,4 @@
-package us.hnry.fancy.data;
+package us.hnry.fancy.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,36 +9,46 @@ import android.os.Parcelable;
  */
 public class Stock implements Parcelable {
 
-    static final String QUOTE_SYMBOL = "symbol";
-    static final String QUOTE_ASK = "Ask";
-    static final String QUOTE_AVERAGE_DAILY_VOLUME = "AverageDailyVolume";
-    static final String QUOTE_BID = "Bid";
-    static final String QUOTE_ASK_REALTIME = "AskRealtime";
-    static final String QUOTE_BID_REALTIME = "BidRealtime";
-    static final String QUOTE_BOOK_VALUE = "BookValue";
-    static final String QUOTE_CHANGE = "Change";
-    static final String QUOTE_CURRENCY = "Currency";
-    static final String QUOTE_CHANGE_REALTIME = "ChangeRealtime";
-    static final String QUOTE_LAST_TRADE_DATE = "LastTradeDate";
-    static final String QUOTE_EARNINGS_SHARE = "EarningsShare";
-    static final String QUOTE_EPS_ESTIMATE_CURRENT_YEAR = "EPSEstimateCurrentYear";
-    static final String QUOTE_EPS_ESTIMATE_NEXT_YEAR = "EPSEstimateNextYear";
-    static final String QUOTE_EPS_ESTIMATE_NEXT_QUARTER = "EPSEstimateNextQuarter";
-    static final String QUOTE_DAYS_LOW = "DaysLow";
-    static final String QUOTE_DAYS_HIGH = "DaysHigh";
-    static final String QUOTE_YEAR_LOW = "YearLow";
-    static final String QUOTE_YEAR_HIGH = "YearHigh";
-    static final String QUOTE_CHANGE_FROM_YEAR_LOW = "ChangeFromYearLow";
-    static final String QUOTE_PERCENT_CHANGE_FROM_YEAR_LOW = "PercentChangeFromYearLow";
-    static final String QUOTE_PERCENT_CHANGE_FROM_YEAR_HIGH = "PercebtChangeFromYearHigh";
-    static final String QUOTE_LAST_TRADE_PRICE_ONLY = "LastTradePriceOnly";
-    static final String QUOTE_FIFTY_DAY_MOVING_AVERAGE = "FiftydayMovingAverage";
-    static final String QUOTE_TWO_HUNDRED_DAY_MOVING_AVERAGE = "TwoHundreddayMovingAverage";
-    static final String QUOTE_NAME = "Name";
-    static final String QUOTE_OPEN = "Open";
-    static final String QUOTE_PREVIOUS_CLOSE = "PreviousClose";
-    static final String QUOTE_TICKER_TREND = "TickerTrend";
+    public static final String QUOTE_SYMBOL = "symbol";
+    public static final String QUOTE_ASK = "Ask";
+    public static final String QUOTE_AVERAGE_DAILY_VOLUME = "AverageDailyVolume";
+    public static final String QUOTE_BID = "Bid";
+    public static final String QUOTE_ASK_REALTIME = "AskRealtime";
+    public static final String QUOTE_BID_REALTIME = "BidRealtime";
+    public static final String QUOTE_BOOK_VALUE = "BookValue";
+    public static final String QUOTE_CHANGE = "Change";
+    public static final String QUOTE_CURRENCY = "Currency";
+    public static final String QUOTE_CHANGE_REALTIME = "ChangeRealtime";
+    public static final String QUOTE_LAST_TRADE_DATE = "LastTradeDate";
+    public static final String QUOTE_EARNINGS_SHARE = "EarningsShare";
+    public static final String QUOTE_EPS_ESTIMATE_CURRENT_YEAR = "EPSEstimateCurrentYear";
+    public static final String QUOTE_EPS_ESTIMATE_NEXT_YEAR = "EPSEstimateNextYear";
+    public static final String QUOTE_EPS_ESTIMATE_NEXT_QUARTER = "EPSEstimateNextQuarter";
+    public static final String QUOTE_DAYS_LOW = "DaysLow";
+    public static final String QUOTE_DAYS_HIGH = "DaysHigh";
+    public static final String QUOTE_YEAR_LOW = "YearLow";
+    public static final String QUOTE_YEAR_HIGH = "YearHigh";
+    public static final String QUOTE_CHANGE_FROM_YEAR_LOW = "ChangeFromYearLow";
+    public static final String QUOTE_PERCENT_CHANGE_FROM_YEAR_LOW = "PercentChangeFromYearLow";
+    public static final String QUOTE_PERCENT_CHANGE_FROM_YEAR_HIGH = "PercebtChangeFromYearHigh";
+    public static final String QUOTE_LAST_TRADE_PRICE_ONLY = "LastTradePriceOnly";
+    public static final String QUOTE_FIFTY_DAY_MOVING_AVERAGE = "FiftydayMovingAverage";
+    public static final String QUOTE_TWO_HUNDRED_DAY_MOVING_AVERAGE = "TwoHundreddayMovingAverage";
+    public static final String QUOTE_NAME = "Name";
+    public static final String QUOTE_OPEN = "Open";
+    public static final String QUOTE_PREVIOUS_CLOSE = "PreviousClose";
+    public static final String QUOTE_TICKER_TREND = "TickerTrend";
+    public static final Creator<Stock> CREATOR = new Creator<Stock>() {
+        @Override
+        public Stock createFromParcel(Parcel in) {
+            return new Stock(in);
+        }
 
+        @Override
+        public Stock[] newArray(int size) {
+            return new Stock[size];
+        }
+    };
     private String symbol;
     private double Ask;
     private long AverageDailyVolume;
@@ -68,7 +78,6 @@ public class Stock implements Parcelable {
     private double Open;
     private double PreviousClose;
     private String TickerTrend;
-
 
     public Stock(String symbol, double ask, long averageDailyVolume, double bid, double askRealtime, double bidRealtime, double bookValue, double change, String currency, double changeRealtime, String lastTradeDate, double earningsShare, double EPSEstimateCurrentYear, double EPSEstimateNextYear, double EPSEstimateNextQuarter, double daysLow, double daysHigh, double yearLow, double yearHigh, double changeFromYearLow, String percentChangeFromYearLow, String percebtChangeFromYearHigh, double lastTradePriceOnly, double fiftydayMovingAverage, double twoHundreddayMovingAverage, String name, double open, double previousClose, String tickerTrend) {
         this.symbol = symbol;
@@ -133,18 +142,6 @@ public class Stock implements Parcelable {
         PreviousClose = in.readDouble();
         TickerTrend = in.readString();
     }
-
-    public static final Creator<Stock> CREATOR = new Creator<Stock>() {
-        @Override
-        public Stock createFromParcel(Parcel in) {
-            return new Stock(in);
-        }
-
-        @Override
-        public Stock[] newArray(int size) {
-            return new Stock[size];
-        }
-    };
 
     public String getSymbol() {
         return symbol;

@@ -28,9 +28,9 @@ import java.util.concurrent.ExecutionException;
 
 import us.hnry.fancy.adapters.SearchAdapter;
 import us.hnry.fancy.data.FetchStockTask;
-import us.hnry.fancy.data.Stock;
-import us.hnry.fancy.data.Symbol;
 import us.hnry.fancy.data.ThorSearchTask;
+import us.hnry.fancy.models.Stock;
+import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 

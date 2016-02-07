@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import us.hnry.fancy.R;
-import us.hnry.fancy.data.Symbol;
+import us.hnry.fancy.models.Symbol;
 
 /**
  * Created by Henry on 2/1/2016.

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.MainActivity;
+import us.hnry.fancy.models.Symbol;
 
 /**
  *

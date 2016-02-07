@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import us.hnry.fancy.data.Stock;
+import us.hnry.fancy.models.Stock;
 
 /**
  * Created by Henry on 2/1/2016.

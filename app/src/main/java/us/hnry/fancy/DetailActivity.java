@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import us.hnry.fancy.adapters.DetailRecycler;
-import us.hnry.fancy.data.Stock;
+import us.hnry.fancy.models.Stock;
 import us.hnry.fancy.utils.Utility;
 
 public class DetailActivity extends AppCompatActivity {
