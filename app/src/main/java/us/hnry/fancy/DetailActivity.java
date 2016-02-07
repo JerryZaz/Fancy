@@ -3,7 +3,11 @@ package us.hnry.fancy;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -23,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,10 +67,13 @@ public class DetailActivity extends AppCompatActivity {
         private Method[] methods;
         private RecyclerView mDetailRecyclerView;
         private FloatingActionButton fab;
+        private FloatingActionButton shareFab;
 
         private Stock fromIntent;
         private Set<String> mSetOfStocks;
         private boolean isTracked;
+
+        private Intent mShareDetail;
 
         private ProgressDialog mProgressDialog;
 
@@ -88,6 +96,52 @@ public class DetailActivity extends AppCompatActivity {
             isTracked = false;
             SharedPreferences preferences = getActivity().getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
             final SharedPreferences.Editor editor = preferences.edit();
+
+            shareFab = (FloatingActionButton) getActivity().findViewById(R.id.share_fab);
+            shareFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    final ProgressDialog shareIntentProgressBar = new ProgressDialog(getActivity());
+                    shareIntentProgressBar.setMessage("Putting your data in a nice envelope");
+                    shareIntentProgressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    shareIntentProgressBar.setCancelable(false);
+                    shareIntentProgressBar.setIndeterminate(true);
+                    shareIntentProgressBar.show();
+
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            mShareDetail = new Intent(Intent.ACTION_SEND);
+                            mShareDetail.setData(Uri.parse("mailto:"));
+                            mShareDetail.putExtra(Intent.EXTRA_SUBJECT, "Market Stalker - Shared Stock Data");
+                            try {
+                                mShareDetail.putExtra(Intent.EXTRA_TEXT, Utility.consumeParcelableStock(fromIntent));
+                                mShareDetail.setType("message/rfc822");
+
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        shareIntentProgressBar.dismiss();
+                                        PackageManager packageManager = getActivity().getPackageManager();
+                                        List<ResolveInfo> appList = packageManager.queryIntentActivities(mShareDetail, PackageManager.MATCH_ALL);
+                                        if (appList.size() > 0) {
+                                            startActivity(mShareDetail);
+                                        }
+                                    }
+                                });
+                            } catch (InvocationTargetException | IllegalAccessException e) {
+                                e.printStackTrace();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Snackbar.make(v, "Something went wrong.", Snackbar.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+                    }.start();
+                }
+            });
 
             fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener() {

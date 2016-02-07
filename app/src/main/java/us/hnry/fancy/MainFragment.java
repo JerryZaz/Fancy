@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -19,7 +17,6 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import us.hnry.fancy.adapters.StockRecycler;
@@ -30,35 +27,25 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/6/2016.
- *
  */
 public class MainFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private FloatingActionButton fab;
     private ArrayList<Stock> mQuotes;
-    private Intent mShareDetail;
-    private boolean mShareIntentLoaded;
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
-    private boolean mShareSnackBarShown;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_main_recycler, container, false);
 
-        mShareIntentLoaded = false;
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mShareIntentLoaded) {
-                    share();
-                    fab.setImageResource(R.drawable.ic_search_white_48dp);
-                } else {
-                    startActivity(new Intent(getActivity(), SearchActivity.class).putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
-                }
+                startActivity(new Intent(getActivity(), SearchActivity.class).putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
             }
         });
 
@@ -73,11 +60,7 @@ public class MainFragment extends Fragment {
         refreshMain();
     }
 
-    public void refreshMain(){
-        mShareSnackBarShown = false;
-        mShareIntentLoaded = false;
-        mShareDetail = null;
-
+    public void refreshMain() {
         if (preferences == null) {
             preferences = getActivity().getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
             editor = preferences.edit();
@@ -123,20 +106,11 @@ public class MainFragment extends Fragment {
                                 progressDialog.dismiss();
                             }
                         });
-
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             }
         }.start();
-    }
-
-    private void share() {
-        PackageManager packageManager = getActivity().getPackageManager();
-        List<ResolveInfo> appList = packageManager.queryIntentActivities(mShareDetail, PackageManager.MATCH_ALL);
-        if (appList.size() > 0) {
-            startActivity(mShareDetail);
-        }
     }
 }
