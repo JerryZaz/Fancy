@@ -1,5 +1,7 @@
 package us.hnry.fancy.data;
 
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -13,7 +15,7 @@ public class StockService {
 
     public interface SAPI {
         @GET("v1/public/yql?")
-        Call<Stock> getQuotes(
+        Call<ArrayList<Stock>> getQuotes(
                 @Query("q") String builtQuery,
                 @Query("env") String env,
                 @Query("format") String format
