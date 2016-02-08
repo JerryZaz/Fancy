@@ -1,6 +1,7 @@
 package us.hnry.fancy.fragments;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -71,10 +72,18 @@ public class ThorRetroSearch extends Fragment {
         mButtonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 mInputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
                 String search = Utility.getStringBeforeBlank(mEditTextSearch.getText().toString());
                 mEditTextSearch.setText(search);
                 if (!search.equals("")) {
+                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.setMessage("Collecting Results");
+                    progressDialog.setCancelable(false);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.show();
+
                     call = thor.getSymbols(search);
                     call.enqueue(new Callback<ArrayList<Symbol>>() {
                         @Override
@@ -82,8 +91,7 @@ public class ThorRetroSearch extends Fragment {
                             try {
                                 mResults = response.body();
                                 searchAdapter.swapList(mResults);
-                            }
-                            catch (NullPointerException e){
+                            } catch (NullPointerException e) {
                                 Log.v("Catch", "Reached.");
                                 Toast toast = null;
                                 if (response.code() == 401) {
@@ -95,6 +103,8 @@ public class ThorRetroSearch extends Fragment {
                                 if (toast != null) {
                                     toast.show();
                                 }
+                            } finally {
+                                progressDialog.dismiss();
                             }
                         }
 
@@ -114,6 +124,8 @@ public class ThorRetroSearch extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        call.cancel();
+        if (call != null) {
+            call.cancel();
+        }
     }
 }

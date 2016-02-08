@@ -2,6 +2,7 @@ package us.hnry.fancy.models;
 
 /**
  * Created by Henry on 1/31/2016.
+ * Remastered on 16/02/08
  */
 public class Symbol {
 

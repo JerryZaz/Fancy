@@ -1,17 +1,23 @@
 package us.hnry.fancy.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
+import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
+import us.hnry.fancy.data.FetchStockTask;
+import us.hnry.fancy.models.Stock;
 import us.hnry.fancy.models.Symbol;
+import us.hnry.fancy.utils.QuoteQueryBuilder;
+import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/8/2016.
@@ -28,15 +34,38 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
     }
 
     @Override
-    public SearchRecyclerViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public SearchRecyclerViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_search, parent, false);
         SearchRecyclerViewHolder holder = new SearchRecyclerViewHolder(
                 itemView,
                 new SearchRecyclerViewHolder.ThorViewHolderClicks() {
                     @Override
-                    public void onItemClick(View caller) {
-                        Toast.makeText(parent.getContext(), "Unhandled click event", Toast.LENGTH_SHORT).show();
+                    public void onItemClick(final View caller) {
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                Symbol symbol = mResults.get(viewType);
+                                FetchStockTask task = new FetchStockTask(caller.getContext());
+                                QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbol.getSymbol());
+                                task.execute(queryBuilder.build());
+                                try {
+                                    ArrayList<Stock> results = task.get();
+                                    if(results.size() > 0){
+                                        Intent launchDetail = new Intent(caller.getContext(), DetailActivity.class);
+                                        launchDetail.putExtra(Utility.STOCK_INTENT, results.get(0));
+                                        caller.getContext().startActivity(launchDetail);
+                                    }
+                                } catch (InterruptedException | ExecutionException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }.start();
                     }
                 }
         );
