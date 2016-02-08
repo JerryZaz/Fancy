@@ -12,20 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import us.hnry.fancy.data.FetchStockTask;
-import us.hnry.fancy.deprecated.SearchAdapter;
 import us.hnry.fancy.fragments.ThorRetroSearch;
 import us.hnry.fancy.models.Stock;
-import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
@@ -57,7 +53,6 @@ public class SearchActivity extends AppCompatActivity {
         private TextView mTextView;
         private EditText mEditTextSearch;
         private Button mButtonSearch;
-        private ListView mListViewSearch;
         private ArrayList<Stock> mQuotes;
         private Intent mLaunchDetail;
         private InputMethodManager mInputMethodManager;
@@ -71,27 +66,12 @@ public class SearchActivity extends AppCompatActivity {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View layout = inflater.inflate(R.layout.fragment_search, container, false);
+            View layout = inflater.inflate(R.layout.fragment_search_recycler, container, false);
             mTextView = (TextView) layout.findViewById(R.id.search_text_view_warning);
             mTextView.setText("Using Symbol search. To search by company, go back to the main screen and use Thor search.");
             mEditTextSearch = (EditText) layout.findViewById(R.id.search_edit_text);
             mEditTextSearch.setHint("Company Symbol");
             mButtonSearch = (Button) layout.findViewById(R.id.search_button);
-            mListViewSearch = (ListView) layout.findViewById(R.id.search_list_view);
-            mListViewSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            mLaunchDetail = new Intent(getActivity(), DetailActivity.class);
-                            mLaunchDetail.putExtra(Utility.STOCK_INTENT, mQuotes.get(position));
-                            startActivity(mLaunchDetail);
-                        }
-                    }.start();
-                }
-            });
-
 
             mButtonSearch = (Button) layout.findViewById(R.id.search_button);
             mButtonSearch.setOnClickListener(new View.OnClickListener() {
@@ -129,18 +109,11 @@ public class SearchActivity extends AppCompatActivity {
                                         mLaunchDetail.putExtra(Utility.STOCK_INTENT, mQuotes.get(0));
                                         startActivity(mLaunchDetail);
                                     } else {
-                                        ArrayList<Symbol> results = new ArrayList<>();
-                                        for (Stock quote : mQuotes) {
-                                            String symbol = quote.getSymbol();
-                                            String name = quote.getName();
-                                            results.add(new Symbol(symbol, name));
-                                        }
-                                        final SearchAdapter searchAdapter = new SearchAdapter(getActivity(), results);
                                         getActivity().runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                mListViewSearch.setAdapter(searchAdapter);
                                                 progressDialog.dismiss();
+                                                Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
                                             }
                                         });
                                     }
