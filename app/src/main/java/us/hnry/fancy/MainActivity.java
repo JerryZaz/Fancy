@@ -11,14 +11,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import us.hnry.fancy.fragments.MainFragment;
+import us.hnry.fancy.fragments.MainRetroFragment;
 import us.hnry.fancy.utils.Utility;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static final String FRAGMENT_TAG_MAIN_LIST = "fragment_main_list";
-    private MainFragment mMainFragment;
+    private MainRetroFragment mMainFragment;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,13 +37,13 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         getFragmentManager().beginTransaction().add(R.id.content_main_list_container,
-                new MainFragment(), FRAGMENT_TAG_MAIN_LIST).commit();
+                new MainRetroFragment(), FRAGMENT_TAG_MAIN_LIST).commit();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mMainFragment = (MainFragment) getFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN_LIST);
+        mMainFragment = (MainRetroFragment) getFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN_LIST);
     }
 
     @Override

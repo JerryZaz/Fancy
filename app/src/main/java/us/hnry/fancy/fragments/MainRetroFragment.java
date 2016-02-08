@@ -63,7 +63,7 @@ public class MainRetroFragment extends Fragment {
         refreshMain();
     }
 
-    private void refreshMain() {
+    public void refreshMain() {
         if (preferences == null) {
             preferences = getActivity().getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
             editor = preferences.edit();
@@ -76,30 +76,22 @@ public class MainRetroFragment extends Fragment {
         progressDialog.setIndeterminate(true);
         progressDialog.show();
 
-        new Thread(){
-            @Override
-            public void run() {
-                final String[] symbolsToQuery =
-                        Utility.getSymbols(
-                                preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                                        new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS))));
-                QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
-                StockRetroFetch stockRetroFetch = new StockRetroFetch(queryBuilder.build());
-                mQuotes = stockRetroFetch.execute();
 
-                final StockRecycler recycler = new StockRecycler(mQuotes, getActivity());
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRecyclerView.setAdapter(recycler);
-                        editor.clear();
-                        editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                                new HashSet<>(Arrays.asList(symbolsToQuery)));
-                        editor.apply();
-                        progressDialog.dismiss();
-                    }
-                });
-            }
-        }.start();
+        final String[] symbolsToQuery =
+                Utility.getSymbols(
+                        preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                                new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS))));
+        QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
+        StockRetroFetch stockRetroFetch = new StockRetroFetch(queryBuilder.build());
+        mQuotes = stockRetroFetch.execute();
+
+        final StockRecycler recycler = new StockRecycler(mQuotes, getActivity());
+        mRecyclerView.setAdapter(recycler);
+        editor.clear();
+        editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                new HashSet<>(Arrays.asList(symbolsToQuery)));
+        editor.apply();
+        progressDialog.dismiss();
+
     }
 }

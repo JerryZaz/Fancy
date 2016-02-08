@@ -11,6 +11,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.data.StockService.SAPI;
+import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Stock;
 
 /**
@@ -18,30 +19,31 @@ import us.hnry.fancy.models.Stock;
  * Test implementation of Retrofit
  */
 public class StockRetroFetch {
-    final String BASE_URL = BuildConfig.BASE_URL;
+    final String BASE_URL = BuildConfig.BASE_API_URL;
     final String ENV = BuildConfig.ENV;
     final String FORMAT = "json";
     private String mBuiltQuery;
-    private Call<ArrayList<Stock>> call;
+    private Call<Quote> call;
 
     private ArrayList<Stock> mQuotes = new ArrayList<>();
 
-    public StockRetroFetch(String query){
+    public StockRetroFetch(String query) {
         mBuiltQuery = query;
     }
 
-    public ArrayList<Stock> execute(){
+    public ArrayList<Stock> execute() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         SAPI sapi = retrofit.create(SAPI.class);
+
         call = sapi.getQuotes(mBuiltQuery, ENV, FORMAT);
-        call.enqueue(new Callback<ArrayList<Stock>>() {
+        call.enqueue(new Callback<Quote>() {
             @Override
-            public void onResponse(Response<ArrayList<Stock>> response) {
-                try{
-                    mQuotes = response.body();
+            public void onResponse(Response<Quote> response) {
+                try {
+                    Log.v(this.getClass().getSimpleName(), "threw: " + response.body().toString());
                 } catch (NullPointerException e){
                     Log.v("Catch", "Reached.");
                     if (response.code() == 401) {
@@ -50,6 +52,7 @@ public class StockRetroFetch {
                         Log.e("getQuotes threw ", "Client error "
                                 + response.code() + " " + response.message());
                     }
+
                 }
             }
 
@@ -58,6 +61,29 @@ public class StockRetroFetch {
                 Log.e("getQuotes threw ", t.getMessage());
             }
         });
+        /*call.enqueue(new Callback<ArrayList<Quote>>() {
+            @Override
+            public void onResponse(Response<ArrayList<Quote>> response) {
+                try {
+                    Log.v(this.getClass().getSimpleName(), "threw: " + response.body().size());
+                } catch (NullPointerException e){
+                    Log.v("Catch", "Reached.");
+                    if (response.code() == 401) {
+                        Log.e("getQuotes threw ", "Unauthenticated");
+                    } else if (response.code() >= 400) {
+                        Log.e("getQuotes threw ", "Client error "
+                                + response.code() + " " + response.message());
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.e("getQuotes threw ", t.getMessage());
+            }
+        });*/
+
         return mQuotes;
     }
 
