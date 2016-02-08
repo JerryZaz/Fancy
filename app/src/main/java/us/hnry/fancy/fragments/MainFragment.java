@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/6/2016.
+ *
  */
 public class MainFragment extends Fragment {
 
@@ -53,6 +55,7 @@ public class MainFragment extends Fragment {
 
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.fragment_main_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         return layout;
     }
 

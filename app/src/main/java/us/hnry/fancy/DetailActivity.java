@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -34,6 +35,7 @@ import java.util.Set;
 import us.hnry.fancy.adapters.DetailRecycler;
 import us.hnry.fancy.models.Stock;
 import us.hnry.fancy.utils.Utility;
+import us.hnry.fancy.views.DividerItemDecoration;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -168,6 +170,8 @@ public class DetailActivity extends AppCompatActivity {
 
             mDetailRecyclerView = (RecyclerView) layout.findViewById(R.id.content_detail_list_view);
             mDetailRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            mDetailRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            mDetailRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
 
             fromIntent = getActivity().getIntent().getParcelableExtra(Utility.STOCK_INTENT);
             if (fromIntent != null) {
