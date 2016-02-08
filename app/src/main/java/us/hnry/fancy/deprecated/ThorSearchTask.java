@@ -1,4 +1,4 @@
-package us.hnry.fancy.data;
+package us.hnry.fancy.deprecated;
 
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,12 +18,15 @@ import java.util.ArrayList;
 
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.MainActivity;
+import us.hnry.fancy.data.FetchStockTask;
 import us.hnry.fancy.models.Symbol;
 
 /**
  *
  * Created by Henry on 2/1/2016.
+ * Deprecated on 16/02/08 in favor of retrofit
  */
+@Deprecated
 public class ThorSearchTask extends AsyncTask<String, Void, ArrayList<Symbol>> {
 
     private final String LOG_TAG = FetchStockTask.class.getSimpleName();

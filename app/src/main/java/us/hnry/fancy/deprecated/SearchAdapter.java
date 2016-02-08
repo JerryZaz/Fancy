@@ -1,4 +1,4 @@
-package us.hnry.fancy.adapters;
+package us.hnry.fancy.deprecated;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,6 +16,7 @@ import us.hnry.fancy.models.Symbol;
  * Created by Henry on 2/1/2016.
  *
  */
+@Deprecated
 public class SearchAdapter extends ArrayAdapter {
 
     private Context mContext;
@@ -42,7 +43,7 @@ public class SearchAdapter extends ArrayAdapter {
         }
 
         Symbol watch = results.get(position);
-        holder.companyTextView.setText(watch.getNameTag());
+        holder.companyTextView.setText(watch.getCompany());
         holder.symbolTextView.setText(watch.getSymbol());
 
         return row;

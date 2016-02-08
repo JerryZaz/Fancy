@@ -1,4 +1,4 @@
-package us.hnry.fancy.adapters;
+package us.hnry.fancy.deprecated;
 
 import android.content.Context;
 import android.graphics.Color;

@@ -1,4 +1,4 @@
-package us.hnry.fancy;
+package us.hnry.fancy.fragments;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -17,18 +17,21 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.concurrent.ExecutionException;
 
+import us.hnry.fancy.R;
+import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.StockRecycler;
-import us.hnry.fancy.data.StockRetroFetch;
+import us.hnry.fancy.data.FetchStockTask;
 import us.hnry.fancy.models.Stock;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
 /**
- * Created by Henry on 2/7/2016.
- * Spin of MainFragment implementing Retrofit instead of ASyncTask
+ * Created by Henry on 2/6/2016.
  */
-public class MainRetroFragment extends Fragment {
+public class MainFragment extends Fragment {
+
     private RecyclerView mRecyclerView;
     private FloatingActionButton fab;
     private ArrayList<Stock> mQuotes;
@@ -59,7 +62,7 @@ public class MainRetroFragment extends Fragment {
         refreshMain();
     }
 
-    private void refreshMain() {
+    public void refreshMain() {
         if (preferences == null) {
             preferences = getActivity().getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
             editor = preferences.edit();
@@ -72,29 +75,43 @@ public class MainRetroFragment extends Fragment {
         progressDialog.setIndeterminate(true);
         progressDialog.show();
 
-        new Thread(){
+        //Instantiate the async task
+        final FetchStockTask task = new FetchStockTask(getActivity());
+
+        final String[] symbolsToQuery =
+                Utility.getSymbols(
+                        preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                                new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS))));
+
+        final QuoteQueryBuilder[] queryBuilder = {null};
+        new Thread() {
             @Override
             public void run() {
-                final String[] symbolsToQuery =
-                        Utility.getSymbols(
-                                preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                                        new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS))));
-                QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
-                StockRetroFetch stockRetroFetch = new StockRetroFetch(queryBuilder.build());
-                mQuotes = stockRetroFetch.execute();
+                queryBuilder[0] = new QuoteQueryBuilder(symbolsToQuery);
+                //Execute the task
+                task.execute(queryBuilder[0].build());
+                try {
+                    //Fetch the result of the background thread
+                    mQuotes = task.get();
+                    if (mQuotes != null) {
+                        final StockRecycler adapter = new StockRecycler(mQuotes, getActivity());
 
-                final StockRecycler recycler = new StockRecycler(mQuotes, getActivity());
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRecyclerView.setAdapter(recycler);
-                        editor.clear();
-                        editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                                new HashSet<>(Arrays.asList(symbolsToQuery)));
-                        editor.apply();
-                        progressDialog.dismiss();
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //Set the adapter to the list view
+                                mRecyclerView.setAdapter(adapter);
+                                editor.clear();
+                                editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                                        new HashSet<>(Arrays.asList(symbolsToQuery)));
+                                editor.apply();
+                                progressDialog.dismiss();
+                            }
+                        });
                     }
-                });
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
         }.start();
     }

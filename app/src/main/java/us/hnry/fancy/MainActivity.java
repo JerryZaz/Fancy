@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import us.hnry.fancy.fragments.MainFragment;
 import us.hnry.fancy.utils.Utility;
 
 public class MainActivity extends AppCompatActivity
