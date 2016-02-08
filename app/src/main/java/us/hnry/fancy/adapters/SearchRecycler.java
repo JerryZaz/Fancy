@@ -42,7 +42,7 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
     public SearchRecyclerViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_search, parent, false);
-        SearchRecyclerViewHolder holder = new SearchRecyclerViewHolder(
+        return new SearchRecyclerViewHolder(
                 itemView,
                 new SearchRecyclerViewHolder.ThorViewHolderClicks() {
                     @Override
@@ -69,7 +69,6 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
                     }
                 }
         );
-        return holder;
     }
 
     @Override

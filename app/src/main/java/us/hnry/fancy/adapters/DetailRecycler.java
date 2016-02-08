@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -34,7 +33,7 @@ public class DetailRecycler extends RecyclerView.Adapter<DetailRecycler.DetailRe
         return new DetailRecyclerViewHolder(v, new DetailRecyclerViewHolder.DetailViewHolderClicks() {
             @Override
             public void onItemClick(View caller) {
-                Toast.makeText(caller.getContext(), "Worked", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
