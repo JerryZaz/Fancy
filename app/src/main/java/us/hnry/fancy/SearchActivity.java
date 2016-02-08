@@ -26,9 +26,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import us.hnry.fancy.adapters.SearchAdapter;
 import us.hnry.fancy.data.FetchStockTask;
 import us.hnry.fancy.data.ThorSearchTask;
+import us.hnry.fancy.deprecated.SearchAdapter;
+import us.hnry.fancy.fragments.ThorRetroSearch;
 import us.hnry.fancy.models.Stock;
 import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
@@ -47,7 +48,7 @@ public class SearchActivity extends AppCompatActivity {
         int fragmentSelector = getIntent().getIntExtra(Utility.SEARCH_INTENT, 0);
         switch (fragmentSelector) {
             case Utility.THOR_SEARCH:
-                getFragmentManager().beginTransaction().add(R.id.thor_container, new ThorSearch(), FRAGMENT_TAG_THOR).commit();
+                getFragmentManager().beginTransaction().add(R.id.thor_container, new ThorRetroSearch(), FRAGMENT_TAG_THOR).commit();
                 break;
             case Utility.SYMBOL_SEARCH:
                 getFragmentManager().beginTransaction().add(R.id.thor_container, new SymbolSearch(), FRAGMENT_TAG_SYMBOL).commit();

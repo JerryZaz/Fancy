@@ -15,14 +15,15 @@ import us.hnry.fancy.models.Symbol;
 
 /**
  * Created by Henry on 2/8/2016.
+ * Remastered SearchAdapter to handle Recycler View
  */
 public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRecyclerViewHolder> {
 
-    private ArrayList<Symbol> results;
+    private ArrayList<Symbol> mResults;
     private Context mContext;
 
-    public SearchRecycler(ArrayList<Symbol> results, Context context) {
-        this.results = results;
+    public SearchRecycler(ArrayList<Symbol> param, Context context) {
+        this.mResults = param;
         this.mContext = context;
     }
 
@@ -44,15 +45,26 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
 
     @Override
     public void onBindViewHolder(SearchRecyclerViewHolder holder, int position) {
-        Symbol symbol = results.get(position);
+        Symbol symbol = mResults.get(position);
         holder.symbolTextView.setText(symbol.getSymbol());
-        holder.companyTextView.setText(symbol.getNameTag());
+        holder.companyTextView.setText(symbol.getCompany());
         holder.itemView.setTag(symbol);
     }
 
     @Override
     public int getItemCount() {
-        return results != null ? results.size() : 0;
+        return mResults != null ? mResults.size() : 0;
+    }
+
+    public void swapList(ArrayList<Symbol> param) {
+        if(mResults != null){
+            mResults.clear();
+            mResults.addAll(param);
+        }
+        else {
+            mResults = param;
+        }
+        notifyDataSetChanged();
     }
 
     public static class SearchRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
