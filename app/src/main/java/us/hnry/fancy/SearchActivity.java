@@ -42,9 +42,11 @@ public class SearchActivity extends AppCompatActivity {
         int fragmentSelector = getIntent().getIntExtra(Utility.SEARCH_INTENT, 0);
         switch (fragmentSelector) {
             case Utility.THOR_SEARCH:
+                setTitle("Thor Search");
                 getFragmentManager().beginTransaction().add(R.id.thor_container, new ThorRetroSearch(), FRAGMENT_TAG_THOR).commit();
                 break;
             case Utility.SYMBOL_SEARCH:
+                setTitle("Symbol Search");
                 getFragmentManager().beginTransaction().add(R.id.thor_container, new SymbolSearch(), FRAGMENT_TAG_SYMBOL).commit();
                 break;
         }
