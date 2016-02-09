@@ -12,6 +12,7 @@ public class UtilityTest extends TestCase {
         assertEquals("2.30M", Utility.formatDouble(2300000));
         assertEquals("107.61", Utility.formatDouble(107.60843));
         assertEquals("N/A", Utility.formatDouble(Utility.DEFAULT_DOUBLE));
+        assertEquals("N/A", Utility.formatDouble(null));
     }
 
     public void testGetStringBeforeBlank() throws Exception {

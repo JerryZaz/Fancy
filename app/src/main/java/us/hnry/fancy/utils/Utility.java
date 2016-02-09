@@ -18,6 +18,7 @@ public class Utility {
     public static final String PERSISTENT_SYMBOLS_SET = "key.symbols.set";
 
     public static final String STOCK_INTENT = "intent_parcelable_stock";
+    public static final String QUOTE_INTENT = "intent_parcelable_quote";
     public static final String SEARCH_INTENT = "intent_search_type_selector";
 
     public static final String[] DEFAULT_SYMBOLS = new String[]{"GOOG", "MSFT", "AAPL", "AMZN",
@@ -39,10 +40,13 @@ public class Utility {
 
     public static String formatDouble(String original)
             throws NumberFormatException {
-        double fetched = Double.parseDouble(original);
-        if (fetched == -1.23) return "N/A";
-        if (fetched > 999999) return String.format("%#,.2f", (fetched / 1000000)) + "M";
-        return String.format("%#,.2f", fetched);
+        if(original != null) {
+            double fetched = Double.parseDouble(original);
+            if (fetched == -1.23) return "N/A";
+            if (fetched > 999999) return String.format("%#,.2f", (fetched / 1000000)) + "M";
+            return String.format("%#,.2f", fetched);
+        }
+        return "N/A";
     }
 
     public static String getStringBeforeBlank(String original) {

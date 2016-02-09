@@ -1,16 +1,18 @@
 package us.hnry.fancy.adapters;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.models.Quote;
+import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/8/2016.
@@ -30,13 +32,15 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
     }
 
     @Override
-    public RetroQuoteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RetroQuoteViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_main_card, parent, false);
         return new RetroQuoteViewHolder(itemView, new RetroQuoteViewHolder.RetroQuoteViewHolderClicks() {
             @Override
             public void OnItemClick(View caller) {
-                Toast.makeText(caller.getContext(), "FIX ME", Toast.LENGTH_SHORT).show();
+                Intent launchDetail = new Intent(caller.getContext(), DetailActivity.class);
+                launchDetail.putExtra(Utility.QUOTE_INTENT, mResults.get(viewType));
+                caller.getContext().startActivity(launchDetail);
             }
         });
     }
