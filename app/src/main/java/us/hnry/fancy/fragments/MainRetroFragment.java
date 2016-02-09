@@ -130,6 +130,7 @@ public class MainRetroFragment extends Fragment {
                          @Override
                          public void onFailure(Throwable t) {
                              Log.e("getQuotes threw ", t.getMessage());
+                             progressDialog.dismiss();
                          }
                      }
         );
