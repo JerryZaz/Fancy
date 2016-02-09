@@ -88,7 +88,8 @@ public class MainRetroFragment extends Fragment {
         }
 
         final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setMessage("Refreshing your data");
+        progressDialog.setTitle("Refreshing your data");
+        progressDialog.setMessage("We're almost there!");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(true);

@@ -62,7 +62,8 @@ public class DetailQuoteFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.setMessage("Fetching data");
+        mProgressDialog.setTitle("Fetching data");
+        mProgressDialog.setMessage("We're almost there!");
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mProgressDialog.setCancelable(false);
         mProgressDialog.setIndeterminate(true);

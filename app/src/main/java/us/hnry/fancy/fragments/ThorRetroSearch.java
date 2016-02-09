@@ -79,7 +79,8 @@ public class ThorRetroSearch extends Fragment {
                 if (!search.equals("")) {
                     final ProgressDialog progressDialog = new ProgressDialog(getActivity());
                     progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    progressDialog.setMessage("Collecting Results");
+                    progressDialog.setTitle("Collecting Results");
+                    progressDialog.setMessage("We're almost there!");
                     progressDialog.setCancelable(false);
                     progressDialog.setIndeterminate(true);
                     progressDialog.show();
