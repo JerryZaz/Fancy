@@ -21,9 +21,9 @@ import java.util.HashSet;
 
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
-import us.hnry.fancy.adapters.StockRecycler;
+import us.hnry.fancy.adapters.RetroQuoteRecycler;
 import us.hnry.fancy.data.StockRetroFetch;
-import us.hnry.fancy.models.Stock;
+import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
@@ -34,7 +34,8 @@ import us.hnry.fancy.utils.Utility;
 public class MainRetroFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private FloatingActionButton fab;
-    private ArrayList<Stock> mQuotes;
+    private ArrayList<Quote.SingleQuote> mQuotes;
+    private RetroQuoteRecycler mAdapter;
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
 
@@ -51,9 +52,11 @@ public class MainRetroFragment extends Fragment {
             }
         });
 
+        mAdapter = new RetroQuoteRecycler(mQuotes);
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.fragment_main_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(mAdapter);
         return layout;
     }
 
@@ -84,13 +87,7 @@ public class MainRetroFragment extends Fragment {
         QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
         StockRetroFetch stockRetroFetch = new StockRetroFetch(queryBuilder.build());
         mQuotes = stockRetroFetch.execute();
-
-        final StockRecycler recycler = new StockRecycler(mQuotes, getActivity());
-        mRecyclerView.setAdapter(recycler);
-        editor.clear();
-        editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                new HashSet<>(Arrays.asList(symbolsToQuery)));
-        editor.apply();
+        mAdapter.swapList(mQuotes);
         progressDialog.dismiss();
 
     }
