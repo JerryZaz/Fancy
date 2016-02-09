@@ -1,20 +1,29 @@
 package us.hnry.fancy.adapters;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.GsonConverterFactory;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
-import us.hnry.fancy.data.FetchStockTask;
-import us.hnry.fancy.models.Stock;
+import us.hnry.fancy.data.StockService.ONESAPI;
+import us.hnry.fancy.models.Quote;
+import us.hnry.fancy.models.Single;
 import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
@@ -47,25 +56,61 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
                 new SearchRecyclerViewHolder.ThorViewHolderClicks() {
                     @Override
                     public void onItemClick(final View caller) {
-                        new Thread(){
+
+                        final ProgressDialog fetchingProgress = new ProgressDialog(caller.getContext());
+                        fetchingProgress.setTitle("Fetching your data");
+                        fetchingProgress.setMessage("We're almost there!");
+                        fetchingProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        fetchingProgress.setIndeterminate(true);
+                        fetchingProgress.setCancelable(false);
+                        fetchingProgress.show();
+
+                        final String BASE_URL = BuildConfig.BASE_API_URL;
+                        final String ENV = BuildConfig.ENV;
+                        final String FORMAT = "json";
+
+                        Symbol symbol = mResults.get(viewType);
+                        QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbol.getSymbol());
+                        String builtQuery = queryBuilder.build();
+
+                        Retrofit retrofit = new Retrofit.Builder()
+                                .baseUrl(BASE_URL)
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build();
+                        ONESAPI onesapi = retrofit.create(ONESAPI.class);
+                        Call<Single> call = onesapi.getQuotes(builtQuery, ENV, FORMAT);
+                        call.enqueue(new Callback<Single>() {
                             @Override
-                            public void run() {
-                                Symbol symbol = mResults.get(viewType);
-                                FetchStockTask task = new FetchStockTask(caller.getContext());
-                                QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbol.getSymbol());
-                                task.execute(queryBuilder.build());
+                            public void onResponse(Response<Single> response) {
                                 try {
-                                    ArrayList<Stock> results = task.get();
-                                    if(results.size() > 0){
-                                        Intent launchDetail = new Intent(caller.getContext(), DetailActivity.class);
-                                        launchDetail.putExtra(Utility.STOCK_INTENT, results.get(0));
-                                        caller.getContext().startActivity(launchDetail);
+                                    Quote.SingleQuote quote = response.body().query.results.getQuote();
+                                    Intent launchDetail = new Intent(caller.getContext(), DetailActivity.class);
+                                    launchDetail.putExtra(Utility.QUOTE_INTENT, quote);
+                                    caller.getContext().startActivity(launchDetail);
+                                } catch (NullPointerException e) {
+                                    Log.v("Catch", "Reached.");
+                                    Toast toast = null;
+                                    if (response.code() == 401) {
+                                        toast = Toast.makeText(caller.getContext(), "Unauthenticated", Toast.LENGTH_SHORT);
+                                    } else if (response.code() >= 400) {
+                                        toast = Toast.makeText(caller.getContext(), "Client error "
+                                                + response.code() + " " + response.message(), Toast.LENGTH_SHORT);
                                     }
-                                } catch (InterruptedException | ExecutionException e) {
-                                    e.printStackTrace();
+                                    if (toast != null) {
+                                        toast.show();
+                                    }
+                                } finally {
+                                    fetchingProgress.dismiss();
                                 }
                             }
-                        }.start();
+
+                            @Override
+                            public void onFailure(Throwable t) {
+                                Log.e("getQuotes threw ", t.getMessage());
+                                fetchingProgress.dismiss();
+                            }
+                        });
+
                     }
                 }
         );
@@ -85,11 +130,10 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
     }
 
     public void swapList(ArrayList<Symbol> param) {
-        if(mResults != null){
+        if (mResults != null) {
             mResults.clear();
             mResults.addAll(param);
-        }
-        else {
+        } else {
             mResults = param;
         }
         notifyDataSetChanged();
@@ -113,7 +157,7 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
             mListener.onItemClick(v);
         }
 
-        public interface ThorViewHolderClicks{
+        public interface ThorViewHolderClicks {
             void onItemClick(View caller);
         }
     }
