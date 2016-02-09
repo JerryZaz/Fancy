@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Stock;
 
 /**
  * Created by Henry on 2/1/2016.
+ *
  */
 public class Utility {
 
@@ -84,6 +86,40 @@ public class Utility {
                 String value = String.valueOf(m.invoke(stock));
                 String name = m.getName().substring(3);
                 if (!name.equals("Class")) {
+                    map.put(name, value);
+                    keys.add(name);
+                }
+            }
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            String key = splitCamelCase(entry.getKey());
+            String value;
+            try {
+                value = formatDouble(entry.getValue());
+            } catch (NumberFormatException e) {
+                value = entry.getValue();
+            }
+            builder.append(key).append(": ").append(value).append("\n");
+        }
+
+        return builder.toString();
+    }
+
+    public static String consumeParcelableQuote(Quote.SingleQuote quote)
+            throws InvocationTargetException, IllegalAccessException {
+        ArrayList<String> keys = new ArrayList<>();
+        Method[] methods = quote.getClass().getMethods();
+        Map<String, String> map = new HashMap<>();
+
+        for (Method m : methods) {
+            if (m.getName().startsWith("get")) {
+
+                String name = m.getName().substring(3);
+                if (!name.equals("Class")) {
+                    String value = String.valueOf(m.invoke(quote));
                     map.put(name, value);
                     keys.add(name);
                 }

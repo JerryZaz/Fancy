@@ -1,4 +1,4 @@
-package us.hnry.fancy.fragments;
+package us.hnry.fancy.deprecated;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
-import us.hnry.fancy.adapters.StockRecycler;
 import us.hnry.fancy.data.FetchStockTask;
 import us.hnry.fancy.models.Stock;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
@@ -30,8 +29,10 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/6/2016.
- *
+ * Deprecated on 16/02/08 in favor of MainRetroFragment
+ * that implements RetroFit
  */
+@Deprecated
 public class MainFragment extends Fragment {
 
     private RecyclerView mRecyclerView;

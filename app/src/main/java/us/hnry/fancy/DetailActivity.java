@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import us.hnry.fancy.adapters.DetailRecycler;
+import us.hnry.fancy.fragments.DetailQuoteFragment;
 import us.hnry.fancy.models.Stock;
 import us.hnry.fancy.utils.Utility;
 import us.hnry.fancy.views.DividerItemDecoration;
@@ -52,7 +53,7 @@ public class DetailActivity extends AppCompatActivity {
         getFragmentManager()
                 .beginTransaction()
                 .add(R.id.detail_container,
-                        new DetailFragment(),
+                        new DetailQuoteFragment(),
                         FRAGMENT_TAG_DETAIL)
                 .commit();
     }

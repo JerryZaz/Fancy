@@ -1,4 +1,4 @@
-package us.hnry.fancy.adapters;
+package us.hnry.fancy.deprecated;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,8 +18,10 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/6/2016.
- *
+ * Deprecated on 16/02/08 in favor of RetroQuoteRecycler that
+ * consumes the new Quote data model
  */
+@Deprecated
 public class StockRecycler extends RecyclerView.Adapter<StockRecycler.StockRecyclerViewHolder> {
 
     private ArrayList<Stock> mQuotes;

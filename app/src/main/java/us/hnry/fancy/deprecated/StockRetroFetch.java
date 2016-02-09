@@ -1,4 +1,4 @@
-package us.hnry.fancy.data;
+package us.hnry.fancy.deprecated;
 
 import android.util.Log;
 
