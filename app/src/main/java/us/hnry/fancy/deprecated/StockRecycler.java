@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
-import us.hnry.fancy.models.Stock;
 import us.hnry.fancy.utils.Utility;
 
 /**

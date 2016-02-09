@@ -1,4 +1,4 @@
-package us.hnry.fancy.models;
+package us.hnry.fancy.deprecated;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,7 +6,10 @@ import android.os.Parcelable;
 /**
  * Created by Henry on 1/31/2016.
  * Parcelable class to store stock information fetched from API.
+ * Deprecated on 16/02/08 in favor of a new Quote model class
+ * compatible with Retrofit
  */
+@Deprecated
 public class Stock implements Parcelable {
 
     public static final String QUOTE_SYMBOL = "symbol";

@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import us.hnry.fancy.deprecated.Stock;
 import us.hnry.fancy.models.Quote;
-import us.hnry.fancy.models.Stock;
 
 /**
  * Created by Henry on 2/1/2016.

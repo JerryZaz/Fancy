@@ -30,8 +30,10 @@ import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
+import us.hnry.fancy.data.StockService;
 import us.hnry.fancy.data.StockService.SAPI;
 import us.hnry.fancy.models.Quote;
+import us.hnry.fancy.models.Single;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
@@ -130,7 +132,43 @@ public class MainRetroFragment extends Fragment {
                          @Override
                          public void onFailure(Throwable t) {
                              Log.e("getQuotes threw ", t.getMessage());
-                             progressDialog.dismiss();
+
+                             progressDialog.show();
+
+                             Retrofit single = new Retrofit.Builder()
+                                     .baseUrl(BASE_URL)
+                                     .addConverterFactory(GsonConverterFactory.create())
+                                     .build();
+                             StockService.ONESAPI onesapi = single.create(StockService.ONESAPI.class);
+                             Call<Single> call = onesapi.getQuotes(mBuiltQuery, ENV, FORMAT);
+                             call.enqueue(new Callback<Single>() {
+                                 @Override
+                                 public void onResponse(Response<Single> response) {
+                                     try {
+                                         Quote.SingleQuote quote = response.body().query.results.getQuote();
+                                         mQuotes = new ArrayList<>();
+                                         mQuotes.add(quote);
+                                         mAdapter.swapList(mQuotes);
+                                     } catch (NullPointerException e) {
+                                         Log.v("Catch", "Reached.");
+                                         if (response.code() == 401) {
+                                             Log.e("getQuotes threw ", "Unauthenticated");
+                                         } else if (response.code() >= 400) {
+                                             Log.e("getQuotes threw ", "Client error "
+                                                     + response.code() + " " + response.message());
+                                         }
+
+                                     } finally {
+                                         progressDialog.dismiss();
+                                     }
+                                 }
+
+                                 @Override
+                                 public void onFailure(Throwable t) {
+                                     Log.e("getQuotes threw ", t.getMessage());
+                                     progressDialog.dismiss();
+                                 }
+                             });
                          }
                      }
         );

@@ -29,8 +29,6 @@ import java.util.concurrent.ExecutionException;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
-import us.hnry.fancy.data.FetchStockTask;
-import us.hnry.fancy.models.Stock;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 

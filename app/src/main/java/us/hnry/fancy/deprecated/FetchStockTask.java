@@ -1,4 +1,4 @@
-package us.hnry.fancy.data;
+package us.hnry.fancy.deprecated;
 
 import android.content.Context;
 import android.net.Uri;
@@ -18,13 +18,14 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import us.hnry.fancy.BuildConfig;
-import us.hnry.fancy.models.Stock;
 import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 1/31/2016.
- *
+ * Deprecated on 16/02/08 after removing all uses of it in favor
+ * of Retrofit
  */
+@Deprecated
 public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
 
     private final String LOG_TAG = FetchStockTask.class.getSimpleName();
