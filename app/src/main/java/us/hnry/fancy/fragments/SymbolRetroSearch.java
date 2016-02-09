@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -121,6 +122,10 @@ public class SymbolRetroSearch extends Fragment {
                             progressDialog.dismiss();
                         }
                     });
+                }
+                else {
+                    Snackbar.make(v, "Please enter a search term", Snackbar.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
                 }
             }
         });
