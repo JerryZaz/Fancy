@@ -11,13 +11,16 @@ import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import us.hnry.fancy.BuildConfig;
-import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.data.StockService.SAPI;
+import us.hnry.fancy.models.Quote;
 
 /**
  * Created by Henry on 2/7/2016.
  * Test implementation of Retrofit
+ * Functionality moved to the Fragment because it was causing
+ * the retrofit task to reach it's end with null data
  */
+@Deprecated
 public class StockRetroFetch {
     final String BASE_URL = BuildConfig.BASE_API_URL;
     final String ENV = BuildConfig.ENV;
