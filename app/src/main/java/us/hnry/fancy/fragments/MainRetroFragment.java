@@ -65,7 +65,7 @@ public class MainRetroFragment extends Fragment {
             }
         });
 
-        mAdapter = new RetroQuoteRecycler(mQuotes);
+        mAdapter = new RetroQuoteRecycler(mQuotes, getActivity());
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.fragment_main_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

@@ -1,6 +1,8 @@
 package us.hnry.fancy.adapters;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +23,11 @@ import us.hnry.fancy.utils.Utility;
 public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.RetroQuoteViewHolder> {
 
     private ArrayList<Quote.SingleQuote> mResults;
+    private Context mContext;
 
-    public RetroQuoteRecycler(ArrayList<Quote.SingleQuote> results) {
+    public RetroQuoteRecycler(ArrayList<Quote.SingleQuote> results, Context context) {
         this.mResults = results;
+        this.mContext = context;
     }
 
     @Override
@@ -50,9 +54,21 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
         Quote.SingleQuote singleQuote = mResults.get(position);
         holder.symbolTextView.setText(singleQuote.getSymbol());
         holder.nameTextView.setText(singleQuote.getName());
-        holder.closeTextView.setText(singleQuote.getPreviousClose());
-        holder.openTextView.setText(singleQuote.getOpen());
-        holder.askTextView.setText(singleQuote.getAsk());
+
+        holder.closeTextView.setText(Utility.formatDouble(singleQuote.getPreviousClose()));
+
+        String open = singleQuote.getOpen();
+        holder.openTextView.setText(Utility.formatDouble(open));
+        String ask = singleQuote.getAsk();
+        holder.askTextView.setText(Utility.formatDouble(ask));
+        if(open != null && ask != null){
+            double difference = Utility.compareAskOpen(singleQuote);
+            holder.askTextView.setTextColor(
+                    difference > 0 ? mContext.getResources().getColor(R.color.currentAskGreen) :
+                            difference < 0 ? Color.RED : Color.BLACK
+            );
+        }
+
         holder.itemView.setTag(singleQuote);
     }
 

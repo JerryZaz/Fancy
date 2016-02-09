@@ -34,6 +34,16 @@ public class Utility {
         return fromSharedPreferences.toArray(new String[fromSharedPreferences.size()]);
     }
 
+    public static double compareAskOpen(Quote.SingleQuote quote){
+        try {
+            double currentAsk = Double.parseDouble(quote.getAsk());
+            double open = Double.parseDouble(quote.getOpen());
+            return currentAsk - open;
+        } catch (NumberFormatException e){
+            return Utility.DEFAULT_DOUBLE;
+        }
+    }
+
     public static String formatDouble(double original) {
         if (original == DEFAULT_DOUBLE) return "N/A";
         if (original > 999999) return String.format("%#,.2f", (original / 1000000)) + "M";
