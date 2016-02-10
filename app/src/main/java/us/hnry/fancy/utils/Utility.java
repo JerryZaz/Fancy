@@ -74,12 +74,37 @@ public class Utility {
         char[] chars = camelCase.toCharArray();
         StringBuilder builder = new StringBuilder(String.valueOf(Character.toUpperCase(chars[0])));
         for (int i = 1; i < chars.length; i++) {
+            char previousChar = chars[i-1];
             char singleChar = chars[i];
-            if (Character.isUpperCase(singleChar)) {
-                builder.append(" ").append(String.valueOf(singleChar));
-            } else {
+            if(Character.isUpperCase(singleChar)){
+                if(!Character.isUpperCase(previousChar)){
+                    builder.append(" ").append(String.valueOf(singleChar));
+                } else {
+                    if (i < chars.length - 2) {
+                        //if it's followed by a lowercase, add space
+                        char nextChar = chars[i + 1];
+                        if (!Character.isUpperCase(nextChar)) {
+                            builder.append(" ").append(String.valueOf(singleChar));
+                        } else {
+                            builder.append(String.valueOf(singleChar));
+                        }
+                    } else {
+                        builder.append(String.valueOf(singleChar));
+                    }
+                }
+            } else{
                 builder.append(String.valueOf(singleChar));
             }
+            /*if (Character.isUpperCase(singleChar) && Character.isUpperCase(previousChar)) {
+                if(i < chars.length - 2){
+                    char nextChar = chars[i+1];
+                    if(!Character.isUpperCase(nextChar)){
+                        builder.append(" ").append(String.valueOf(singleChar));
+                    }
+                }
+            } else {
+                builder.append(String.valueOf(singleChar));
+            }*/
         }
         return builder.toString();
     }

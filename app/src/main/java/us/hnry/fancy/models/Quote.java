@@ -3,12 +3,16 @@ package us.hnry.fancy.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Henry on 2/7/2016.
+ *
  */
+@SuppressWarnings("unused, SpellCheckingInspection")
 public class Quote {
 
     public Query query;
@@ -65,25 +69,44 @@ public class Quote {
         public String LastTradeRealtimeWithTime;
         public String ChangePercentRealtime;
         public String ChangeFromYearHigh;
-        public String PercebtChangeFromYearHigh;
+
+        @SerializedName("PercebtChangeFromYearHigh")
+        public String PercentChangeFromYearHigh;
+
         public String LastTradeWithTime;
         public String LastTradePriceOnly;
         public String HighLimit;
         public String LowLimit;
         public String DaysRange;
         public String DaysRangeRealtime;
-        public String FiftydayMovingAverage;
-        public String TwoHundreddayMovingAverage;
-        public String ChangeFromTwoHundreddayMovingAverage;
-        public String PercentChangeFromTwoHundreddayMovingAverage;
-        public String ChangeFromFiftydayMovingAverage;
-        public String PercentChangeFromFiftydayMovingAverage;
+
+        @SerializedName("FiftydayMovingAverage")
+        public String FiftyDaysMovingAverage;
+
+        @SerializedName("TwoHundreddayMovingAverage")
+        public String TwoHundredDaysMovingAverage;
+
+        @SerializedName("ChangeFromTwoHundreddayMovingAverage")
+        public String ChangeFromTwoHundredDaysMovingAverage;
+
+        @SerializedName("PercentChangeFromTwoHundreddayMovingAverage")
+        public String PercentChangeFromTwoHundredDaysMovingAverage;
+
+        @SerializedName("ChangeFromFiftydayMovingAverage")
+        public String ChangeFromFiftyDaysMovingAverage;
+
+        @SerializedName("PercentChangeFromFiftydayMovingAverage")
+        public String PercentChangeFromFiftyDaysMovingAverage;
+
         public String Name;
         public String Notes;
         public String Open;
         public String PreviousClose;
         public String PricePaid;
-        public String ChangeinPercent;
+
+        @SerializedName("ChangeinPercent")
+        public String ChangePercent;
+
         public String PriceSales;
         public String PriceBook;
         public String ExDividendDate;
@@ -97,7 +120,10 @@ public class Quote {
         public String ShortRatio;
         public String LastTradeTime;
         public String TickerTrend;
-        public String OneyrTargetPrice;
+
+        @SerializedName("OneyrTargetPrice")
+        public String OneYearTargetPrice;
+
         public String Volume;
         public String HoldingsValue;
         public String HoldingsValueRealtime;
@@ -108,7 +134,7 @@ public class Quote {
         public String DividendYield;
         public String PercentChange;
 
-        public SingleQuote(String symbol, String ask, String averageDailyVolume, String bid, String askRealtime, String bidRealtime, String bookValue, String changePercentChange, String change, String commission, String currency, String changeRealtime, String afterHoursChangeRealtime, String dividendShare, String lastTradeDate, String tradeDate, String earningsShare, String errorIndicationreturnedforsymbolchangedinvalid, String EPSEstimateCurrentYear, String EPSEstimateNextYear, String EPSEstimateNextQuarter, String daysLow, String daysHigh, String yearLow, String yearHigh, String holdingsGainPercent, String annualizedGain, String holdingsGain, String holdingsGainPercentRealtime, String holdingsGainRealtime, String moreInfo, String orderBookRealtime, String marketCapitalization, String marketCapRealtime, String EBITDA, String changeFromYearLow, String percentChangeFromYearLow, String lastTradeRealtimeWithTime, String changePercentRealtime, String changeFromYearHigh, String percebtChangeFromYearHigh, String lastTradeWithTime, String lastTradePriceOnly, String highLimit, String lowLimit, String daysRange, String daysRangeRealtime, String fiftydayMovingAverage, String twoHundreddayMovingAverage, String changeFromTwoHundreddayMovingAverage, String percentChangeFromTwoHundreddayMovingAverage, String changeFromFiftydayMovingAverage, String percentChangeFromFiftydayMovingAverage, String name, String notes, String open, String previousClose, String pricePaid, String changeinPercent, String priceSales, String priceBook, String exDividendDate, String PERatio, String dividendPayDate, String PERatioRealtime, String PEGRatio, String priceEPSEstimateCurrentYear, String priceEPSEstimateNextYear, String sharesOwned, String shortRatio, String lastTradeTime, String tickerTrend, String oneyrTargetPrice, String volume, String holdingsValue, String holdingsValueRealtime, String yearRange, String daysValueChange, String daysValueChangeRealtime, String stockExchange, String dividendYield, String percentChange) {
+        public SingleQuote(String symbol, String ask, String averageDailyVolume, String bid, String askRealtime, String bidRealtime, String bookValue, String changePercentChange, String change, String commission, String currency, String changeRealtime, String afterHoursChangeRealtime, String dividendShare, String lastTradeDate, String tradeDate, String earningsShare, String errorIndicationreturnedforsymbolchangedinvalid, String EPSEstimateCurrentYear, String EPSEstimateNextYear, String EPSEstimateNextQuarter, String daysLow, String daysHigh, String yearLow, String yearHigh, String holdingsGainPercent, String annualizedGain, String holdingsGain, String holdingsGainPercentRealtime, String holdingsGainRealtime, String moreInfo, String orderBookRealtime, String marketCapitalization, String marketCapRealtime, String EBITDA, String changeFromYearLow, String percentChangeFromYearLow, String lastTradeRealtimeWithTime, String changePercentRealtime, String changeFromYearHigh, String percentChangeFromYearHigh, String lastTradeWithTime, String lastTradePriceOnly, String highLimit, String lowLimit, String daysRange, String daysRangeRealtime, String fiftyDaysMovingAverage, String twoHundredDaysMovingAverage, String changeFromTwoHundredDaysMovingAverage, String percentChangeFromTwoHundredDaysMovingAverage, String changeFromFiftyDaysMovingAverage, String percentChangeFromFiftyDaysMovingAverage, String name, String notes, String open, String previousClose, String pricePaid, String changePercent, String priceSales, String priceBook, String exDividendDate, String PERatio, String dividendPayDate, String PERatioRealtime, String PEGRatio, String priceEPSEstimateCurrentYear, String priceEPSEstimateNextYear, String sharesOwned, String shortRatio, String lastTradeTime, String tickerTrend, String oneYearTargetPrice, String volume, String holdingsValue, String holdingsValueRealtime, String yearRange, String daysValueChange, String daysValueChangeRealtime, String stockExchange, String dividendYield, String percentChange) {
             this.symbol = symbol;
             Ask = ask;
             AverageDailyVolume = averageDailyVolume;
@@ -149,25 +175,25 @@ public class Quote {
             LastTradeRealtimeWithTime = lastTradeRealtimeWithTime;
             ChangePercentRealtime = changePercentRealtime;
             ChangeFromYearHigh = changeFromYearHigh;
-            PercebtChangeFromYearHigh = percebtChangeFromYearHigh;
+            PercentChangeFromYearHigh = percentChangeFromYearHigh;
             LastTradeWithTime = lastTradeWithTime;
             LastTradePriceOnly = lastTradePriceOnly;
             HighLimit = highLimit;
             LowLimit = lowLimit;
             DaysRange = daysRange;
             DaysRangeRealtime = daysRangeRealtime;
-            FiftydayMovingAverage = fiftydayMovingAverage;
-            TwoHundreddayMovingAverage = twoHundreddayMovingAverage;
-            ChangeFromTwoHundreddayMovingAverage = changeFromTwoHundreddayMovingAverage;
-            PercentChangeFromTwoHundreddayMovingAverage = percentChangeFromTwoHundreddayMovingAverage;
-            ChangeFromFiftydayMovingAverage = changeFromFiftydayMovingAverage;
-            PercentChangeFromFiftydayMovingAverage = percentChangeFromFiftydayMovingAverage;
+            FiftyDaysMovingAverage = fiftyDaysMovingAverage;
+            TwoHundredDaysMovingAverage = twoHundredDaysMovingAverage;
+            ChangeFromTwoHundredDaysMovingAverage = changeFromTwoHundredDaysMovingAverage;
+            PercentChangeFromTwoHundredDaysMovingAverage = percentChangeFromTwoHundredDaysMovingAverage;
+            ChangeFromFiftyDaysMovingAverage = changeFromFiftyDaysMovingAverage;
+            PercentChangeFromFiftyDaysMovingAverage = percentChangeFromFiftyDaysMovingAverage;
             Name = name;
             Notes = notes;
             Open = open;
             PreviousClose = previousClose;
             PricePaid = pricePaid;
-            ChangeinPercent = changeinPercent;
+            ChangePercent = changePercent;
             PriceSales = priceSales;
             PriceBook = priceBook;
             ExDividendDate = exDividendDate;
@@ -181,7 +207,7 @@ public class Quote {
             ShortRatio = shortRatio;
             LastTradeTime = lastTradeTime;
             TickerTrend = tickerTrend;
-            OneyrTargetPrice = oneyrTargetPrice;
+            OneYearTargetPrice = oneYearTargetPrice;
             Volume = volume;
             HoldingsValue = holdingsValue;
             HoldingsValueRealtime = holdingsValueRealtime;
@@ -234,25 +260,25 @@ public class Quote {
             LastTradeRealtimeWithTime = in.readString();
             ChangePercentRealtime = in.readString();
             ChangeFromYearHigh = in.readString();
-            PercebtChangeFromYearHigh = in.readString();
+            PercentChangeFromYearHigh = in.readString();
             LastTradeWithTime = in.readString();
             LastTradePriceOnly = in.readString();
             HighLimit = in.readString();
             LowLimit = in.readString();
             DaysRange = in.readString();
             DaysRangeRealtime = in.readString();
-            FiftydayMovingAverage = in.readString();
-            TwoHundreddayMovingAverage = in.readString();
-            ChangeFromTwoHundreddayMovingAverage = in.readString();
-            PercentChangeFromTwoHundreddayMovingAverage = in.readString();
-            ChangeFromFiftydayMovingAverage = in.readString();
-            PercentChangeFromFiftydayMovingAverage = in.readString();
+            FiftyDaysMovingAverage = in.readString();
+            TwoHundredDaysMovingAverage = in.readString();
+            ChangeFromTwoHundredDaysMovingAverage = in.readString();
+            PercentChangeFromTwoHundredDaysMovingAverage = in.readString();
+            ChangeFromFiftyDaysMovingAverage = in.readString();
+            PercentChangeFromFiftyDaysMovingAverage = in.readString();
             Name = in.readString();
             Notes = in.readString();
             Open = in.readString();
             PreviousClose = in.readString();
             PricePaid = in.readString();
-            ChangeinPercent = in.readString();
+            ChangePercent = in.readString();
             PriceSales = in.readString();
             PriceBook = in.readString();
             ExDividendDate = in.readString();
@@ -266,7 +292,7 @@ public class Quote {
             ShortRatio = in.readString();
             LastTradeTime = in.readString();
             TickerTrend = in.readString();
-            OneyrTargetPrice = in.readString();
+            OneYearTargetPrice = in.readString();
             Volume = in.readString();
             HoldingsValue = in.readString();
             HoldingsValueRealtime = in.readString();
@@ -598,12 +624,12 @@ public class Quote {
             ChangeFromYearHigh = changeFromYearHigh;
         }
 
-        public String getPercebtChangeFromYearHigh() {
-            return PercebtChangeFromYearHigh;
+        public String getPercentChangeFromYearHigh() {
+            return PercentChangeFromYearHigh;
         }
 
-        public void setPercebtChangeFromYearHigh(String percebtChangeFromYearHigh) {
-            PercebtChangeFromYearHigh = percebtChangeFromYearHigh;
+        public void setPercentChangeFromYearHigh(String percentChangeFromYearHigh) {
+            PercentChangeFromYearHigh = percentChangeFromYearHigh;
         }
 
         public String getLastTradeWithTime() {
@@ -654,52 +680,52 @@ public class Quote {
             DaysRangeRealtime = daysRangeRealtime;
         }
 
-        public String getFiftydayMovingAverage() {
-            return FiftydayMovingAverage;
+        public String getFiftyDaysMovingAverage() {
+            return FiftyDaysMovingAverage;
         }
 
-        public void setFiftydayMovingAverage(String fiftydayMovingAverage) {
-            FiftydayMovingAverage = fiftydayMovingAverage;
+        public void setFiftyDaysMovingAverage(String fiftyDaysMovingAverage) {
+            FiftyDaysMovingAverage = fiftyDaysMovingAverage;
         }
 
-        public String getTwoHundreddayMovingAverage() {
-            return TwoHundreddayMovingAverage;
+        public String getTwoHundredDaysMovingAverage() {
+            return TwoHundredDaysMovingAverage;
         }
 
-        public void setTwoHundreddayMovingAverage(String twoHundreddayMovingAverage) {
-            TwoHundreddayMovingAverage = twoHundreddayMovingAverage;
+        public void setTwoHundredDaysMovingAverage(String twoHundredDaysMovingAverage) {
+            TwoHundredDaysMovingAverage = twoHundredDaysMovingAverage;
         }
 
-        public String getChangeFromTwoHundreddayMovingAverage() {
-            return ChangeFromTwoHundreddayMovingAverage;
+        public String getChangeFromTwoHundredDaysMovingAverage() {
+            return ChangeFromTwoHundredDaysMovingAverage;
         }
 
-        public void setChangeFromTwoHundreddayMovingAverage(String changeFromTwoHundreddayMovingAverage) {
-            ChangeFromTwoHundreddayMovingAverage = changeFromTwoHundreddayMovingAverage;
+        public void setChangeFromTwoHundredDaysMovingAverage(String changeFromTwoHundredDaysMovingAverage) {
+            ChangeFromTwoHundredDaysMovingAverage = changeFromTwoHundredDaysMovingAverage;
         }
 
-        public String getPercentChangeFromTwoHundreddayMovingAverage() {
-            return PercentChangeFromTwoHundreddayMovingAverage;
+        public String getPercentChangeFromTwoHundredDaysMovingAverage() {
+            return PercentChangeFromTwoHundredDaysMovingAverage;
         }
 
-        public void setPercentChangeFromTwoHundreddayMovingAverage(String percentChangeFromTwoHundreddayMovingAverage) {
-            PercentChangeFromTwoHundreddayMovingAverage = percentChangeFromTwoHundreddayMovingAverage;
+        public void setPercentChangeFromTwoHundredDaysMovingAverage(String percentChangeFromTwoHundredDaysMovingAverage) {
+            PercentChangeFromTwoHundredDaysMovingAverage = percentChangeFromTwoHundredDaysMovingAverage;
         }
 
-        public String getChangeFromFiftydayMovingAverage() {
-            return ChangeFromFiftydayMovingAverage;
+        public String getChangeFromFiftyDaysMovingAverage() {
+            return ChangeFromFiftyDaysMovingAverage;
         }
 
-        public void setChangeFromFiftydayMovingAverage(String changeFromFiftydayMovingAverage) {
-            ChangeFromFiftydayMovingAverage = changeFromFiftydayMovingAverage;
+        public void setChangeFromFiftyDaysMovingAverage(String changeFromFiftyDaysMovingAverage) {
+            ChangeFromFiftyDaysMovingAverage = changeFromFiftyDaysMovingAverage;
         }
 
-        public String getPercentChangeFromFiftydayMovingAverage() {
-            return PercentChangeFromFiftydayMovingAverage;
+        public String getPercentChangeFromFiftyDaysMovingAverage() {
+            return PercentChangeFromFiftyDaysMovingAverage;
         }
 
-        public void setPercentChangeFromFiftydayMovingAverage(String percentChangeFromFiftydayMovingAverage) {
-            PercentChangeFromFiftydayMovingAverage = percentChangeFromFiftydayMovingAverage;
+        public void setPercentChangeFromFiftyDaysMovingAverage(String percentChangeFromFiftyDaysMovingAverage) {
+            PercentChangeFromFiftyDaysMovingAverage = percentChangeFromFiftyDaysMovingAverage;
         }
 
         public String getName() {
@@ -742,12 +768,12 @@ public class Quote {
             PricePaid = pricePaid;
         }
 
-        public String getChangeinPercent() {
-            return ChangeinPercent;
+        public String getChangePercent() {
+            return ChangePercent;
         }
 
-        public void setChangeinPercent(String changeinPercent) {
-            ChangeinPercent = changeinPercent;
+        public void setChangePercent(String changePercent) {
+            ChangePercent = changePercent;
         }
 
         public String getPriceSales() {
@@ -854,12 +880,12 @@ public class Quote {
             TickerTrend = tickerTrend;
         }
 
-        public String getOneyrTargetPrice() {
-            return OneyrTargetPrice;
+        public String getOneYearTargetPrice() {
+            return OneYearTargetPrice;
         }
 
-        public void setOneyrTargetPrice(String oneyrTargetPrice) {
-            OneyrTargetPrice = oneyrTargetPrice;
+        public void setOneYearTargetPrice(String oneYearTargetPrice) {
+            OneYearTargetPrice = oneYearTargetPrice;
         }
 
         public String getVolume() {
@@ -981,25 +1007,25 @@ public class Quote {
             dest.writeString(LastTradeRealtimeWithTime);
             dest.writeString(ChangePercentRealtime);
             dest.writeString(ChangeFromYearHigh);
-            dest.writeString(PercebtChangeFromYearHigh);
+            dest.writeString(PercentChangeFromYearHigh);
             dest.writeString(LastTradeWithTime);
             dest.writeString(LastTradePriceOnly);
             dest.writeString(HighLimit);
             dest.writeString(LowLimit);
             dest.writeString(DaysRange);
             dest.writeString(DaysRangeRealtime);
-            dest.writeString(FiftydayMovingAverage);
-            dest.writeString(TwoHundreddayMovingAverage);
-            dest.writeString(ChangeFromTwoHundreddayMovingAverage);
-            dest.writeString(PercentChangeFromTwoHundreddayMovingAverage);
-            dest.writeString(ChangeFromFiftydayMovingAverage);
-            dest.writeString(PercentChangeFromFiftydayMovingAverage);
+            dest.writeString(FiftyDaysMovingAverage);
+            dest.writeString(TwoHundredDaysMovingAverage);
+            dest.writeString(ChangeFromTwoHundredDaysMovingAverage);
+            dest.writeString(PercentChangeFromTwoHundredDaysMovingAverage);
+            dest.writeString(ChangeFromFiftyDaysMovingAverage);
+            dest.writeString(PercentChangeFromFiftyDaysMovingAverage);
             dest.writeString(Name);
             dest.writeString(Notes);
             dest.writeString(Open);
             dest.writeString(PreviousClose);
             dest.writeString(PricePaid);
-            dest.writeString(ChangeinPercent);
+            dest.writeString(ChangePercent);
             dest.writeString(PriceSales);
             dest.writeString(PriceBook);
             dest.writeString(ExDividendDate);
@@ -1013,7 +1039,7 @@ public class Quote {
             dest.writeString(ShortRatio);
             dest.writeString(LastTradeTime);
             dest.writeString(TickerTrend);
-            dest.writeString(OneyrTargetPrice);
+            dest.writeString(OneYearTargetPrice);
             dest.writeString(Volume);
             dest.writeString(HoldingsValue);
             dest.writeString(HoldingsValueRealtime);

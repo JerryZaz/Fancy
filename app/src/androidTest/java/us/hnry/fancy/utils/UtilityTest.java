@@ -21,5 +21,8 @@ public class UtilityTest extends TestCase {
 
     public void testSplitCamelCase() throws Exception {
         assertEquals("A Foo Bar Test", Utility.splitCamelCase("AFooBarTest"));
+        assertEquals("AFBT", Utility.splitCamelCase("AFBT"));
+        assertEquals("AFOO Bar Test", Utility.splitCamelCase("AFOOBarTest"));
+        assertEquals("Price EPS", Utility.splitCamelCase("PriceEPS"));
     }
 }
