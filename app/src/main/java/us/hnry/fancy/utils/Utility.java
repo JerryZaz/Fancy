@@ -3,6 +3,7 @@ package us.hnry.fancy.utils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +13,6 @@ import us.hnry.fancy.models.Quote;
 
 /**
  * Created by Henry on 2/1/2016.
- *
  */
 public class Utility {
 
@@ -34,12 +34,12 @@ public class Utility {
         return fromSharedPreferences.toArray(new String[fromSharedPreferences.size()]);
     }
 
-    public static double compareAskOpen(Quote.SingleQuote quote){
+    public static double compareAskOpen(Quote.SingleQuote quote) {
         try {
             double currentAsk = Double.parseDouble(quote.getAsk());
             double open = Double.parseDouble(quote.getOpen());
             return currentAsk - open;
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return Utility.DEFAULT_DOUBLE;
         }
     }
@@ -52,7 +52,7 @@ public class Utility {
 
     public static String formatDouble(String original)
             throws NumberFormatException {
-        if(original != null) {
+        if (original != null) {
             double fetched = Double.parseDouble(original);
             if (fetched == -1.23) return "N/A";
             if (fetched > 999999) return String.format("%#,.2f", (fetched / 1000000)) + "M";
@@ -74,10 +74,10 @@ public class Utility {
         char[] chars = camelCase.toCharArray();
         StringBuilder builder = new StringBuilder(String.valueOf(Character.toUpperCase(chars[0])));
         for (int i = 1; i < chars.length; i++) {
-            char previousChar = chars[i-1];
+            char previousChar = chars[i - 1];
             char singleChar = chars[i];
-            if(Character.isUpperCase(singleChar)){
-                if(!Character.isUpperCase(previousChar)){
+            if (Character.isUpperCase(singleChar)) {
+                if (!Character.isUpperCase(previousChar)) {
                     builder.append(" ").append(String.valueOf(singleChar));
                 } else {
                     if (i < chars.length - 2) {
@@ -92,23 +92,29 @@ public class Utility {
                         builder.append(String.valueOf(singleChar));
                     }
                 }
-            } else{
-                builder.append(String.valueOf(singleChar));
-            }
-            /*if (Character.isUpperCase(singleChar) && Character.isUpperCase(previousChar)) {
-                if(i < chars.length - 2){
-                    char nextChar = chars[i+1];
-                    if(!Character.isUpperCase(nextChar)){
-                        builder.append(" ").append(String.valueOf(singleChar));
-                    }
-                }
             } else {
                 builder.append(String.valueOf(singleChar));
-            }*/
+            }
         }
         return builder.toString();
     }
 
+    public static String removeXMLTagsFromLastTradeWithTime(String in) {
+        String symbols = "</b>";
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < in.length(); i++) {
+            String temp = in.substring(i, i + 1);
+            if (!symbols.contains(temp)) {
+                builder.append(temp);
+            } else {
+                builder.append("");
+            }
+        }
+        return builder.toString();
+    }
+
+    @Deprecated
     public static String consumeParcelableStock(Stock stock)
             throws InvocationTargetException, IllegalAccessException {
 
@@ -161,19 +167,26 @@ public class Utility {
             }
         }
 
+        Collections.sort(keys);
+
         StringBuilder builder = new StringBuilder();
 
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            String key = splitCamelCase(entry.getKey());
+        for (String key : keys) {
             String value;
-            try {
-                value = formatDouble(entry.getValue());
-            } catch (NumberFormatException e) {
-                value = entry.getValue();
+            if (!key.equals("LastTradeWithTime")) {
+                value = map.get(key);
+            } else {
+                value = Utility.removeXMLTagsFromLastTradeWithTime(map.get(key));
             }
-            builder.append(key).append(": ").append(value).append("\n");
-        }
+            if(!value.equals("null")) {
+                try{
+                    value = Utility.formatDouble(value);
+                } catch (NumberFormatException e){
 
+                }
+                builder.append(Utility.splitCamelCase(key)).append(": ").append(value).append("\n");
+            }
+        }
         return builder.toString();
     }
 }

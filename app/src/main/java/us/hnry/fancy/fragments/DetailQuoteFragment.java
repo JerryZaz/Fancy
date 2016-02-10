@@ -201,8 +201,14 @@ public class DetailQuoteFragment extends Fragment {
                 if(!name.equals("Class")){
                     String value = String.valueOf(m.invoke(quote));
                     if(!value.equals("null")) {
-                        map.put(name, value);
-                        keys.add(name);
+                        if(!name.equals("LastTradeWithTime")) {
+                            map.put(name, value);
+                            keys.add(name);
+                        } else{
+                            value = Utility.removeXMLTagsFromLastTradeWithTime(value);
+                            map.put(name, value);
+                            keys.add(name);
+                        }
                     }
                 }
             }

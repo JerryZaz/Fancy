@@ -25,4 +25,8 @@ public class UtilityTest extends TestCase {
         assertEquals("AFOO Bar Test", Utility.splitCamelCase("AFOOBarTest"));
         assertEquals("Price EPS", Utility.splitCamelCase("PriceEPS"));
     }
+
+    public void testRemoveXMLTags() throws Exception {
+        assertEquals("Foo", Utility.removeXMLTagsFromLastTradeWithTime("<b>Foo</b>"));
+    }
 }
