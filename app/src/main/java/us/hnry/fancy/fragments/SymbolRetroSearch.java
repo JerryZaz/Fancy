@@ -15,9 +15,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,13 +32,14 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/8/2016.
- *
+ * Replaced Symbol Search, implements Retrofit instead of ASyncTask.
  */
 public class SymbolRetroSearch extends Fragment {
+
+    final static String TAG = SymbolRetroSearch.class.getSimpleName();
     private TextView mTextView;
     private EditText mEditTextSearch;
     private Button mButtonSearch;
-    private ArrayList<Quote.SingleQuote> mQuotes;
     private Intent mLaunchDetail;
     private InputMethodManager mInputMethodManager;
 
@@ -100,30 +98,30 @@ public class SymbolRetroSearch extends Fragment {
                                 mLaunchDetail.putExtra(Utility.QUOTE_INTENT, quote);
                                 v.getContext().startActivity(mLaunchDetail);
                             } catch (NullPointerException e) {
-                                Log.v("Catch", "Reached.");
-                                Toast toast = null;
-                                if (response.code() == 401) {
-                                    toast = Toast.makeText(v.getContext(), "Unauthenticated", Toast.LENGTH_SHORT);
-                                } else if (response.code() >= 400) {
-                                    toast = Toast.makeText(v.getContext(), "Client error "
-                                            + response.code() + " " + response.message(), Toast.LENGTH_SHORT);
+                                if (response.body().query.count <= 0) {
+                                    Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
                                 }
-                                if (toast != null) {
-                                    toast.show();
+                                if (response.code() == 401) {
+                                    Log.e(TAG, "><ServiceReturned: Unauthenticated>");
+                                } else if (response.code() >= 400) {
+                                    Log.e(TAG, "><ServiceReturned: Client error "
+                                            + response.code() + " " + response.message() + ">");
                                 }
                             } finally {
+                                if (!response.isSuccess()) {
+                                    Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
+                                }
                                 progressDialog.dismiss();
                             }
                         }
 
                         @Override
                         public void onFailure(Throwable t) {
-                            Log.e("getQuotes threw ", t.getMessage());
+                            Log.e(TAG, "><ServiceReturned: >" + t.getMessage());
                             progressDialog.dismiss();
                         }
                     });
-                }
-                else {
+                } else {
                     Snackbar.make(v, "Please enter a search term", Snackbar.LENGTH_SHORT).show();
                     progressDialog.dismiss();
                 }

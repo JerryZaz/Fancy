@@ -71,7 +71,7 @@ public class ThorRetroSearch extends Fragment {
         final THOR thor = retrofit.create(THOR.class);
         mButtonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
 
                 mInputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
                 String search = Utility.getStringBeforeBlank(mEditTextSearch.getText().toString());
@@ -105,6 +105,9 @@ public class ThorRetroSearch extends Fragment {
                                     toast.show();
                                 }
                             } finally {
+                                if(!response.isSuccess()){
+                                    Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
+                                }
                                 progressDialog.dismiss();
                             }
                         }
