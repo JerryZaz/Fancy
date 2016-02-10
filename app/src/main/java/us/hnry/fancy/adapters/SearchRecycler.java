@@ -21,7 +21,7 @@ import retrofit2.Retrofit;
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
-import us.hnry.fancy.data.StockService.ONESAPI;
+import us.hnry.fancy.data.StockService.SAPI;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Single;
 import us.hnry.fancy.models.Symbol;
@@ -77,8 +77,8 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
                                 .baseUrl(BASE_URL)
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .build();
-                        ONESAPI onesapi = retrofit.create(ONESAPI.class);
-                        Call<Single> call = onesapi.getQuotes(builtQuery, ENV, FORMAT);
+                        SAPI onesapi = retrofit.create(SAPI.class);
+                        Call<Single> call = onesapi.getSingleQuote(builtQuery, ENV, FORMAT);
                         call.enqueue(new Callback<Single>() {
                             @Override
                             public void onResponse(Response<Single> response) {

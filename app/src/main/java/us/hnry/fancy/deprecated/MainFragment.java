@@ -30,6 +30,7 @@ import us.hnry.fancy.utils.Utility;
  * Deprecated on 16/02/08 in favor of MainRetroFragment
  * that implements RetroFit
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class MainFragment extends Fragment {
 

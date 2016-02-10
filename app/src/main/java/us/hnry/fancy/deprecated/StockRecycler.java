@@ -20,6 +20,7 @@ import us.hnry.fancy.utils.Utility;
  * Deprecated on 16/02/08 in favor of RetroQuoteRecycler that
  * consumes the new Quote data model
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class StockRecycler extends RecyclerView.Adapter<StockRecycler.StockRecyclerViewHolder> {
 

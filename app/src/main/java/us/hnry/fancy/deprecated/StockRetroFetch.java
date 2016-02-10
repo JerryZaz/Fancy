@@ -20,6 +20,7 @@ import us.hnry.fancy.models.Quote;
  * Functionality moved to the Fragment because it was causing
  * the retrofit task to reach it's end with null data
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class StockRetroFetch {
     final String BASE_URL = BuildConfig.BASE_API_URL;

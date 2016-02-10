@@ -140,8 +140,8 @@ public class MainRetroFragment extends Fragment {
                                      .baseUrl(BASE_URL)
                                      .addConverterFactory(GsonConverterFactory.create())
                                      .build();
-                             StockService.ONESAPI onesapi = single.create(StockService.ONESAPI.class);
-                             Call<Single> call = onesapi.getQuotes(mBuiltQuery, ENV, FORMAT);
+                             StockService.SAPI onesapi = single.create(StockService.SAPI.class);
+                             Call<Single> call = onesapi.getSingleQuote(mBuiltQuery, ENV, FORMAT);
                              call.enqueue(new Callback<Single>() {
                                  @Override
                                  public void onResponse(Response<Single> response) {

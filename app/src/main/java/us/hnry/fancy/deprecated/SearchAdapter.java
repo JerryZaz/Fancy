@@ -16,6 +16,7 @@ import us.hnry.fancy.models.Symbol;
  * Created by Henry on 2/1/2016.
  *
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class SearchAdapter extends ArrayAdapter {
 

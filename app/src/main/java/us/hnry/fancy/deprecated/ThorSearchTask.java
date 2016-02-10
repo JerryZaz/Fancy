@@ -25,6 +25,7 @@ import us.hnry.fancy.models.Symbol;
  * Created by Henry on 2/1/2016.
  * Deprecated on 16/02/08 in favor of retrofit
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class ThorSearchTask extends AsyncTask<String, Void, ArrayList<Symbol>> {
 

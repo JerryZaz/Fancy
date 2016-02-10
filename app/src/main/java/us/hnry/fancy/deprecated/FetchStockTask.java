@@ -25,6 +25,7 @@ import us.hnry.fancy.utils.Utility;
  * Deprecated on 16/02/08 after removing all uses of it in favor
  * of Retrofit
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class FetchStockTask extends AsyncTask<String, Void, ArrayList<Stock>> {
 

@@ -87,8 +87,8 @@ public class SymbolRetroSearch extends Fragment {
                             .baseUrl(BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create())
                             .build();
-                    StockService.ONESAPI onesapi = retrofit.create(StockService.ONESAPI.class);
-                    Call<Single> call = onesapi.getQuotes(builtQuery, ENV, FORMAT);
+                    StockService.SAPI onesapi = retrofit.create(StockService.SAPI.class);
+                    Call<Single> call = onesapi.getSingleQuote(builtQuery, ENV, FORMAT);
                     call.enqueue(new Callback<Single>() {
                         @Override
                         public void onResponse(Response<Single> response) {

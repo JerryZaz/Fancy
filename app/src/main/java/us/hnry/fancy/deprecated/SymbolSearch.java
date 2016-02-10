@@ -28,6 +28,7 @@ import us.hnry.fancy.utils.Utility;
  * Deprecated on 16/02/08 in favor of SymbolRetroSearch
  * which implements Retrofit instead of ASyncTask
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class SymbolSearch extends Fragment {
 

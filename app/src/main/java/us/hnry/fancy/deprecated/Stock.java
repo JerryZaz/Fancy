@@ -9,6 +9,7 @@ import android.os.Parcelable;
  * Deprecated on 16/02/08 in favor of a new Quote model class
  * compatible with Retrofit
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class Stock implements Parcelable {
 

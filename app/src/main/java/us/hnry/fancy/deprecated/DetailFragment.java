@@ -40,6 +40,7 @@ import us.hnry.fancy.views.DividerItemDecoration;
  * that uses the new Quote model class
  */
 
+@SuppressWarnings("ALL")
 @Deprecated
 public class DetailFragment extends Fragment {
     Map<String, String> map;

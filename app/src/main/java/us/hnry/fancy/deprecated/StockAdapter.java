@@ -17,6 +17,7 @@ import us.hnry.fancy.utils.Utility;
  * Created by Henry on 1/31/2016.
  *
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class StockAdapter extends ArrayAdapter {
 

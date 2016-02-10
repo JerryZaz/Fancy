@@ -34,6 +34,7 @@ import us.hnry.fancy.utils.Utility;
  * Created by Henry on 2/8/2016.
  * Removed from the SearchActivity class
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class ThorSearch extends Fragment {
 

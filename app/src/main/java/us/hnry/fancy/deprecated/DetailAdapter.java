@@ -17,6 +17,7 @@ import us.hnry.fancy.utils.Utility;
  * Created by Henry on 2/1/2016.
  *
  */
+@SuppressWarnings("ALL")
 @Deprecated
 public class DetailAdapter extends ArrayAdapter {
 

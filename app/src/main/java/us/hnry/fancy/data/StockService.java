@@ -19,15 +19,11 @@ public class StockService {
                 @Query("env") String env,
                 @Query("format") String format
         );
-    }
-
-    public interface ONESAPI{
         @GET("v1/public/yql?")
-        Call<Single> getQuotes(
+        Call<Single> getSingleQuote(
                 @Query("q") String builtQuery,
                 @Query("env") String env,
                 @Query("format") String format
         );
     }
-
 }
