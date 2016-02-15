@@ -33,7 +33,13 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/8/2016.
- * Refactoring Thor Search to make use of Retrofit and RecyclerView
+ * Refactoring Thor Search to make use of Retrofit and RecyclerView,
+ * hence the inclusion of "Retro" to distinguish this class from RetroSearch
+ * which made requests to the Thor server using ASyncTask.
+ *
+ * The Thor service is used to find companies based on an input, it returns company names
+ * that match the search, along with their registered <b>Symbol</b>. This symbol is then
+ * used to do a <b>StockService</b> request to get the data related to this company.
  */
 public class ThorRetroSearch extends Fragment {
 
@@ -58,25 +64,37 @@ public class ThorRetroSearch extends Fragment {
         mEditTextSearch = (EditText) layout.findViewById(R.id.search_edit_text);
         mButtonSearch = (Button) layout.findViewById(R.id.search_button);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BuildConfig.THOR_BASE_API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
         searchAdapter = new SearchRecycler(mResults, getActivity());
         mRecyclerViewSearch = (RecyclerView) layout.findViewById(R.id.search_recycler_view);
         mRecyclerViewSearch.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerViewSearch.setAdapter(searchAdapter);
 
+        //Instantiate retrofit with the known attributes, the API URL
+        // and the GSonConverter because I know I'll be receiving a JSON back.
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BuildConfig.THOR_BASE_API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        //Use the retrofit object to generate an implementation of the THOR interface
         final THOR thor = retrofit.create(THOR.class);
+
         mButtonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-
+                //This code snippet hides the soft keyboard
+                //When implemented in a fragment, it must be instantiated in onActivityCreated
                 mInputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
+                // Thor doesn't react too well to multi-word requests, so I make use of a Utility
+                // method to fetch the first word and get rid of anything else
+                // @TODO: Validate against the user entering symbols and numbers
                 String search = Utility.getStringBeforeBlank(mEditTextSearch.getText().toString());
+                // Replace the text, a sort of warning to the user.
                 mEditTextSearch.setText(search);
+
                 if (!search.equals("")) {
+
                     final ProgressDialog progressDialog = new ProgressDialog(getActivity());
                     progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     progressDialog.setTitle("Collecting Results");
@@ -85,8 +103,19 @@ public class ThorRetroSearch extends Fragment {
                     progressDialog.setIndeterminate(true);
                     progressDialog.show();
 
+                    //Call to the service to make an HTTP request to the server
                     call = thor.getSymbols(search);
+
+                    // Execute the request asynchronously with a callback listener to fetch the
+                    // response or the error message (if any) while talking to the server,
+                    // creating the request, or processing the response.
                     call.enqueue(new Callback<ArrayList<Symbol>>() {
+
+                        /**
+                         * From the interface: Invoked for a received HTTP response.
+                         * @param response call .isSuccess to determine if the response indicates
+                         *                 success.
+                         */
                         @Override
                         public void onResponse(Response<ArrayList<Symbol>> response) {
                             try {
@@ -129,6 +158,7 @@ public class ThorRetroSearch extends Fragment {
     public void onStop() {
         super.onStop();
         if (call != null) {
+            //always...
             call.cancel();
         }
     }

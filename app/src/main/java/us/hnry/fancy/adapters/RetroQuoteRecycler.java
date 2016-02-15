@@ -18,13 +18,21 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/8/2016.
+ * Remastered StockRecycler to handle RecyclerView and its click events.
  *
+ * Name of the class also makes reference to the Retrofit implementation that fetches
+ * the data onto the new Quote model class.
  */
 public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.RetroQuoteViewHolder> {
 
     private ArrayList<Quote.SingleQuote> mResults;
     private Context mContext;
 
+    /**
+     * Constructor.
+     * @param results ArrayList of SingleQuote objects
+     * @param context the context.
+     */
     public RetroQuoteRecycler(ArrayList<Quote.SingleQuote> results, Context context) {
         this.mResults = results;
         this.mContext = context;
@@ -32,6 +40,7 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
 
     @Override
     public int getItemViewType(int position) {
+        // work-around to get the item being clicked on
         return position;
     }
 
@@ -77,6 +86,10 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
         return mResults != null ? mResults.size() : 0;
     }
 
+    /**
+     * Helper method that updates the data displayed in the recycler view
+     * @param param the new information to be displayed
+     */
     public void swapList(ArrayList<Quote.SingleQuote> param) {
         if(mResults != null){
             mResults.clear();
@@ -112,6 +125,9 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
             mListener.OnItemClick(v);
         }
 
+        /**
+         * Interface to define the OnClick events of the recycler view
+         */
         public interface RetroQuoteViewHolderClicks{
             void OnItemClick(View caller);
         }

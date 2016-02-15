@@ -30,13 +30,19 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/8/2016.
- * Remastered SearchAdapter to handle Recycler View
+ * Remastered SearchAdapter to handle Recycler View and its Click events.
+ * Implements RecyclerView Adapter and RecyclerView ViewHolder
  */
 public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRecyclerViewHolder> {
 
     private ArrayList<Symbol> mResults;
     private Context mContext;
 
+    /**
+     * Adapter constructor.
+     * @param param The results of a Thor Search.
+     * @param context the context.
+     */
     public SearchRecycler(ArrayList<Symbol> param, Context context) {
         this.mResults = param;
         this.mContext = context;
@@ -44,6 +50,7 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
 
     @Override
     public int getItemViewType(int position) {
+        // Work-around to get the item from the list of results in the onClick event
         return position;
     }
 
@@ -51,6 +58,7 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
     public SearchRecyclerViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_search, parent, false);
+
         return new SearchRecyclerViewHolder(
                 itemView,
                 new SearchRecyclerViewHolder.ThorViewHolderClicks() {
@@ -69,32 +77,60 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
                         final String ENV = BuildConfig.ENV;
                         final String FORMAT = "json";
 
+                        //Apply the work-around to get a single ite,
                         Symbol symbol = mResults.get(viewType);
+
+                        //Call the Utility QuoteQueryBuilder class
+                        // to build a query with the result symbol
                         QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbol.getSymbol());
                         String builtQuery = queryBuilder.build();
 
+                        //Get a Retrofit instance
                         Retrofit retrofit = new Retrofit.Builder()
                                 .baseUrl(BASE_URL)
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .build();
+
+                        //Use the retrofit instance to generate an implementation of the
+                        // StockAPI interface
                         SAPI onesapi = retrofit.create(SAPI.class);
+
+                        //Call to the service to make an HTTP request to the server
                         Call<Single> call = onesapi.getSingleQuote(builtQuery, ENV, FORMAT);
+
+                        // Execute the request asynchronously with a callback listener to fetch the
+                        // response or the error message (if any) while talking to the server,
+                        // creating the request, or processing the response.
                         call.enqueue(new Callback<Single>() {
+
+                            /**
+                             * From the interface: Invoked for a received HTTP response.
+                             * @param response call .isSuccess to determine if the response indicates
+                             *                 success.
+                             */
                             @Override
                             public void onResponse(Response<Single> response) {
                                 try {
-                                    Quote.SingleQuote quote = response.body().query.results.getQuote();
-                                    Intent launchDetail = new Intent(caller.getContext(), DetailActivity.class);
+                                    // Dig into the response, which holds an instance of the Single
+                                    // model class, to fetch the actual Quote.
+                                    Quote.SingleQuote quote = response.body().query.results
+                                            .getQuote();
+
+                                    Intent launchDetail
+                                            = new Intent(caller.getContext(), DetailActivity.class);
                                     launchDetail.putExtra(Utility.QUOTE_INTENT, quote);
                                     caller.getContext().startActivity(launchDetail);
+
                                 } catch (NullPointerException e) {
                                     Log.v("Catch", "Reached.");
                                     Toast toast = null;
                                     if (response.code() == 401) {
-                                        toast = Toast.makeText(caller.getContext(), "Unauthenticated", Toast.LENGTH_SHORT);
+                                        toast = Toast.makeText(caller.getContext(),
+                                                "Unauthenticated", Toast.LENGTH_SHORT);
                                     } else if (response.code() >= 400) {
                                         toast = Toast.makeText(caller.getContext(), "Client error "
-                                                + response.code() + " " + response.message(), Toast.LENGTH_SHORT);
+                                                + response.code() + " " + response.message(),
+                                                Toast.LENGTH_SHORT);
                                     }
                                     if (toast != null) {
                                         toast.show();
@@ -129,6 +165,10 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
         return mResults != null ? mResults.size() : 0;
     }
 
+    /**
+     * Helper method that updates the data displayed in the recycler view
+     * @param param the new information to be displayed
+     */
     public void swapList(ArrayList<Symbol> param) {
         if (mResults != null) {
             mResults.clear();
@@ -157,6 +197,9 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
             mListener.onItemClick(v);
         }
 
+        /**
+         * Interface to define the OnClick events of the recycler view
+         */
         public interface ThorViewHolderClicks {
             void onItemClick(View caller);
         }

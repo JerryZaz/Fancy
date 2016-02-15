@@ -21,6 +21,11 @@ public class DetailRecycler extends RecyclerView.Adapter<DetailRecycler.DetailRe
     private ArrayList<String> mKeys;
     private Map<String, String> mMap;
 
+    /**
+     * The RecyclerView in the detail will be populated by a Map representation of a SingleQuote
+     * @param keys being the list of variables of the Model class, as they were stored in the Map
+     * @param map representation of all the instance variables and instance values.
+     */
     public DetailRecycler(ArrayList<String> keys, Map<String, String> map) {
         mKeys = keys;
         mMap = map;

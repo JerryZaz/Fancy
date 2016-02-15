@@ -38,16 +38,13 @@ import us.hnry.fancy.views.DividerItemDecoration;
 
 /**
  * Created by Henry on 2/8/2016.
- *
+ * Remastered Detail Fragment that consumes a SingleQuote object to
+ * instantiate a RecyclerViewAdapter to feed the RecyclerView.
  */
 public class DetailQuoteFragment extends Fragment {
-    private Map<String, String> map;
-    private ArrayList<String> keys;
-    private Method[] methods;
 
     private RecyclerView mDetailRecyclerView;
     private FloatingActionButton fab;
-    private FloatingActionButton shareFab;
 
     private SingleQuote fromIntent;
     private Set<String> mSetOfStocks;
@@ -78,7 +75,7 @@ public class DetailQuoteFragment extends Fragment {
         SharedPreferences preferences = getActivity().getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = preferences.edit();
 
-        shareFab = (FloatingActionButton) getActivity().findViewById(R.id.share_fab);
+        FloatingActionButton shareFab = (FloatingActionButton) getActivity().findViewById(R.id.share_fab);
         shareFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -189,22 +186,30 @@ public class DetailQuoteFragment extends Fragment {
         return layout;
     }
 
+    /**
+     * Takes the parcelable SingleQuote received, fetches its individual fields to
+     * get an instance of the Adapter and populate the RecyclerView.
+     * @param quote to be consumed
+     * @return RecyclerViewAdapter
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
     private DetailRecycler consumeParcelableQuoteFromIntent(SingleQuote quote)
             throws InvocationTargetException, IllegalAccessException {
-        keys = new ArrayList<>();
-        methods = quote.getClass().getMethods();
-        map = new HashMap<>();
+        ArrayList<String> keys = new ArrayList<>();
+        Method[] methods = quote.getClass().getMethods();
+        Map<String, String> map = new HashMap<>();
 
-        for(Method m : methods){
-            if(m.getName().startsWith("get")){
+        for (Method m : methods) {
+            if (m.getName().startsWith("get")) {
                 String name = m.getName().substring(3);
-                if(!name.equals("Class")){
+                if (!name.equals("Class")) {
                     String value = String.valueOf(m.invoke(quote));
-                    if(!value.equals("null")) {
-                        if(!name.equals("LastTradeWithTime")) {
+                    if (!value.equals("null")) {
+                        if (!name.equals("LastTradeWithTime")) {
                             map.put(name, value);
                             keys.add(name);
-                        } else{
+                        } else {
                             value = Utility.removeXMLTagsFromLastTradeWithTime(value);
                             map.put(name, value);
                             keys.add(name);

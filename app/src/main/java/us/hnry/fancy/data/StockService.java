@@ -8,10 +8,20 @@ import us.hnry.fancy.models.Single;
 
 /**
  * Created by Henry on 2/7/2016.
- * Retrofit interface
+ * This class contains the interface for the Endpoint requests
+ * that the server can handle.
  */
 public class StockService {
 
+    /**
+     * Retrofit will turn the HTTP API into a Java interface that
+     * contains the Endpoints that the server can handle.
+     * Each HTTP Request is an Endpoint.
+     *
+     * Two endpoints with the same annotations used as a counter-measure
+     * to the fact that the server returns two different formats when
+     * a single item is queried.
+     */
     public interface SAPI {
         @GET("v1/public/yql?")
         Call<Quote> getQuotes(
