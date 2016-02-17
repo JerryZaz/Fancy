@@ -143,7 +143,7 @@ public class ThorRetroSearch extends Fragment {
 
                         @Override
                         public void onFailure(Throwable t) {
-                            Log.e("getSymbols threw ", t.getMessage());
+                            Log.e("getSymbols threw ", "" + t.getMessage());
                         }
                     });
                 } else {
