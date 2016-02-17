@@ -35,6 +35,7 @@ public class Utility {
             "FB", "TSLA", "T", "TMUS", "YHOO", "NFLX"};
     public static final double DEFAULT_DOUBLE = -1.23;
     public static final long DEFAULT_LONG = -1;
+    public static final String BROADCAST = "us.hnry.fancy.refresher";
 
     static {
         STOCK_INTENT = "intent_parcelable_stock";
