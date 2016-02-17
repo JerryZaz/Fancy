@@ -1,6 +1,7 @@
 package us.hnry.fancy.adapters;
 
 import android.app.Fragment;
+import android.content.Context;
 
 import us.hnry.fancy.fragments.SymbolRetroSearch;
 import us.hnry.fancy.fragments.ThorRetroSearch;
@@ -10,9 +11,16 @@ import us.hnry.fancy.fragments.ThorRetroSearch;
  */
 public class SearchPagerAdapter extends AndroidPagerAdapter {
 
+    final int PAGE_COUNT = 2;
+    private String tabTitles[] = new String[] {
+            "Thor Search",
+            "Symbol Search"
+    };
+    private Context context;
 
-    public SearchPagerAdapter(android.app.FragmentManager fm) {
+    public SearchPagerAdapter(android.app.FragmentManager fm, Context context) {
         super(fm);
+        this.context = context;
     }
 
     @Override
@@ -31,20 +39,11 @@ public class SearchPagerAdapter extends AndroidPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        String title = "";
-        switch (position){
-            case 0:
-                title = "Thor Search";
-                break;
-            case 1:
-                title = "Symbol Search";
-                break;
-        }
-        return title;
+        return tabTitles[position];
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return PAGE_COUNT;
     }
 }

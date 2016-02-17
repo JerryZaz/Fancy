@@ -7,24 +7,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
+        android:background="@color/colorPrimary"
         android:gravity="center_horizontal"
-        android:background="@color/colorPrimary">
-        <TextView
-            android:id="@+id/search_text_view_warning"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Entering more than one word might lower your chances to get a match."
-            android:textColor="@android:color/white"/>
+        android:orientation="vertical"
+        android:padding="16dp">
+
         <EditText
             android:id="@+id/search_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Company Lookup"
-            android:textColor="@android:color/white"
-            android:textColorHint="@android:color/white"
-            android:inputType="textNoSuggestions" />
+            android:inputType="textNoSuggestions"
+            android:textColor="@android:color/white" />
         <LinearLayout
             style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
@@ -35,7 +28,9 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Search" />
+                android:text="Search"
+                android:textSize="20sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>

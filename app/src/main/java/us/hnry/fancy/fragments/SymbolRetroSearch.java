@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,7 +39,6 @@ import us.hnry.fancy.utils.Utility;
 public class SymbolRetroSearch extends Fragment {
 
     final static String TAG = SymbolRetroSearch.class.getSimpleName();
-    private TextView mTextView;
     private EditText mEditTextSearch;
     private Button mButtonSearch;
     private Intent mLaunchDetail;
@@ -56,10 +54,9 @@ public class SymbolRetroSearch extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_search_recycler, container, false);
-        mTextView = (TextView) layout.findViewById(R.id.search_text_view_warning);
-        mTextView.setText("Using Symbol search. To search by company, go back to the main screen and use Thor search.");
+
         mEditTextSearch = (EditText) layout.findViewById(R.id.search_edit_text);
-        mEditTextSearch.setHint("Company Symbol");
+        mEditTextSearch.setHint("Company Symbol (e.g. AMZN)");
         mButtonSearch = (Button) layout.findViewById(R.id.search_button);
 
         mButtonSearch = (Button) layout.findViewById(R.id.search_button);

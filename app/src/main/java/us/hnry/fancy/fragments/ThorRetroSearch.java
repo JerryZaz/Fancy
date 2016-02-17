@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -30,6 +31,7 @@ import us.hnry.fancy.adapters.SearchRecycler;
 import us.hnry.fancy.data.ThorSearchService.THOR;
 import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.utils.Utility;
+import us.hnry.fancy.views.DividerItemDecoration;
 
 /**
  * Created by Henry on 2/8/2016.
@@ -62,11 +64,14 @@ public class ThorRetroSearch extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_search_recycler, container, false);
         mEditTextSearch = (EditText) layout.findViewById(R.id.search_edit_text);
+        mEditTextSearch.setHint("Company Lookup (e.g. Amazon)");
         mButtonSearch = (Button) layout.findViewById(R.id.search_button);
 
         searchAdapter = new SearchRecycler(mResults, getActivity());
         mRecyclerViewSearch = (RecyclerView) layout.findViewById(R.id.search_recycler_view);
         mRecyclerViewSearch.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerViewSearch.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerViewSearch.addItemDecoration(new DividerItemDecoration(getActivity(), null));
         mRecyclerViewSearch.setAdapter(searchAdapter);
 
         //Instantiate retrofit with the known attributes, the API URL

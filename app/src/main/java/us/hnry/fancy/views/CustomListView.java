@@ -12,6 +12,7 @@ import android.widget.ListView;
  * Created by Henry on 2/2/2016.
  *
  */
+@SuppressWarnings("ALL")
 public class CustomListView extends ListView {
 
     private static final String TAG = CustomListView.class.getName();
