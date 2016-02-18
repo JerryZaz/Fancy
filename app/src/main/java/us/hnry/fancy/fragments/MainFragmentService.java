@@ -10,6 +10,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import us.hnry.fancy.R;
+import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.services.Refresh;
@@ -38,6 +40,8 @@ public class MainFragmentService extends Fragment {
 
     @Bind(R.id.fragment_main_recycler_view)
     RecyclerView mRecyclerView;
+
+    private FloatingActionButton mSearchFab;
 
     private ArrayList<Quote.SingleQuote> mQuotes;
     private RetroQuoteRecycler mAdapter;
@@ -112,6 +116,14 @@ public class MainFragmentService extends Fragment {
         runningInstance = this;
         View layout = inflater.inflate(R.layout.fragment_main_recycler, container, false);
         ButterKnife.bind(this, layout);
+
+        mSearchFab = (FloatingActionButton) getActivity().findViewById(R.id.search_fab);
+        mSearchFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), SearchActivity.class).putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
+            }
+        });
 
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setTitle("Setting up something fancy!");
