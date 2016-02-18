@@ -6,4 +6,5 @@
     <color name="colorWhite">#FFFFFF</color>
 
     <color name="currentAskGreen">#008E15</color>
+    <color name="tabIndicatorColor">#50000000</color>
 </resources>

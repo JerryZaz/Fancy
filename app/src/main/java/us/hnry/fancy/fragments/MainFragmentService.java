@@ -129,7 +129,7 @@ public class MainFragmentService extends Fragment {
         mProgressDialog.setTitle("Setting up something fancy!");
         mProgressDialog.setMessage("Connecting to the service...");
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mProgressDialog.setCancelable(true);
+        mProgressDialog.setCancelable(false);
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.show();
 
