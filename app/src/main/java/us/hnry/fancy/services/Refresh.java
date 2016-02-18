@@ -28,6 +28,7 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/17/2016.
+ *
  */
 public class Refresh extends Service implements RefresherControls {
 
@@ -61,17 +62,17 @@ public class Refresh extends Service implements RefresherControls {
         start(new UpdateListener() {
             @Override
             public void onUpdate(ArrayList<Quote.SingleQuote> lastTime) {
-                //Toast.makeText(getApplicationContext(), lastTime.get(0).getAsk(), Toast.LENGTH_LONG).show();
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction(Utility.BROADCAST);
                 broadcastIntent.putExtra(Utility.QUOTE_INTENT, lastTime);
                 sendBroadcast(broadcastIntent);
             }
         });
-        Runnable runnable = new Runnable() {
+        new Thread() {
             @Override
             public void run() {
                 while (isRunning) {
+
                     refreshMain();
                     long futureTime = System.currentTimeMillis() + MIN_UPDATE_TIME;
                     while (System.currentTimeMillis() < futureTime)
@@ -84,9 +85,9 @@ public class Refresh extends Service implements RefresherControls {
                         }
                 }
             }
-        };
-        Thread fetcher = new Thread(runnable);
-        fetcher.start();
+        }.start();
+        /*Thread fetcher = new Thread(runnable);
+        fetcher.start();*/
         return Service.START_STICKY;
     }
 
@@ -94,14 +95,12 @@ public class Refresh extends Service implements RefresherControls {
     public void start() {
         if (isRunning) return;
         isRunning = true;
-        //TODO: start getting updates
         lastTime = System.currentTimeMillis();
     }
 
     @Override
     public void stop() {
         if (isRunning) {
-            //TODO: implement
             isRunning = false;
             mListener = null;
         }
@@ -124,15 +123,6 @@ public class Refresh extends Service implements RefresherControls {
         if (preferences == null) {
             preferences = getApplicationContext().getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
         }
-
-        /*final ProgressDialog progressDialog = new ProgressDialog(getApplicationContext());
-        progressDialog.setTitle("Refreshing your data");
-        progressDialog.setMessage("We're almost there!");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setCancelable(false);
-        progressDialog.setIndeterminate(true);
-        progressDialog.show();*/
-
         // Query build upon the user's list of tracked companies, or the default sef it no
         // user data is found.
         final String[] symbolsToQuery =
@@ -176,6 +166,7 @@ public class Refresh extends Service implements RefresherControls {
                         //mAdapter.swapList(mQuotes);
                         mListener.onUpdate(mQuotes);
                         Log.v(LOG_TAG, "Refreshed");
+
                     } catch (NullPointerException e) {
                         Log.v("Catch", "Reached.");
                         if (response.code() == 401) {
@@ -186,7 +177,6 @@ public class Refresh extends Service implements RefresherControls {
                         }
 
                     } finally {
-                        //progressDialog.dismiss();
                     }
                 }
 
@@ -203,7 +193,7 @@ public class Refresh extends Service implements RefresherControls {
         if (symbolsToQuery.length == 1) {
             // This IF is so that the server is not queried twice in the
             // event that the query is actually malformed
-            //progressDialog.show();
+
 
             // We already have an instance of the service, we'll use it
             // to make another HTTP request, this time using a different
@@ -232,14 +222,12 @@ public class Refresh extends Service implements RefresherControls {
                         }
 
                     } finally {
-                        //progressDialog.dismiss();
                     }
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
                     Log.e("getQuotes threw ", t.getMessage());
-                    //progressDialog.dismiss();
                 }
             });
         }
