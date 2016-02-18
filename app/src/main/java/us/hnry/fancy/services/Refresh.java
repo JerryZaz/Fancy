@@ -40,7 +40,7 @@ public class Refresh extends Service implements RefresherControls {
     private final IBinder mBinder = new LocalBinder();
     ArrayList<Quote.SingleQuote> mQuotes;
     private long lastTime;
-    private boolean isRunning;
+    private volatile boolean isRunning;
     private UpdateListener mListener;
     private SharedPreferences preferences;
     private String mBuiltQuery;
@@ -55,6 +55,10 @@ public class Refresh extends Service implements RefresherControls {
     public boolean onUnbind(Intent intent) {
         stop();
         return super.onUnbind(intent);
+    }
+
+    public void terminate(){
+        isRunning = false;
     }
 
     @Override

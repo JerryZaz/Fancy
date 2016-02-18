@@ -103,6 +103,7 @@ public class MainFragmentService extends Fragment {
     public void unbind() {
         Log.v(LOG_TAG, "unbinding");
         if (connected) {
+            mRefreshService.terminate();
             getActivity().stopService(new Intent(getActivity(), Refresh.class));
             getActivity().unbindService(mConnection);
             connected = false;
