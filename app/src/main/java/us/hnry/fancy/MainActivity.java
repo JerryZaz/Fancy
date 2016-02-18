@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static final String FRAGMENT_TAG_MAIN_LIST = "fragment_main_list";
+    public static boolean sRefresherBinding = false;
     private MainFragmentService mMainFragment;
 
     protected void onCreate(Bundle savedInstanceState) {

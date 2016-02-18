@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import us.hnry.fancy.MainActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
@@ -46,12 +47,15 @@ public class MainFragmentService extends Fragment {
     private ArrayList<Quote.SingleQuote> mQuotes;
     private RetroQuoteRecycler mAdapter;
     private Refresh mRefreshService;
+    private Refresh.LocalBinder binder;
     private boolean connected;
     private ProgressDialog mProgressDialog;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Refresh.LocalBinder binder = (Refresh.LocalBinder) service;
+            if(binder != null) binder = null;
+            binder = (Refresh.LocalBinder) service;
+            if(mRefreshService != null) mRefreshService.terminate();
             mRefreshService = binder.getService();
             connected = true;
             mProgressDialog.setTitle("Refreshing your data...");
@@ -91,8 +95,9 @@ public class MainFragmentService extends Fragment {
     }
 
     public void bind() {
+        if(connected || MainActivity.sRefresherBinding) return;
+        MainActivity.sRefresherBinding = true;
         Log.v(LOG_TAG, "binding...");
-        if(connected) return;
         mProgressDialog.setTitle("Service Connected!");
         mProgressDialog.setMessage("We're almost there!");
         Intent bindingIntent = new Intent(getActivity(), Refresh.class);
@@ -104,8 +109,8 @@ public class MainFragmentService extends Fragment {
         Log.v(LOG_TAG, "unbinding");
         if (connected) {
             mRefreshService.terminate();
-            getActivity().stopService(new Intent(getActivity(), Refresh.class));
             getActivity().unbindService(mConnection);
+            getActivity().stopService(new Intent(getActivity(), Refresh.class));
             connected = false;
         }
     }
@@ -130,7 +135,7 @@ public class MainFragmentService extends Fragment {
         mProgressDialog.setTitle("Setting up something fancy!");
         mProgressDialog.setMessage("Connecting to the service...");
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mProgressDialog.setCancelable(false);
+        mProgressDialog.setCancelable(true);
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.show();
 
@@ -156,8 +161,8 @@ public class MainFragmentService extends Fragment {
             if(MainFragmentService.getInstance() != null) {
                 MainFragmentService.getInstance().mQuotes = intent.getParcelableArrayListExtra(Utility.QUOTE_INTENT);
                 MainFragmentService.getInstance().mAdapter.swapList(MainFragmentService.getInstance().mQuotes);
-                //Toast.makeText(context, MainFragmentService.getInstance().mQuotes.get(0).getAsk(), Toast.LENGTH_LONG).show();
                 Log.v(LOG_TAG, "Package received");
+                MainActivity.sRefresherBinding = false;
             }
         }
     }
