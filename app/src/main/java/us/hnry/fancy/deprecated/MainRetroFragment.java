@@ -1,4 +1,4 @@
-package us.hnry.fancy.fragments;
+package us.hnry.fancy.deprecated;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -40,6 +40,9 @@ import us.hnry.fancy.utils.Utility;
  * Created by Henry on 2/7/2016.
  * Spin of MainFragment implementing Retrofit instead of ASyncTask
  */
+
+@SuppressWarnings("ALL")
+@Deprecated
 public class MainRetroFragment extends Fragment {
     final String BASE_URL = BuildConfig.BASE_API_URL;
     final String ENV = BuildConfig.ENV;

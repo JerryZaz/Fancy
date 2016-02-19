@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,36 +38,39 @@ public class Refresh extends Service implements RefresherControls {
     private static final String LOG_TAG = Refresh.class.getSimpleName();
 
     private final IBinder mBinder = new LocalBinder();
-    private Thread fetcher;
     private volatile boolean isRunning;
-    private UpdateListener mListener;
-    private SharedPreferences preferences;
 
+    private SharedPreferences preferences;
     private ArrayList<Quote.SingleQuote> mQuotes;
+
+    private ReentrantLock mLock;
+    private Handler mHandler;
+    private List<UpdateListener> mListeners;
 
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
-            while (isRunning) {
-
-                refreshMain();
-                long futureTime = System.currentTimeMillis() + MIN_UPDATE_TIME;
-                while (System.currentTimeMillis() < futureTime)
-                    synchronized (this) {
-                        try {
-                            wait(futureTime - System.currentTimeMillis());
-                            Log.v(LOG_TAG, "Waiting");
-                        } catch (Exception ignored) {
-                        }
-                    }
-            }
-            try {
-                fetcher.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            refreshMain();
+            if (mHandler != null)
+                mHandler.postDelayed(this, MIN_UPDATE_TIME);
         }
     };
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mLock = new ReentrantLock();
+        mListeners = new ArrayList<>();
+        mHandler = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (isRunning) stop();
+        mHandler.removeCallbacks(mRunnable);
+        mHandler = null;
+    }
 
     @Nullable
     @Override
@@ -77,10 +82,6 @@ public class Refresh extends Service implements RefresherControls {
     public boolean onUnbind(Intent intent) {
         stop();
         return super.onUnbind(intent);
-    }
-
-    public void terminate() {
-        isRunning = false;
     }
 
     @Override
@@ -95,8 +96,10 @@ public class Refresh extends Service implements RefresherControls {
             }
         });
 
-        fetcher = new Thread(mRunnable);
-        fetcher.start();
+        if (mHandler == null) {
+            mHandler = new Handler();
+            mHandler.post(mRunnable);
+        }
 
         return Service.START_STICKY;
     }
@@ -108,17 +111,44 @@ public class Refresh extends Service implements RefresherControls {
     }
 
     @Override
-    public void stop() {
-        if (isRunning) {
-            isRunning = false;
-            mListener = null;
-        }
+    public void start(UpdateListener listener) {
+        start();
+        registerListener(listener);
     }
 
     @Override
-    public void start(UpdateListener listener) {
-        start();
-        mListener = listener;
+    public void registerListener(UpdateListener listener) {
+        mLock.lock();
+        if (!mListeners.contains(listener))
+            mListeners.add(listener);
+        mLock.unlock();
+    }
+
+    @Override
+    public void unregisterListener(UpdateListener listener) {
+        mLock.lock();
+        if (mListeners.contains(listener))
+            mListeners.remove(listener);
+        mLock.unlock();
+    }
+
+    @Override
+    public void warnListeners(ArrayList<Quote.SingleQuote> newData) {
+        mLock.lock();
+        for (UpdateListener listener : mListeners) {
+            listener.onUpdate(newData);
+        }
+        mLock.unlock();
+    }
+
+    @Override
+    public void stop() {
+        if (isRunning) {
+            isRunning = false;
+            for (UpdateListener listener : mListeners) {
+                unregisterListener(listener);
+            }
+        }
     }
 
     /**
@@ -135,7 +165,6 @@ public class Refresh extends Service implements RefresherControls {
         final String FORMAT = "json";
 
         String mBuiltQuery;
-
 
         Log.v(LOG_TAG, "RefreshMain called");
         if (preferences == null) {
@@ -182,7 +211,8 @@ public class Refresh extends Service implements RefresherControls {
                         List<Quote.SingleQuote> asList = response.body().query.results.getQuote();
                         mQuotes = new ArrayList<>(asList);
                         //mAdapter.swapList(mQuotes);
-                        mListener.onUpdate(mQuotes);
+                        //mListener.onUpdate(mQuotes);
+                        warnListeners(mQuotes);
                         Log.v(LOG_TAG, "Refreshed");
 
                     } catch (NullPointerException e) {
@@ -226,7 +256,8 @@ public class Refresh extends Service implements RefresherControls {
                         mQuotes = new ArrayList<>();
                         mQuotes.add(quote);
                         //mAdapter.swapList(mQuotes);
-                        mListener.onUpdate(mQuotes);
+                        //mListener.onUpdate(mQuotes);
+                        warnListeners(mQuotes);
                         Log.v(LOG_TAG, "Refreshed");
                     } catch (NullPointerException e) {
                         Log.v("Catch", "Reached.");
