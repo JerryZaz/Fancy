@@ -28,22 +28,44 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/17/2016.
- *
+ * Service to update the data on the main screen automatically
  */
 public class Refresh extends Service implements RefresherControls {
 
     private static final long MIN_UPDATE_TIME = 1000 * 60;
     private static final String LOG_TAG = Refresh.class.getSimpleName();
-    final String BASE_URL = BuildConfig.BASE_API_URL;
-    final String ENV = BuildConfig.ENV;
-    final String FORMAT = "json";
+
     private final IBinder mBinder = new LocalBinder();
-    ArrayList<Quote.SingleQuote> mQuotes;
-    private long lastTime;
+    private Thread fetcher;
     private volatile boolean isRunning;
     private UpdateListener mListener;
     private SharedPreferences preferences;
-    private String mBuiltQuery;
+
+    private ArrayList<Quote.SingleQuote> mQuotes;
+
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            while (isRunning) {
+
+                refreshMain();
+                long futureTime = System.currentTimeMillis() + MIN_UPDATE_TIME;
+                while (System.currentTimeMillis() < futureTime)
+                    synchronized (this) {
+                        try {
+                            wait(futureTime - System.currentTimeMillis());
+                            Log.v(LOG_TAG, "Waiting");
+                        } catch (Exception ignored) {
+                        }
+                    }
+            }
+            try {
+                fetcher.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     @Nullable
     @Override
@@ -57,7 +79,7 @@ public class Refresh extends Service implements RefresherControls {
         return super.onUnbind(intent);
     }
 
-    public void terminate(){
+    public void terminate() {
         isRunning = false;
     }
 
@@ -65,33 +87,17 @@ public class Refresh extends Service implements RefresherControls {
     public int onStartCommand(Intent intent, int flags, int startId) {
         start(new UpdateListener() {
             @Override
-            public void onUpdate(ArrayList<Quote.SingleQuote> lastTime) {
+            public void onUpdate(ArrayList<Quote.SingleQuote> newData) {
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction(Utility.BROADCAST);
-                broadcastIntent.putExtra(Utility.QUOTE_INTENT, lastTime);
+                broadcastIntent.putExtra(Utility.QUOTE_INTENT, newData);
                 sendBroadcast(broadcastIntent);
             }
         });
-        new Thread() {
-            @Override
-            public void run() {
-                while (isRunning) {
 
-                    refreshMain();
-                    long futureTime = System.currentTimeMillis() + MIN_UPDATE_TIME;
-                    while (System.currentTimeMillis() < futureTime)
-                        synchronized (this) {
-                            try {
-                                wait(futureTime - System.currentTimeMillis());
-                                Log.v(LOG_TAG, "Waiting");
-                            } catch (Exception ignored) {
-                            }
-                        }
-                }
-            }
-        }.start();
-        /*Thread fetcher = new Thread(runnable);
-        fetcher.start();*/
+        fetcher = new Thread(mRunnable);
+        fetcher.start();
+
         return Service.START_STICKY;
     }
 
@@ -99,7 +105,6 @@ public class Refresh extends Service implements RefresherControls {
     public void start() {
         if (isRunning) return;
         isRunning = true;
-        lastTime = System.currentTimeMillis();
     }
 
     @Override
@@ -122,7 +127,16 @@ public class Refresh extends Service implements RefresherControls {
      * the query upon the default list of symbols, with which a call to the server will be made
      * to fetch the most up-to-date data.
      */
+
+
     public void refreshMain() {
+        final String BASE_URL = BuildConfig.BASE_API_URL;
+        final String ENV = BuildConfig.ENV;
+        final String FORMAT = "json";
+
+        String mBuiltQuery;
+
+
         Log.v(LOG_TAG, "RefreshMain called");
         if (preferences == null) {
             preferences = getApplicationContext().getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
@@ -179,8 +193,6 @@ public class Refresh extends Service implements RefresherControls {
                             Log.e("getQuotes threw ", "Client error "
                                     + response.code() + " " + response.message());
                         }
-
-                    } finally {
                     }
                 }
 
@@ -224,8 +236,6 @@ public class Refresh extends Service implements RefresherControls {
                             Log.e("getQuotes threw ", "Client error "
                                     + response.code() + " " + response.message());
                         }
-
-                    } finally {
                     }
                 }
 
