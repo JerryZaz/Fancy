@@ -124,7 +124,7 @@ public class DetailFragment extends Fragment {
             }
         });
 
-        fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        fab = (FloatingActionButton) getActivity().findViewById(R.id.search_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

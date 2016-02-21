@@ -11,14 +11,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import us.hnry.fancy.fragments.MainRetroFragment;
+import us.hnry.fancy.fragments.MainFragmentService;
 import us.hnry.fancy.utils.Utility;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static final String FRAGMENT_TAG_MAIN_LIST = "fragment_main_list";
-    private MainRetroFragment mMainFragment;
+    public static boolean sRefresherBinding = false;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,14 +36,20 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getFragmentManager().beginTransaction().add(R.id.content_main_list_container,
-                new MainRetroFragment(), FRAGMENT_TAG_MAIN_LIST).commit();
+        MainFragmentService mainFragment;
+        if(savedInstanceState == null) {
+            mainFragment = new MainFragmentService();
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.content_main_list_container,
+                            mainFragment, FRAGMENT_TAG_MAIN_LIST)
+                    .commit();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mMainFragment = (MainRetroFragment) getFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN_LIST);
     }
 
     @Override
@@ -60,20 +66,18 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        return false;
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                if (mMainFragment != null) {
-                    mMainFragment.refreshMain();
-                }
+                Toast.makeText(this, "Auto Refresh Enabled", Toast.LENGTH_LONG).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

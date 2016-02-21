@@ -33,6 +33,13 @@
         <activity android:name=".SearchActivity"
             android:label="Search"
             android:parentActivityName=".MainActivity"/>
+        <service android:name=".services.Refresh"/>
+        <receiver android:name=".fragments.MainFragmentService$UpdateReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="us.hnry.fancy.refresher" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
