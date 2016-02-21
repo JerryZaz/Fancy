@@ -18,12 +18,16 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        getFragmentManager()
-                .beginTransaction()
-                .add(R.id.detail_container,
-                        new DetailQuoteFragment(),
-                        FRAGMENT_TAG_DETAIL)
-                .commit();
+        DetailQuoteFragment detailFragment;
+        if(savedInstanceState == null) {
+            detailFragment = new DetailQuoteFragment();
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.detail_container,
+                            detailFragment,
+                            FRAGMENT_TAG_DETAIL)
+                    .commit();
+        }
     }
 
     @Override

@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity
 
     static final String FRAGMENT_TAG_MAIN_LIST = "fragment_main_list";
     public static boolean sRefresherBinding = false;
-    private MainFragmentService mMainFragment;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,14 +36,20 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getFragmentManager().beginTransaction().add(R.id.content_main_list_container,
-                new MainFragmentService(), FRAGMENT_TAG_MAIN_LIST).commit();
+        MainFragmentService mainFragment;
+        if(savedInstanceState == null) {
+            mainFragment = new MainFragmentService();
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.content_main_list_container,
+                            mainFragment, FRAGMENT_TAG_MAIN_LIST)
+                    .commit();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mMainFragment = (MainFragmentService) getFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN_LIST);
     }
 
     @Override
