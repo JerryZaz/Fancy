@@ -67,7 +67,7 @@ public class ThorRetroSearch extends Fragment {
         mEditTextSearch.setHint("Company Lookup (e.g. Amazon)");
         mButtonSearch = (Button) layout.findViewById(R.id.search_button);
 
-        searchAdapter = new SearchRecycler(mResults, getActivity());
+        searchAdapter = new SearchRecycler(mResults);
         mRecyclerViewSearch = (RecyclerView) layout.findViewById(R.id.search_recycler_view);
         mRecyclerViewSearch.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerViewSearch.setItemAnimator(new DefaultItemAnimator());

@@ -18,12 +18,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.data.StockService;
 import us.hnry.fancy.models.Quote;
+import us.hnry.fancy.models.Quote.SingleQuote;
 import us.hnry.fancy.models.Single;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
@@ -41,7 +40,7 @@ public class Refresh extends Service implements RefresherControls {
     private volatile boolean isRunning;
 
     private SharedPreferences preferences;
-    private ArrayList<Quote.SingleQuote> mQuotes;
+    private ArrayList<SingleQuote> mQuotes;
 
     private ReentrantLock mLock;
     private Handler mHandler;
@@ -160,10 +159,8 @@ public class Refresh extends Service implements RefresherControls {
 
 
     public void refreshMain() {
-        final String BASE_URL = BuildConfig.BASE_API_URL;
         final String ENV = BuildConfig.ENV;
         final String FORMAT = "json";
-
         String mBuiltQuery;
 
         Log.v(LOG_TAG, "RefreshMain called");
@@ -179,19 +176,9 @@ public class Refresh extends Service implements RefresherControls {
         QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
         mBuiltQuery = queryBuilder.build();
 
-        // Get an instance of Retrofit.
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        // Use the retrofit object to generate an implementation of the
-        // StockAPI interface.
-        final StockService.SAPI sapi = retrofit.create(StockService.SAPI.class);
-
         if (symbolsToQuery.length > 1) {
-            //Call to the service to make an HTTP request to the server
-            Call<Quote> call = sapi.getQuotes(mBuiltQuery, ENV, FORMAT);
+            Call<Quote> call = StockService.Implementation.get(BuildConfig.BASE_API_URL)
+                    .getQuotes(mBuiltQuery, ENV, FORMAT);
 
             // Execute the request asynchronously with a callback listener to fetch the
             // response or the error message (if any) while talking to the server,
@@ -208,10 +195,8 @@ public class Refresh extends Service implements RefresherControls {
                     try {
                         // Dig into the response, which holds an instance of the Quote
                         // model class, to fetch the actual Quote.
-                        List<Quote.SingleQuote> asList = response.body().query.results.getQuote();
+                        List<SingleQuote> asList = response.body().query.results.getQuote();
                         mQuotes = new ArrayList<>(asList);
-                        //mAdapter.swapList(mQuotes);
-                        //mListener.onUpdate(mQuotes);
                         warnListeners(mQuotes);
                         Log.v(LOG_TAG, "Refreshed");
 
@@ -232,21 +217,19 @@ public class Refresh extends Service implements RefresherControls {
                 }
             });
         }
+
         // If the user is only tracking one symbol, the previous operation
         // will fail because the server will respond with an object
         // instead of the expected array, so the network request must be
         // handled with a different endpoint that expects an object
         if (symbolsToQuery.length == 1) {
+
             // This IF is so that the server is not queried twice in the
             // event that the query is actually malformed
 
+            Call<Single> call = StockService.Implementation.get(BuildConfig.BASE_API_URL)
+                    .getSingleQuote(mBuiltQuery, ENV, FORMAT);
 
-            // We already have an instance of the service, we'll use it
-            // to make another HTTP request, this time using a different
-            // Endpoint.
-            Call<Single> call = sapi.getSingleQuote(mBuiltQuery, ENV, FORMAT);
-
-            // Executing asynchronously
             call.enqueue(new Callback<Single>() {
                 @Override
                 public void onResponse(Response<Single> response) {
@@ -255,8 +238,6 @@ public class Refresh extends Service implements RefresherControls {
                                 .getQuote();
                         mQuotes = new ArrayList<>();
                         mQuotes.add(quote);
-                        //mAdapter.swapList(mQuotes);
-                        //mListener.onUpdate(mQuotes);
                         warnListeners(mQuotes);
                         Log.v(LOG_TAG, "Refreshed");
                     } catch (NullPointerException e) {
