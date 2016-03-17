@@ -32,6 +32,7 @@ public class SearchFragmentPager extends Fragment {
         ButterKnife.bind(this, layout);
         activitySearchPager.setAdapter(new SearchPagerAdapter(getFragmentManager(), getActivity()));
         mSlidingTabs.setupWithViewPager(activitySearchPager);
+        mSlidingTabs.setTabMode(TabLayout.MODE_FIXED);
         int searchSelector = getActivity().getIntent().getIntExtra(Utility.SEARCH_INTENT, 0);
         activitySearchPager.setCurrentItem(searchSelector, true);
         return layout;

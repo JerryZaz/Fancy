@@ -42,15 +42,10 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
         this.mResults = param;
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        // Work-around to get the item from the list of results in the onClick event
-        return position;
-    }
 
     @Override
     public SearchRecyclerViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
+        final View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_search, parent, false);
 
         return new SearchRecyclerViewHolder(
@@ -70,8 +65,7 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
                         final String ENV = BuildConfig.ENV;
                         final String FORMAT = "json";
 
-                        //Apply the work-around to get a single ite,
-                        Symbol symbol = mResults.get(viewType);
+                        Symbol symbol = (Symbol) itemView.getTag();
 
                         //Call the Utility QuoteQueryBuilder class
                         // to build a query with the result symbol

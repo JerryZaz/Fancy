@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.models.Quote;
+import us.hnry.fancy.models.Quote.SingleQuote;
 import us.hnry.fancy.utils.Utility;
 
 /**
@@ -25,7 +26,7 @@ import us.hnry.fancy.utils.Utility;
  */
 public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.RetroQuoteViewHolder> {
 
-    private ArrayList<Quote.SingleQuote> mResults;
+    private ArrayList<SingleQuote> mResults;
     private Context mContext;
 
     /**
@@ -39,20 +40,14 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
     }
 
     @Override
-    public int getItemViewType(int position) {
-        // work-around to get the item being clicked on
-        return position;
-    }
-
-    @Override
     public RetroQuoteViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
+        final View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_main_card, parent, false);
         return new RetroQuoteViewHolder(itemView, new RetroQuoteViewHolder.RetroQuoteViewHolderClicks() {
             @Override
             public void OnItemClick(View caller) {
                 Intent launchDetail = new Intent(caller.getContext(), DetailActivity.class);
-                launchDetail.putExtra(Utility.QUOTE_INTENT, mResults.get(viewType));
+                launchDetail.putExtra(Utility.QUOTE_INTENT, (SingleQuote) itemView.getTag());
                 caller.getContext().startActivity(launchDetail);
             }
         });
