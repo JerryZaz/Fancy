@@ -16,21 +16,24 @@ import us.hnry.fancy.R;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Quote.SingleQuote;
 import us.hnry.fancy.utils.Utility;
+import us.hnry.fancy.views.MainItemTouchCallback;
 
 /**
  * Created by Henry on 2/8/2016.
  * Remastered StockRecycler to handle RecyclerView and its click events.
- *
+ * <p/>
  * Name of the class also makes reference to the Retrofit implementation that fetches
  * the data onto the new Quote model class.
  */
-public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.RetroQuoteViewHolder> {
+public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.RetroQuoteViewHolder>
+        implements MainItemTouchCallback.ItemTouchHelperListener {
 
     private ArrayList<SingleQuote> mResults;
     private Context mContext;
 
     /**
      * Constructor.
+     *
      * @param results ArrayList of SingleQuote objects
      * @param context the context.
      */
@@ -65,7 +68,7 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
         holder.openTextView.setText(Utility.formatDouble(open));
         String ask = singleQuote.getAsk();
         holder.askTextView.setText(Utility.formatDouble(ask));
-        if(open != null && ask != null){
+        if (open != null && ask != null) {
             double difference = Utility.compareAskOpen(singleQuote);
             holder.askTextView.setTextColor(
                     difference > 0 ? mContext.getResources().getColor(R.color.currentAskGreen) :
@@ -83,20 +86,31 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
 
     /**
      * Helper method that updates the data displayed in the recycler view
+     *
      * @param param the new information to be displayed
      */
     public void swapList(ArrayList<Quote.SingleQuote> param) {
-        if(mResults != null){
+        if (mResults != null) {
             mResults.clear();
             mResults.addAll(param);
-        }
-        else {
+        } else {
             mResults = param;
         }
         notifyDataSetChanged();
     }
 
-    public static class RetroQuoteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    @Override
+    public void onItemSwiped(int adapterPosition) {
+        mResults.remove(mResults.get(adapterPosition));
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void onItemDragged() {
+
+    }
+
+    public static class RetroQuoteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView symbolTextView;
         public TextView nameTextView;
         public TextView closeTextView;
@@ -123,7 +137,7 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
         /**
          * Interface to define the OnClick events of the recycler view
          */
-        public interface RetroQuoteViewHolderClicks{
+        public interface RetroQuoteViewHolderClicks {
             void OnItemClick(View caller);
         }
     }

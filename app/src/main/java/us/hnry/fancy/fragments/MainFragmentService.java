@@ -14,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ import us.hnry.fancy.adapters.RetroQuoteRecycler;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.services.Refresh;
 import us.hnry.fancy.utils.Utility;
+import us.hnry.fancy.views.MainItemTouchCallback;
 
 /**
  * Created by Henry on 2/17/2016.
@@ -142,7 +144,12 @@ public class MainFragmentService extends Fragment {
         mAdapter = new RetroQuoteRecycler(mQuotes, getActivity());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
+
+        ItemTouchHelper.Callback callback = new MainItemTouchCallback(mAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(mRecyclerView);
         return layout;
     }
 
