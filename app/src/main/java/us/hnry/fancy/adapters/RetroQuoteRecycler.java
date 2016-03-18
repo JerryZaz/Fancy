@@ -13,10 +13,12 @@ import java.util.ArrayList;
 
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
+import us.hnry.fancy.data.PersistentSymbolsChangedListener;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Quote.SingleQuote;
+import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.utils.Utility;
-import us.hnry.fancy.views.MainItemTouchCallback;
+import us.hnry.fancy.views.MainItemTouchCallback.ItemTouchHelperListener;
 
 /**
  * Created by Henry on 2/8/2016.
@@ -26,10 +28,11 @@ import us.hnry.fancy.views.MainItemTouchCallback;
  * the data onto the new Quote model class.
  */
 public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.RetroQuoteViewHolder>
-        implements MainItemTouchCallback.ItemTouchHelperListener {
+        implements ItemTouchHelperListener {
 
     private ArrayList<SingleQuote> mResults;
     private Context mContext;
+    private PersistentSymbolsChangedListener mListener;
 
     /**
      * Constructor.
@@ -37,9 +40,10 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
      * @param results ArrayList of SingleQuote objects
      * @param context the context.
      */
-    public RetroQuoteRecycler(ArrayList<Quote.SingleQuote> results, Context context) {
-        this.mResults = results;
-        this.mContext = context;
+    public RetroQuoteRecycler(ArrayList<Quote.SingleQuote> results, Context context, PersistentSymbolsChangedListener listener) {
+        mResults = results;
+        mContext = context;
+        mListener = listener;
     }
 
     @Override
@@ -58,7 +62,7 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
 
     @Override
     public void onBindViewHolder(RetroQuoteViewHolder holder, int position) {
-        Quote.SingleQuote singleQuote = mResults.get(position);
+        SingleQuote singleQuote = mResults.get(position);
         holder.symbolTextView.setText(singleQuote.getSymbol());
         holder.nameTextView.setText(singleQuote.getName());
 
@@ -101,7 +105,9 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
 
     @Override
     public void onItemSwiped(int adapterPosition) {
-        mResults.remove(mResults.get(adapterPosition));
+        SingleQuote quote = mResults.get(adapterPosition);
+        mResults.remove(quote);
+        mListener.onSymbolRemoved(new Symbol(quote.getName(), quote.getSymbol()));
         notifyDataSetChanged();
     }
 

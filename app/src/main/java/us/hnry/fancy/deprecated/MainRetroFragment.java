@@ -28,9 +28,11 @@ import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
+import us.hnry.fancy.data.PersistentSymbolsChangedListener;
 import us.hnry.fancy.data.StockService;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Single;
+import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
@@ -41,7 +43,7 @@ import us.hnry.fancy.utils.Utility;
 
 @SuppressWarnings("ALL")
 @Deprecated
-public class MainRetroFragment extends Fragment {
+public class MainRetroFragment extends Fragment implements PersistentSymbolsChangedListener {
     final String BASE_URL = BuildConfig.BASE_API_URL;
     final String ENV = BuildConfig.ENV;
     final String FORMAT = "json";
@@ -64,7 +66,7 @@ public class MainRetroFragment extends Fragment {
             }
         });
 
-        mAdapter = new RetroQuoteRecycler(mQuotes, getActivity());
+        mAdapter = new RetroQuoteRecycler(mQuotes, getActivity(), this);
         RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.fragment_main_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -196,5 +198,15 @@ public class MainRetroFragment extends Fragment {
                          }
                      }
         );
+    }
+
+    @Override
+    public void onSymbolAdded(Symbol symbol) {
+
+    }
+
+    @Override
+    public void onSymbolRemoved(Symbol symbol) {
+
     }
 }

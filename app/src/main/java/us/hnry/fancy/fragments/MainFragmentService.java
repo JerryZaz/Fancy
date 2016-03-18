@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -21,6 +22,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,7 +32,9 @@ import us.hnry.fancy.MainActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
+import us.hnry.fancy.data.PersistentSymbolsChangedListener;
 import us.hnry.fancy.models.Quote;
+import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.services.Refresh;
 import us.hnry.fancy.utils.Utility;
 import us.hnry.fancy.views.MainItemTouchCallback;
@@ -36,7 +42,7 @@ import us.hnry.fancy.views.MainItemTouchCallback;
 /**
  * Created by Henry on 2/17/2016.
  */
-public class MainFragmentService extends Fragment {
+public class MainFragmentService extends Fragment implements PersistentSymbolsChangedListener {
 
     private static final String LOG_TAG = MainFragmentService.class.getSimpleName();
     private static MainFragmentService runningInstance;
@@ -47,6 +53,7 @@ public class MainFragmentService extends Fragment {
     private FloatingActionButton mSearchFab;
 
     private ArrayList<Quote.SingleQuote> mQuotes;
+    private Set<String> mSetOfStocks;
     private RetroQuoteRecycler mAdapter;
     private Refresh mRefreshService;
     private Refresh.LocalBinder binder;
@@ -141,7 +148,7 @@ public class MainFragmentService extends Fragment {
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.show();
 
-        mAdapter = new RetroQuoteRecycler(mQuotes, getActivity());
+        mAdapter = new RetroQuoteRecycler(mQuotes, getActivity(), this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setHasFixedSize(true);
@@ -157,6 +164,27 @@ public class MainFragmentService extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onSymbolAdded(Symbol symbol) {
+        /* Nothing yet */
+    }
+
+    @Override
+    public void onSymbolRemoved(Symbol symbol) {
+        SharedPreferences preferences = getActivity().getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        if(mSetOfStocks == null){
+            mSetOfStocks = preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
+                    new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS)));
+        }
+        if(mSetOfStocks.contains(symbol.getSymbol())){
+            mSetOfStocks.remove(symbol.getSymbol());
+            editor.clear();
+            editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET, mSetOfStocks);
+            editor.apply();
+        }
     }
 
     public static class UpdateReceiver extends BroadcastReceiver{
