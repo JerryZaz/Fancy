@@ -157,6 +157,13 @@ public class MainFragmentService extends Fragment {
         @Override
         public void onReceive(final Context context, final Intent intent) {
 
+            if(MainFragmentService.getInstance().mProgressDialog != null) MainFragmentService.getInstance().mProgressDialog.dismiss();
+            if(MainFragmentService.getInstance() != null) {
+                MainFragmentService.getInstance().mQuotes = intent.getParcelableArrayListExtra(Utility.QUOTE_INTENT);
+                MainFragmentService.getInstance().mAdapter.swapList(MainFragmentService.getInstance().mQuotes);
+                Log.v(LOG_TAG, "Package received");
+                MainActivity.sRefresherBinding = false;
+            }
         }
     }
 }
