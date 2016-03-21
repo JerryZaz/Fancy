@@ -28,7 +28,7 @@ import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
-import us.hnry.fancy.data.PersistentSymbolsChangedListener;
+import us.hnry.fancy.data.StockPresenter;
 import us.hnry.fancy.data.StockService;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Single;
@@ -43,7 +43,7 @@ import us.hnry.fancy.utils.Utility;
 
 @SuppressWarnings("ALL")
 @Deprecated
-public class MainRetroFragment extends Fragment implements PersistentSymbolsChangedListener {
+public class MainRetroFragment extends Fragment implements StockPresenter.PersistentSymbolsChangedListener {
     final String BASE_URL = BuildConfig.BASE_API_URL;
     final String ENV = BuildConfig.ENV;
     final String FORMAT = "json";

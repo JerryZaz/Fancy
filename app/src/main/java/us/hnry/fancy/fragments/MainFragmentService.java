@@ -32,7 +32,7 @@ import us.hnry.fancy.MainActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
-import us.hnry.fancy.data.PersistentSymbolsChangedListener;
+import us.hnry.fancy.data.StockPresenter;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.services.Refresh;
@@ -42,7 +42,7 @@ import us.hnry.fancy.views.MainItemTouchCallback;
 /**
  * Created by Henry on 2/17/2016.
  */
-public class MainFragmentService extends Fragment implements PersistentSymbolsChangedListener {
+public class MainFragmentService extends Fragment implements StockPresenter.PersistentSymbolsChangedListener {
 
     private static final String LOG_TAG = MainFragmentService.class.getSimpleName();
     private static MainFragmentService runningInstance;

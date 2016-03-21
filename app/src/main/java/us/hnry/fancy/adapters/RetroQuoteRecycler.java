@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
-import us.hnry.fancy.data.PersistentSymbolsChangedListener;
+import us.hnry.fancy.data.StockPresenter.PersistentSymbolsChangedListener;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Quote.SingleQuote;
 import us.hnry.fancy.models.Symbol;
