@@ -7,7 +7,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -22,9 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -53,8 +49,8 @@ public class MainFragmentService extends Fragment implements StockPresenter.Pers
     private FloatingActionButton mSearchFab;
 
     private ArrayList<Quote.SingleQuote> mQuotes;
-    private Set<String> mSetOfStocks;
     private RetroQuoteRecycler mAdapter;
+    private StockPresenter mPresenter;
     private Refresh mRefreshService;
     private Refresh.LocalBinder binder;
     private boolean connected;
@@ -132,6 +128,8 @@ public class MainFragmentService extends Fragment implements StockPresenter.Pers
         View layout = inflater.inflate(R.layout.fragment_main_recycler, container, false);
         ButterKnife.bind(this, layout);
 
+        mPresenter = new StockPresenter(getActivity(), this);
+
         mSearchFab = (FloatingActionButton) getActivity().findViewById(R.id.search_fab);
         mSearchFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,17 +171,9 @@ public class MainFragmentService extends Fragment implements StockPresenter.Pers
 
     @Override
     public void onSymbolRemoved(Symbol symbol) {
-        SharedPreferences preferences = getActivity().getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        if(mSetOfStocks == null){
-            mSetOfStocks = preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                    new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS)));
-        }
-        if(mSetOfStocks.contains(symbol.getSymbol())){
-            mSetOfStocks.remove(symbol.getSymbol());
-            editor.clear();
-            editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET, mSetOfStocks);
-            editor.apply();
+
+        if(mPresenter.isTracked(symbol)){
+            mPresenter.removeSymbol(symbol);
         }
     }
 
