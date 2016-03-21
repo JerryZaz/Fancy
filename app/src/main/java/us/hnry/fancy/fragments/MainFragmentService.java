@@ -21,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,19 +31,20 @@ import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
 import us.hnry.fancy.data.StockPresenter;
+import us.hnry.fancy.data.StockPresenter.PersistentSymbolsChangedListener;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.services.Refresh;
+import us.hnry.fancy.utils.ObservableObject;
 import us.hnry.fancy.utils.Utility;
 import us.hnry.fancy.views.MainItemTouchCallback;
 
 /**
  * Created by Henry on 2/17/2016.
  */
-public class MainFragmentService extends Fragment implements StockPresenter.PersistentSymbolsChangedListener {
+public class MainFragmentService extends Fragment implements PersistentSymbolsChangedListener, Observer {
 
     private static final String LOG_TAG = MainFragmentService.class.getSimpleName();
-    private static MainFragmentService runningInstance;
 
     @Bind(R.id.fragment_main_recycler_view)
     RecyclerView mRecyclerView;
@@ -73,10 +76,6 @@ public class MainFragmentService extends Fragment implements StockPresenter.Pers
             Log.v(LOG_TAG, "Service Crashed");
         }
     };
-
-    public static MainFragmentService getInstance() {
-        return runningInstance;
-    }
 
     @Override
     public void onResume() {
@@ -117,11 +116,12 @@ public class MainFragmentService extends Fragment implements StockPresenter.Pers
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setRetainInstance(true);
-        runningInstance = this;
+
         View layout = inflater.inflate(R.layout.fragment_main_recycler, container, false);
         ButterKnife.bind(this, layout);
 
         mPresenter = new StockPresenter(getActivity(), this);
+        ObservableObject.getInstance().addObserver(this);
 
         mSearchFab = (FloatingActionButton) getActivity().findViewById(R.id.search_fab);
         mSearchFab.setOnClickListener(new View.OnClickListener() {
@@ -170,17 +170,20 @@ public class MainFragmentService extends Fragment implements StockPresenter.Pers
         }
     }
 
+    @Override
+    public void update(Observable observable, Object data) {
+        ArrayList<Quote.SingleQuote> retrievedData = (ArrayList<Quote.SingleQuote>) data;
+        mAdapter.swapList(retrievedData);
+        if(mProgressDialog != null) mProgressDialog.dismiss();
+    }
+
     public static class UpdateReceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(final Context context, final Intent intent) {
 
-            MainFragmentService fragment = MainFragmentService.getInstance();
-
-            if(fragment.mProgressDialog != null) fragment.mProgressDialog.dismiss();
-            fragment.mQuotes = intent.getParcelableArrayListExtra(Utility.QUOTE_INTENT);
-            fragment.mAdapter.swapList(fragment.mQuotes);
-            Log.v(LOG_TAG, "Package received");
+            ArrayList<Quote.SingleQuote> data = intent.getParcelableArrayListExtra(StockPresenter.QUOTE_INTENT);
+            ObservableObject.getInstance().updateValue(data);
             MainActivity.sRefresherBinding = false;
         }
     }
