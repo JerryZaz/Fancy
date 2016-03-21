@@ -1,14 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'hnry_us'
-            keyPassword 'P4ssw0rd!'
-            storeFile file('C:/Users/Henry/.android/fancy-release-key.keystore')
-            storePassword 'P4ssw0rd!'
-        }
-    }
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 

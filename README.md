@@ -12,12 +12,12 @@ Available in the [Play Store](https://play.google.com/store/apps/details?id=us.h
 * Observable Object
 * Parcelable model classes
 * RecyclerView
-    RecyclerViewAdapter
-    RecyclerViewViewHolder
-    Interface to handle click-events
-    ItemTouchHelper
+** RecyclerViewAdapter
+** RecyclerViewViewHolder
+** Interface to handle click-events
+** ItemTouchHelper
 * TabLayout
-    ViewPager
-    AndroidPagerAdapter
+** ViewPager
+** AndroidPagerAdapter
 * CardView
 * Splash Activity
