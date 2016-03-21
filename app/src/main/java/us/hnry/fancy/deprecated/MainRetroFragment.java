@@ -23,16 +23,16 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
-import us.hnry.fancy.data.StockService.SAPI;
+import us.hnry.fancy.data.StockPresenter;
+import us.hnry.fancy.data.StockService;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Single;
+import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
@@ -43,7 +43,7 @@ import us.hnry.fancy.utils.Utility;
 
 @SuppressWarnings("ALL")
 @Deprecated
-public class MainRetroFragment extends Fragment {
+public class MainRetroFragment extends Fragment implements StockPresenter.PersistentSymbolsChangedListener {
     final String BASE_URL = BuildConfig.BASE_API_URL;
     final String ENV = BuildConfig.ENV;
     final String FORMAT = "json";
@@ -66,7 +66,7 @@ public class MainRetroFragment extends Fragment {
             }
         });
 
-        mAdapter = new RetroQuoteRecycler(mQuotes, getActivity());
+        mAdapter = new RetroQuoteRecycler(mQuotes, getActivity(), this);
         RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.fragment_main_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -109,18 +109,9 @@ public class MainRetroFragment extends Fragment {
         QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbolsToQuery);
         mBuiltQuery = queryBuilder.build();
 
-        // Get an instance of Retrofit.
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        // Use the retrofit object to generate an implementation of the
-        // StockAPI interface.
-        final SAPI sapi = retrofit.create(SAPI.class);
-
         //Call to the service to make an HTTP request to the server
-        Call<Quote> call = sapi.getQuotes(mBuiltQuery, ENV, FORMAT);
+        Call<Quote> call = StockService.Implementation.get(BuildConfig.BASE_API_URL)
+                .getQuotes(mBuiltQuery, ENV, FORMAT);
 
         // Execute the request asynchronously with a callback listener to fetch the
         // response or the error message (if any) while talking to the server,
@@ -170,7 +161,8 @@ public class MainRetroFragment extends Fragment {
                                  // We already have an instance of the service, we'll use it
                                  // to make another HTTP request, this time using a different
                                  // Endpoint.
-                                 Call<Single> call = sapi.getSingleQuote(mBuiltQuery, ENV, FORMAT);
+                                 Call<Single> call = StockService.Implementation.get(BuildConfig.BASE_API_URL)
+                                         .getSingleQuote(mBuiltQuery, ENV, FORMAT);
 
                                  // Executing asynchronously
                                  call.enqueue(new Callback<Single>() {
@@ -206,5 +198,15 @@ public class MainRetroFragment extends Fragment {
                          }
                      }
         );
+    }
+
+    @Override
+    public void onSymbolAdded(Symbol symbol) {
+
+    }
+
+    @Override
+    public void onSymbolRemoved(Symbol symbol) {
+
     }
 }

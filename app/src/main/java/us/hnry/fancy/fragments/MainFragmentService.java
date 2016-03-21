@@ -14,12 +14,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,17 +30,21 @@ import us.hnry.fancy.MainActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
+import us.hnry.fancy.data.StockPresenter;
+import us.hnry.fancy.data.StockPresenter.PersistentSymbolsChangedListener;
 import us.hnry.fancy.models.Quote;
+import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.services.Refresh;
+import us.hnry.fancy.utils.ObservableObject;
 import us.hnry.fancy.utils.Utility;
+import us.hnry.fancy.views.MainItemTouchCallback;
 
 /**
  * Created by Henry on 2/17/2016.
  */
-public class MainFragmentService extends Fragment {
+public class MainFragmentService extends Fragment implements PersistentSymbolsChangedListener, Observer {
 
     private static final String LOG_TAG = MainFragmentService.class.getSimpleName();
-    private static MainFragmentService runningInstance;
 
     @Bind(R.id.fragment_main_recycler_view)
     RecyclerView mRecyclerView;
@@ -46,6 +53,7 @@ public class MainFragmentService extends Fragment {
 
     private ArrayList<Quote.SingleQuote> mQuotes;
     private RetroQuoteRecycler mAdapter;
+    private StockPresenter mPresenter;
     private Refresh mRefreshService;
     private Refresh.LocalBinder binder;
     private boolean connected;
@@ -69,22 +77,11 @@ public class MainFragmentService extends Fragment {
         }
     };
 
-    public static MainFragmentService getInstance() {
-        return runningInstance;
-    }
-
     @Override
     public void onResume() {
         Log.v(LOG_TAG, "onResume");
         super.onResume();
         bind();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.v(LOG_TAG, "onPause");
-
     }
 
     @Override
@@ -119,15 +116,19 @@ public class MainFragmentService extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setRetainInstance(true);
-        runningInstance = this;
+
         View layout = inflater.inflate(R.layout.fragment_main_recycler, container, false);
         ButterKnife.bind(this, layout);
+
+        mPresenter = new StockPresenter(getActivity(), this);
+        ObservableObject.getInstance().addObserver(this);
 
         mSearchFab = (FloatingActionButton) getActivity().findViewById(R.id.search_fab);
         mSearchFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), SearchActivity.class).putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
+                startActivity(new Intent(getActivity(), SearchActivity.class)
+                        .putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
             }
         });
 
@@ -139,10 +140,15 @@ public class MainFragmentService extends Fragment {
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.show();
 
-        mAdapter = new RetroQuoteRecycler(mQuotes, getActivity());
+        mAdapter = new RetroQuoteRecycler(mQuotes, getActivity(), this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
+
+        ItemTouchHelper.Callback callback = new MainItemTouchCallback(mAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(mRecyclerView);
         return layout;
     }
 
@@ -152,18 +158,33 @@ public class MainFragmentService extends Fragment {
         ButterKnife.unbind(this);
     }
 
+    @Override
+    public void onSymbolAdded(Symbol symbol) {
+        /* Nothing yet */
+    }
+
+    @Override
+    public void onSymbolRemoved(Symbol symbol) {
+        if(mPresenter.isTracked(symbol)){
+            mPresenter.removeSymbol(symbol);
+        }
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        ArrayList<Quote.SingleQuote> retrievedData = (ArrayList<Quote.SingleQuote>) data;
+        mAdapter.swapList(retrievedData);
+        if(mProgressDialog != null) mProgressDialog.dismiss();
+    }
+
     public static class UpdateReceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(final Context context, final Intent intent) {
 
-            if(MainFragmentService.getInstance().mProgressDialog != null) MainFragmentService.getInstance().mProgressDialog.dismiss();
-            if(MainFragmentService.getInstance() != null) {
-                MainFragmentService.getInstance().mQuotes = intent.getParcelableArrayListExtra(Utility.QUOTE_INTENT);
-                MainFragmentService.getInstance().mAdapter.swapList(MainFragmentService.getInstance().mQuotes);
-                Log.v(LOG_TAG, "Package received");
-                MainActivity.sRefresherBinding = false;
-            }
+            ArrayList<Quote.SingleQuote> data = intent.getParcelableArrayListExtra(StockPresenter.QUOTE_INTENT);
+            ObservableObject.getInstance().updateValue(data);
+            MainActivity.sRefresherBinding = false;
         }
     }
 }

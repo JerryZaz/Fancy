@@ -19,7 +19,7 @@ public class DetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         DetailQuoteFragment detailFragment;
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             detailFragment = new DetailQuoteFragment();
             getFragmentManager()
                     .beginTransaction()

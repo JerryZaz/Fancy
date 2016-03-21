@@ -1,7 +1,6 @@
 package us.hnry.fancy.adapters;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,13 +14,11 @@ import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
-import us.hnry.fancy.data.StockService.SAPI;
+import us.hnry.fancy.data.StockService;
 import us.hnry.fancy.models.Quote;
 import us.hnry.fancy.models.Single;
 import us.hnry.fancy.models.Symbol;
@@ -36,27 +33,19 @@ import us.hnry.fancy.utils.Utility;
 public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRecyclerViewHolder> {
 
     private ArrayList<Symbol> mResults;
-    private Context mContext;
 
     /**
      * Adapter constructor.
      * @param param The results of a Thor Search.
-     * @param context the context.
      */
-    public SearchRecycler(ArrayList<Symbol> param, Context context) {
+    public SearchRecycler(ArrayList<Symbol> param) {
         this.mResults = param;
-        this.mContext = context;
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        // Work-around to get the item from the list of results in the onClick event
-        return position;
-    }
 
     @Override
     public SearchRecyclerViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
+        final View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_search, parent, false);
 
         return new SearchRecyclerViewHolder(
@@ -73,30 +62,19 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
                         fetchingProgress.setCancelable(false);
                         fetchingProgress.show();
 
-                        final String BASE_URL = BuildConfig.BASE_API_URL;
                         final String ENV = BuildConfig.ENV;
                         final String FORMAT = "json";
 
-                        //Apply the work-around to get a single ite,
-                        Symbol symbol = mResults.get(viewType);
+                        Symbol symbol = (Symbol) itemView.getTag();
 
                         //Call the Utility QuoteQueryBuilder class
                         // to build a query with the result symbol
                         QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(symbol.getSymbol());
                         String builtQuery = queryBuilder.build();
 
-                        //Get a Retrofit instance
-                        Retrofit retrofit = new Retrofit.Builder()
-                                .baseUrl(BASE_URL)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build();
-
-                        //Use the retrofit instance to generate an implementation of the
-                        // StockAPI interface
-                        SAPI onesapi = retrofit.create(SAPI.class);
-
                         //Call to the service to make an HTTP request to the server
-                        Call<Single> call = onesapi.getSingleQuote(builtQuery, ENV, FORMAT);
+                        Call<Single> call = StockService.Implementation.get(BuildConfig.BASE_API_URL)
+                                .getSingleQuote(builtQuery, ENV, FORMAT);
 
                         // Execute the request asynchronously with a callback listener to fetch the
                         // response or the error message (if any) while talking to the server,

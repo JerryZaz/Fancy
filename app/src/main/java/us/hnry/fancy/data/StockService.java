@@ -11,29 +11,35 @@ import us.hnry.fancy.models.Single;
  * This class contains the interface for the Endpoint requests
  * that the server can handle.
  */
-public class StockService {
 
-    /**
-     * Retrofit will turn the HTTP API into a Java interface that
-     * contains the Endpoints that the server can handle.
-     * Each HTTP Request is an Endpoint.
-     *
-     * Two endpoints with the same annotations used as a counter-measure
-     * to the fact that the server returns two different formats when
-     * a single item is queried.
-     */
-    public interface SAPI {
-        @GET("v1/public/yql?")
-        Call<Quote> getQuotes(
-                @Query("q") String builtQuery,
-                @Query("env") String env,
-                @Query("format") String format
-        );
-        @GET("v1/public/yql?")
-        Call<Single> getSingleQuote(
-                @Query("q") String builtQuery,
-                @Query("env") String env,
-                @Query("format") String format
-        );
+/**
+ * Retrofit will turn the HTTP API into a Java interface that
+ * contains the Endpoints that the server can handle.
+ * Each HTTP Request is an Endpoint.
+ * <p/>
+ * Two endpoints with the same annotations used as a counter-measure
+ * to the fact that the server returns two different formats when
+ * a single item is queried.
+ */
+public interface StockService {
+    @GET("v1/public/yql?")
+    Call<Quote> getQuotes(
+            @Query("q") String builtQuery,
+            @Query("env") String env,
+            @Query("format") String format
+    );
+
+    @GET("v1/public/yql?")
+    Call<Single> getSingleQuote(
+            @Query("q") String builtQuery,
+            @Query("env") String env,
+            @Query("format") String format
+    );
+
+    class Implementation extends BaseRetrofit{
+        public static StockService get(String baseUrl){
+            setBaseUrl(baseUrl);
+            return getBuilder().build().create(StockService.class);
+        }
     }
 }

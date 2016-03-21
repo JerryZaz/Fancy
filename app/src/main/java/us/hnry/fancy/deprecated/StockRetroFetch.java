@@ -7,11 +7,9 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import us.hnry.fancy.BuildConfig;
-import us.hnry.fancy.data.StockService.SAPI;
+import us.hnry.fancy.data.StockService;
 import us.hnry.fancy.models.Quote;
 
 /**
@@ -36,13 +34,9 @@ public class StockRetroFetch {
     }
 
     public ArrayList<Quote.SingleQuote> execute() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        SAPI sapi = retrofit.create(SAPI.class);
 
-        call = sapi.getQuotes(mBuiltQuery, ENV, FORMAT);
+        call = StockService.Implementation.get(BASE_URL)
+                .getQuotes(mBuiltQuery, ENV, FORMAT);
         call.enqueue(new Callback<Quote>() {
             @Override
             public void onResponse(Response<Quote> response) {

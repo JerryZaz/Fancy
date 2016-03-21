@@ -2,9 +2,7 @@ package us.hnry.fancy.fragments;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -23,16 +21,15 @@ import android.widget.Toast;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.DetailRecycler;
+import us.hnry.fancy.data.StockPresenter;
 import us.hnry.fancy.models.Quote.SingleQuote;
+import us.hnry.fancy.models.Symbol;
 import us.hnry.fancy.utils.Utility;
 import us.hnry.fancy.views.DividerItemDecoration;
 
@@ -41,18 +38,19 @@ import us.hnry.fancy.views.DividerItemDecoration;
  * Remastered Detail Fragment that consumes a SingleQuote object to
  * instantiate a RecyclerViewAdapter to feed the RecyclerView.
  */
-public class DetailQuoteFragment extends Fragment {
+public class DetailQuoteFragment extends Fragment implements StockPresenter.PersistentSymbolsChangedListener {
 
     private RecyclerView mDetailRecyclerView;
-    private FloatingActionButton fab;
+    private FloatingActionButton mTrackedFab;
 
     private SingleQuote fromIntent;
-    private Set<String> mSetOfStocks;
-    private boolean isTracked;
+    private Symbol mFromIntentSymbol;
 
     private Intent mShareDetail;
 
     private ProgressDialog mProgressDialog;
+
+    private StockPresenter mPresenter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -71,11 +69,43 @@ public class DetailQuoteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_detail, container, false);
-        isTracked = false;
-        SharedPreferences preferences = getActivity().getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
-        final SharedPreferences.Editor editor = preferences.edit();
 
+        mPresenter = new StockPresenter(getActivity(), this);
         FloatingActionButton shareFab = (FloatingActionButton) getActivity().findViewById(R.id.share_fab);
+        mTrackedFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+
+        fromIntent = getActivity().getIntent().getParcelableExtra(Utility.QUOTE_INTENT);
+        if (fromIntent != null) {
+            getActivity().setTitle(fromIntent.getName());
+            mFromIntentSymbol = new Symbol(fromIntent.getName(), fromIntent.getSymbol());
+            if(mPresenter.isTracked(mFromIntentSymbol)){
+                mTrackedFab.setImageResource(R.drawable.ic_check_circle_white_24dp);
+            }
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        final DetailRecycler detailAdapter = consumeParcelableQuoteFromIntent(fromIntent);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mDetailRecyclerView.setAdapter(detailAdapter);
+                                mProgressDialog.dismiss();
+                            }
+                        });
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+
+        } else {
+            Toast.makeText(getActivity(),
+                    "Selection returned invalid results from the server.",
+                    Toast.LENGTH_SHORT).show();
+            getActivity().finish();
+        }
+
         shareFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -121,26 +151,21 @@ public class DetailQuoteFragment extends Fragment {
             }
         });
 
-        fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mTrackedFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-                if (isTracked) {
-                    mSetOfStocks.remove(fromIntent.getSymbol());
-                    fab.setImageResource(R.drawable.ic_favorite_white_24dp);
-                    isTracked = false;
-                    Snackbar.make(view, "Removed from Favorites", Snackbar.LENGTH_SHORT).show();
-                } else {
-                    mSetOfStocks.add(fromIntent.getSymbol());
-                    fab.setImageResource(R.drawable.ic_check_circle_white_24dp);
-                    isTracked = true;
-                    Snackbar.make(view, "Added to Favorites", Snackbar.LENGTH_SHORT).show();
+                if (fromIntent != null) {
+                    if (mPresenter.isTracked(mFromIntentSymbol)) {
+                        mPresenter.removeSymbol(mFromIntentSymbol);
+                        Snackbar.make(view, "Removed from Favorites", Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        mPresenter.addSymbol(mFromIntentSymbol);
+                        Snackbar.make(view, "Added to Favorites", Snackbar.LENGTH_SHORT).show();
+                    }
                 }
-                editor.clear();
-                editor.putStringSet(Utility.PERSISTENT_SYMBOLS_SET, mSetOfStocks);
-                editor.apply();
+                else {
+                    Snackbar.make(view, "Invalid data from server.", Snackbar.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -149,46 +174,13 @@ public class DetailQuoteFragment extends Fragment {
         mDetailRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mDetailRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
 
-        fromIntent = getActivity().getIntent().getParcelableExtra(Utility.QUOTE_INTENT);
-        if (fromIntent != null) {
-            getActivity().setTitle(fromIntent.getName());
-            mSetOfStocks = preferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                    new HashSet<>(Arrays.asList(Utility.DEFAULT_SYMBOLS)));
-            if (mSetOfStocks.contains(fromIntent.getSymbol())) {
-                fab.setImageResource(R.drawable.ic_check_circle_white_24dp);
-                isTracked = true;
-            }
-            new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        final DetailRecycler detailAdapter = consumeParcelableQuoteFromIntent(fromIntent);
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDetailRecyclerView.setAdapter(detailAdapter);
-                                mProgressDialog.dismiss();
-                            }
-                        });
-                    } catch (InvocationTargetException | IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
-
-        } else {
-            Toast.makeText(getActivity(),
-                    "Selection returned invalid results from the server.",
-                    Toast.LENGTH_SHORT).show();
-            getActivity().finish();
-        }
-
         return layout;
     }
 
     /**
      * Takes the parcelable SingleQuote received, fetches its individual fields to
      * get an instance of the Adapter and populate the RecyclerView.
+     *
      * @param quote to be consumed
      * @return RecyclerViewAdapter
      * @throws InvocationTargetException
@@ -219,5 +211,15 @@ public class DetailQuoteFragment extends Fragment {
             }
         }
         return new DetailRecycler(keys, map);
+    }
+
+    @Override
+    public void onSymbolAdded(Symbol symbol) {
+        mTrackedFab.setImageResource(R.drawable.ic_check_circle_white_24dp);
+    }
+
+    @Override
+    public void onSymbolRemoved(Symbol symbol) {
+        mTrackedFab.setImageResource(R.drawable.ic_favorite_white_24dp);
     }
 }

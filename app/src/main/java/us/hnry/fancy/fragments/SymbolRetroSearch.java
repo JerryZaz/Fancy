@@ -17,9 +17,7 @@ import android.widget.EditText;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
@@ -89,18 +87,9 @@ public class SymbolRetroSearch extends Fragment {
                     final String ENV = BuildConfig.ENV;
                     final String FORMAT = "json";
 
-                    // Get a Retrofit instance
-                    Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl(BASE_URL)
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build();
-
-                    // Use the retrofit instance to generate an implementation of the
-                    // StockAPI interface
-                    StockService.SAPI onesapi = retrofit.create(StockService.SAPI.class);
-
                     // Call to the service to make an HTTP request to the server
-                    Call<Single> call = onesapi.getSingleQuote(builtQuery, ENV, FORMAT);
+                    Call<Single> call = StockService.Implementation.get(BASE_URL)
+                            .getSingleQuote(builtQuery, ENV, FORMAT);
 
                     // Execute the request asynchronously with a callback listener to fetch the
                     // response or the error message (if any) while talking to the server,
