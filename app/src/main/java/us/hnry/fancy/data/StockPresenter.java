@@ -2,12 +2,22 @@ package us.hnry.fancy.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import retrofit2.Callback;
+import retrofit2.Response;
+import us.hnry.fancy.BuildConfig;
+import us.hnry.fancy.models.Quote;
+import us.hnry.fancy.models.Quote.SingleQuote;
+import us.hnry.fancy.models.Single;
 import us.hnry.fancy.models.Symbol;
+import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
 /**
@@ -27,9 +37,84 @@ public class StockPresenter {
     private Context mContext;
     private PersistentSymbolsChangedListener mListener;
 
-    public StockPresenter(Context context, PersistentSymbolsChangedListener listener){
+    public StockPresenter(Context context) {
+        mContext = context;
+    }
+
+    public StockPresenter(Context context, PersistentSymbolsChangedListener listener) {
         mContext = context;
         mListener = listener;
+    }
+
+    public ArrayList<SingleQuote> fetchStockData(final OnNewStockDataRetrieved listener) {
+        int countOfSymbols = getPersistentSymbolsSetCount();
+
+        if (countOfSymbols > 0) {
+            QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(
+                    Utility.getSymbols(getPersistentSymbolsSet()));
+            String builtQuery = queryBuilder.build();
+
+            if (countOfSymbols > 1) {
+
+                StockService.Implementation.get(BuildConfig.BASE_API_URL)
+                        .getQuotes(builtQuery, BuildConfig.ENV, "json")
+                        .enqueue(new Callback<Quote>() {
+                            @Override
+                            public void onResponse(Response<Quote> response) {
+                                try {
+                                    List<SingleQuote> asList = response.body().query.results.getQuote();
+                                    listener.newDataAvailable(new ArrayList<>(asList));
+                                } catch (NullPointerException e) {
+                                    Log.v("Catch", "Reached.");
+                                    if (response.code() == 401) {
+                                        Log.e("getQuotes threw ", "Unauthenticated");
+                                    } else if (response.code() >= 400) {
+                                        Log.e("getQuotes threw ", "Client error "
+                                                + response.code() + " " + response.message());
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Throwable t) {
+                                Log.e("getQuotes threw ", t.getMessage());
+                            }
+                        });
+            }
+            if (countOfSymbols == 1) {
+                StockService.Implementation.get(BuildConfig.BASE_API_URL)
+                        .getSingleQuote(builtQuery, BuildConfig.ENV, "json")
+                        .enqueue(new Callback<Single>() {
+                            @Override
+                            public void onResponse(Response<Single> response) {
+                                try {
+                                    SingleQuote quote = response.body().query.results.getQuote();
+                                    ArrayList<SingleQuote> result = new ArrayList<>();
+                                    result.add(quote);
+                                    listener.newDataAvailable(result);
+                                } catch (NullPointerException e) {
+                                    Log.v("Catch", "Reached.");
+                                    if (response.code() == 401) {
+                                        Log.e("getQuotes threw ", "Unauthenticated");
+                                    } else if (response.code() >= 400) {
+                                        Log.e("getQuotes threw ", "Client error "
+                                                + response.code() + " " + response.message());
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Throwable t) {
+                                Log.e("getQuotes threw ", t.getMessage());
+                            }
+                        });
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private int getPersistentSymbolsSetCount() {
+        return getPersistentSymbolsSet().size();
     }
 
     private Set<String> getPersistentSymbolsSet() {
@@ -47,7 +132,9 @@ public class StockPresenter {
             editor.clear();
             editor.putStringSet(PERSISTENT_SYMBOLS_SET, persistentSymbols);
             editor.apply();
-            mListener.onSymbolAdded(symbol);
+            if (mListener != null) {
+                mListener.onSymbolAdded(symbol);
+            }
             return true;
         } else {
             return false;
@@ -62,7 +149,9 @@ public class StockPresenter {
             editor.clear();
             editor.putStringSet(PERSISTENT_SYMBOLS_SET, persistentSymbols);
             editor.apply();
-            mListener.onSymbolRemoved(symbol);
+            if (mListener != null) {
+                mListener.onSymbolRemoved(symbol);
+            }
             return true;
         } else {
             return false;
@@ -73,8 +162,13 @@ public class StockPresenter {
         return getPersistentSymbolsSet().contains(symbol.getSymbol());
     }
 
-    public interface PersistentSymbolsChangedListener{
+    public interface OnNewStockDataRetrieved {
+        void newDataAvailable(ArrayList<SingleQuote> quotes);
+    }
+
+    public interface PersistentSymbolsChangedListener {
         void onSymbolAdded(Symbol symbol);
+
         void onSymbolRemoved(Symbol symbol);
     }
 }

@@ -86,13 +86,6 @@ public class MainFragmentService extends Fragment implements StockPresenter.Pers
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        Log.v(LOG_TAG, "onPause");
-
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         unbind();
@@ -134,7 +127,8 @@ public class MainFragmentService extends Fragment implements StockPresenter.Pers
         mSearchFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), SearchActivity.class).putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
+                startActivity(new Intent(getActivity(), SearchActivity.class)
+                        .putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
             }
         });
 
@@ -171,7 +165,6 @@ public class MainFragmentService extends Fragment implements StockPresenter.Pers
 
     @Override
     public void onSymbolRemoved(Symbol symbol) {
-
         if(mPresenter.isTracked(symbol)){
             mPresenter.removeSymbol(symbol);
         }
@@ -182,13 +175,13 @@ public class MainFragmentService extends Fragment implements StockPresenter.Pers
         @Override
         public void onReceive(final Context context, final Intent intent) {
 
-            if(MainFragmentService.getInstance().mProgressDialog != null) MainFragmentService.getInstance().mProgressDialog.dismiss();
-            if(MainFragmentService.getInstance() != null) {
-                MainFragmentService.getInstance().mQuotes = intent.getParcelableArrayListExtra(Utility.QUOTE_INTENT);
-                MainFragmentService.getInstance().mAdapter.swapList(MainFragmentService.getInstance().mQuotes);
-                Log.v(LOG_TAG, "Package received");
-                MainActivity.sRefresherBinding = false;
-            }
+            MainFragmentService fragment = MainFragmentService.getInstance();
+
+            if(fragment.mProgressDialog != null) fragment.mProgressDialog.dismiss();
+            fragment.mQuotes = intent.getParcelableArrayListExtra(Utility.QUOTE_INTENT);
+            fragment.mAdapter.swapList(fragment.mQuotes);
+            Log.v(LOG_TAG, "Package received");
+            MainActivity.sRefresherBinding = false;
         }
     }
 }
