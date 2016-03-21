@@ -48,6 +48,7 @@ public class Utility {
      * @param fromSharedPreferences or the default array of symbols.
      * @return an array representation of the symbols to query
      */
+    @Deprecated
     public static String[] getSymbols(Set<String> fromSharedPreferences) {
         return fromSharedPreferences.toArray(new String[fromSharedPreferences.size()]);
     }

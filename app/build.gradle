@@ -32,6 +32,7 @@ android {
         it.buildConfigField 'String', 'BASE_API_URL', '"http://query.yahooapis.com/"'
         it.buildConfigField 'String', 'BASE_QUERY', '"select * from yahoo.finance.quotes where symbol in "'
         it.buildConfigField 'String', 'ENV', '"http://datatables.org/alltables.env"'
+        it.buildConfigField 'String', 'FORMAT', '"json"'
         it.buildConfigField 'String', 'THOR_BASE_URL', '"http://chstocksearch.herokuapp.com/api"'
         it.buildConfigField 'String', 'THOR_BASE_API_URL', '"http://chstocksearch.herokuapp.com/api/"'
     }

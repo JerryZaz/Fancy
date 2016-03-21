@@ -46,82 +46,19 @@ public class StockPresenter {
         mListener = listener;
     }
 
-    public ArrayList<SingleQuote> fetchStockData(final OnNewStockDataRetrieved listener) {
-        int countOfSymbols = getPersistentSymbolsSetCount();
+    private Set<String> getPersistentSymbolsSet() {
+        mPreferences = mContext.getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
 
-        if (countOfSymbols > 0) {
-            QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(
-                    Utility.getSymbols(getPersistentSymbolsSet()));
-            String builtQuery = queryBuilder.build();
-
-            if (countOfSymbols > 1) {
-
-                StockService.Implementation.get(BuildConfig.BASE_API_URL)
-                        .getQuotes(builtQuery, BuildConfig.ENV, "json")
-                        .enqueue(new Callback<Quote>() {
-                            @Override
-                            public void onResponse(Response<Quote> response) {
-                                try {
-                                    List<SingleQuote> asList = response.body().query.results.getQuote();
-                                    listener.newDataAvailable(new ArrayList<>(asList));
-                                } catch (NullPointerException e) {
-                                    Log.v("Catch", "Reached.");
-                                    if (response.code() == 401) {
-                                        Log.e("getQuotes threw ", "Unauthenticated");
-                                    } else if (response.code() >= 400) {
-                                        Log.e("getQuotes threw ", "Client error "
-                                                + response.code() + " " + response.message());
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Throwable t) {
-                                Log.e("getQuotes threw ", t.getMessage());
-                            }
-                        });
-            }
-            if (countOfSymbols == 1) {
-                StockService.Implementation.get(BuildConfig.BASE_API_URL)
-                        .getSingleQuote(builtQuery, BuildConfig.ENV, "json")
-                        .enqueue(new Callback<Single>() {
-                            @Override
-                            public void onResponse(Response<Single> response) {
-                                try {
-                                    SingleQuote quote = response.body().query.results.getQuote();
-                                    ArrayList<SingleQuote> result = new ArrayList<>();
-                                    result.add(quote);
-                                    listener.newDataAvailable(result);
-                                } catch (NullPointerException e) {
-                                    Log.v("Catch", "Reached.");
-                                    if (response.code() == 401) {
-                                        Log.e("getQuotes threw ", "Unauthenticated");
-                                    } else if (response.code() >= 400) {
-                                        Log.e("getQuotes threw ", "Client error "
-                                                + response.code() + " " + response.message());
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Throwable t) {
-                                Log.e("getQuotes threw ", t.getMessage());
-                            }
-                        });
-            }
-        }
-        return new ArrayList<>();
+        return mPreferences.getStringSet(PERSISTENT_SYMBOLS_SET,
+                new HashSet<>(Arrays.asList(DEFAULT_SYMBOLS)));
     }
 
     private int getPersistentSymbolsSetCount() {
         return getPersistentSymbolsSet().size();
     }
 
-    private Set<String> getPersistentSymbolsSet() {
-        mPreferences = mContext.getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE);
-
-        return mPreferences.getStringSet(PERSISTENT_SYMBOLS_SET,
-                new HashSet<>(Arrays.asList(DEFAULT_SYMBOLS)));
+    public boolean isTracked(Symbol symbol) {
+        return getPersistentSymbolsSet().contains(symbol.getSymbol());
     }
 
     public boolean addSymbol(Symbol symbol) {
@@ -158,8 +95,74 @@ public class StockPresenter {
         }
     }
 
-    public boolean isTracked(Symbol symbol) {
-        return getPersistentSymbolsSet().contains(symbol.getSymbol());
+    public ArrayList<SingleQuote> fetchStockData(final OnNewStockDataRetrieved listener) {
+        int countOfSymbols = getPersistentSymbolsSetCount();
+
+        if (countOfSymbols > 0) {
+            QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(getSymbolsAsArray());
+            String builtQuery = queryBuilder.build();
+
+            if (countOfSymbols > 1) {
+
+                StockService.Implementation.get(BuildConfig.BASE_API_URL)
+                        .getQuotes(builtQuery, BuildConfig.ENV, BuildConfig.FORMAT)
+                        .enqueue(new Callback<Quote>() {
+                            @Override
+                            public void onResponse(Response<Quote> response) {
+                                try {
+                                    List<SingleQuote> asList = response.body().query.results.getQuote();
+                                    listener.newDataAvailable(new ArrayList<>(asList));
+                                } catch (NullPointerException e) {
+                                    Log.v("Catch", "Reached.");
+                                    if (response.code() == 401) {
+                                        Log.e("getQuotes threw ", "Unauthenticated");
+                                    } else if (response.code() >= 400) {
+                                        Log.e("getQuotes threw ", "Client error "
+                                                + response.code() + " " + response.message());
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Throwable t) {
+                                Log.e("getQuotes threw ", t.getMessage());
+                            }
+                        });
+            }
+            if (countOfSymbols == 1) {
+                StockService.Implementation.get(BuildConfig.BASE_API_URL)
+                        .getSingleQuote(builtQuery, BuildConfig.ENV, BuildConfig.FORMAT)
+                        .enqueue(new Callback<Single>() {
+                            @Override
+                            public void onResponse(Response<Single> response) {
+                                try {
+                                    SingleQuote quote = response.body().query.results.getQuote();
+                                    ArrayList<SingleQuote> result = new ArrayList<>();
+                                    result.add(quote);
+                                    listener.newDataAvailable(result);
+                                } catch (NullPointerException e) {
+                                    Log.v("Catch", "Reached.");
+                                    if (response.code() == 401) {
+                                        Log.e("getQuotes threw ", "Unauthenticated");
+                                    } else if (response.code() >= 400) {
+                                        Log.e("getQuotes threw ", "Client error "
+                                                + response.code() + " " + response.message());
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Throwable t) {
+                                Log.e("getQuotes threw ", t.getMessage());
+                            }
+                        });
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private String[] getSymbolsAsArray() {
+        return getPersistentSymbolsSet().toArray(new String[getPersistentSymbolsSet().size()]);
     }
 
     public interface OnNewStockDataRetrieved {
