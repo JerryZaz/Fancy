@@ -1,7 +1,7 @@
-# Redder
-=========
+# Redder ![alt text](https://github.com/JerryZaz/Fancy/blob/master/app/src/main/res/mipmap-xhdpi/moco_black.png "Market Stalker")
+----------
 
-Android application for the Stock Market called _Market Stalker_
+Android application for the Stock Market called **Market Stalker**
 Available in the [Play Store](https://play.google.com/store/apps/details?id=us.hnry.fancy).
 
 ### Technologies applied
@@ -16,6 +16,11 @@ Available in the [Play Store](https://play.google.com/store/apps/details?id=us.h
     * RecyclerViewViewHolder
     * Interface to handle click-events
     * ItemTouchHelper
+* DrawerLayout
+    * Navigation View
+* Coordinator Layout
+* AppBar Layout
+* CollapsingToolbar Layout
 * TabLayout
     * ViewPager
     * AndroidPagerAdapter
