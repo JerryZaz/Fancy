@@ -35,7 +35,7 @@ public class MainItemTouchCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean isLongPressDragEnabled() {
-        return false;
+        return true;
     }
 
     @Override
@@ -43,8 +43,20 @@ public class MainItemTouchCallback extends ItemTouchHelper.Callback {
         return true;
     }
 
+    /**
+     * Implementing this interface will make a class reactive to cards being dragged or swiped.
+     */
     public interface ItemTouchHelperListener{
+
+        /**
+         * Handle the Card-being-swiped event.
+         * @param adapterPosition index of the item being swiped.
+         */
         void onItemSwiped(int adapterPosition);
+
+        /**
+         * Handle the Card-being-dragged event.
+         */
         void onItemDragged();
     }
 }

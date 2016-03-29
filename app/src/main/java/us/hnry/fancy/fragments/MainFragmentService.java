@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,6 +42,9 @@ import us.hnry.fancy.views.MainItemTouchCallback;
 
 /**
  * Created by Henry on 2/17/2016.
+ * Remastered MainRetroFragment to implement the Library and the Refresh Service, this is where
+ * the main screen RecyclerView's content is managed in coordination with the Library, the Adapter
+ * and the service.
  */
 public class MainFragmentService extends Fragment implements PersistentSymbolsChangedListener, Observer {
 
@@ -58,6 +62,7 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
     private Refresh.LocalBinder binder;
     private boolean connected;
     private ProgressDialog mProgressDialog;
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -91,6 +96,9 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
         Log.v(LOG_TAG, "onStop");
     }
 
+    /**
+     * Checks if the Refresh Service is bound or binding. If not, it binds the service.
+     */
     public void bind() {
         if(connected || MainActivity.sRefresherBinding) return;
         MainActivity.sRefresherBinding = true;
@@ -102,6 +110,9 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
         getActivity().startService(bindingIntent);
     }
 
+    /**
+     * Checks if the Refresh Service is bound. If bound, it unbinds the service.
+     */
     public void unbind() {
         Log.v(LOG_TAG, "unbinding");
         if (connected) {
@@ -160,13 +171,25 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
 
     @Override
     public void onSymbolAdded(Symbol symbol) {
-        /* Nothing yet */
+        Snackbar.make(mRecyclerView,
+                symbol.getSymbol() + " will be visible after the next update",
+                Snackbar.LENGTH_SHORT)
+                .show();
     }
 
     @Override
-    public void onSymbolRemoved(Symbol symbol) {
+    public void onSymbolRemoved(final Symbol symbol) {
         if(mPresenter.isTracked(symbol)){
-            mPresenter.removeSymbol(symbol);
+            if(mPresenter.removeSymbol(symbol)){
+                Snackbar.make(mRecyclerView, "Symbol removed from Favorites", Snackbar.LENGTH_LONG)
+                        .setAction("Undo", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mPresenter.addSymbol(symbol);
+                            }
+                        })
+                        .show();
+            }
         }
     }
 
@@ -177,6 +200,10 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
         if(mProgressDialog != null) mProgressDialog.dismiss();
     }
 
+    /**
+     * Broadcast Receiver for the Refresh Service, which broadcasts the data fetched
+     * from the server
+     */
     public static class UpdateReceiver extends BroadcastReceiver{
 
         @Override

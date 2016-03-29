@@ -25,7 +25,7 @@ public abstract class BaseRetrofit {
 
     static OkHttpClient buildLogger(){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
         return new OkHttpClient.Builder()
                 .addInterceptor(interceptor)

@@ -14,7 +14,8 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/5/2016.
- *
+ * RecyclerView Adapter for the Detail view. It takes the fields of a Parcelable object and
+ * displays each field in the Recycler View.
  */
 public class DetailRecycler extends RecyclerView.Adapter<DetailRecycler.DetailRecyclerViewHolder> {
 
@@ -64,6 +65,10 @@ public class DetailRecycler extends RecyclerView.Adapter<DetailRecycler.DetailRe
         return mKeys.size();
     }
 
+    /**
+     * RecyclerView ViewHolder implementation to display each item of the Parcelable
+     * Quote object.
+     */
     public static class DetailRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView keyTextView;
         public TextView valueTextView;

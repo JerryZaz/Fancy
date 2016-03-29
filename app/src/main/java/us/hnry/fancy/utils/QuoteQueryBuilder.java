@@ -8,7 +8,7 @@ import us.hnry.fancy.BuildConfig;
 
 /**
  * Created by Henry on 2/1/2016.
- * Hax to customize queries to the API.
+ * Hax to assemble queries to the API.
  */
 public class QuoteQueryBuilder {
 
@@ -17,7 +17,8 @@ public class QuoteQueryBuilder {
 
     /**
      * Initializes the array upon which the query will be built on.
-     * @param toQuery 1+ symbols to add to the query
+     * @param toQuery Not to be confused with objects of the Symbol class,
+     *                this method takes a String representation of the symbol ("AMZN, "GOOG").
      */
     public QuoteQueryBuilder(String... toQuery){
         symbols = toQuery;

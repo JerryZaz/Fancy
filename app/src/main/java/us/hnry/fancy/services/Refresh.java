@@ -136,13 +136,6 @@ public class Refresh extends Service implements RefresherControls, StockPresente
         }
     }
 
-    /**
-     * Method responsible for refreshing the data displayed on the main screen.
-     * It picks up the user's stored data to build the query, if there's none then it builds
-     * the query upon the default list of symbols, with which a call to the server will be made
-     * to fetch the most up-to-date data.
-     */
-
     public void refreshMain() {
         StockPresenter presenter = new StockPresenter(getApplicationContext());
         presenter.fetchStockData(this);

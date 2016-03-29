@@ -23,7 +23,7 @@ import us.hnry.fancy.views.MainItemTouchCallback.ItemTouchHelperListener;
 /**
  * Created by Henry on 2/8/2016.
  * Remastered StockRecycler to handle RecyclerView and its click events.
- * <p/>
+ *
  * Name of the class also makes reference to the Retrofit implementation that fetches
  * the data onto the new Quote model class.
  */
@@ -35,12 +35,13 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
     private PersistentSymbolsChangedListener mListener;
 
     /**
-     * Constructor.
      *
      * @param results ArrayList of SingleQuote objects
-     * @param context the context.
+     * @param context Used only to fetch resource items.
+     * @param listener Adapter requires a registered listener of the
+     *                 PersistentSymbolsChangedListener interface
      */
-    public RetroQuoteRecycler(ArrayList<Quote.SingleQuote> results, Context context, PersistentSymbolsChangedListener listener) {
+    public RetroQuoteRecycler(ArrayList<SingleQuote> results, Context context, PersistentSymbolsChangedListener listener) {
         mResults = results;
         mContext = context;
         mListener = listener;
@@ -116,6 +117,9 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
 
     }
 
+    /**
+     * ViewHolder implementation for the RecyclerView on the main screen.
+     */
     public static class RetroQuoteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView symbolTextView;
         public TextView nameTextView;
@@ -124,6 +128,11 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
         public TextView askTextView;
         public RetroQuoteViewHolderClicks mListener;
 
+        /**
+         * ViewHolder constructor for the RecyclerView on the main screen
+         * @param itemView Layout that contains the fields that need to be populated
+         * @param listener Registers a listener for the click events
+         */
         public RetroQuoteViewHolder(View itemView, RetroQuoteViewHolderClicks listener) {
             super(itemView);
             symbolTextView = (TextView) itemView.findViewById(R.id.single_row_text_view_symbol);

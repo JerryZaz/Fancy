@@ -17,6 +17,8 @@ import us.hnry.fancy.utils.Utility;
 
 /**
  * Created by Henry on 2/16/2016.
+ * Handles the display of the two search Fragments using the ViewPager class and displaying them
+ * in a Tab Layout.
  */
 public class SearchFragmentPager extends Fragment {
 

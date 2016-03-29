@@ -37,6 +37,8 @@ import us.hnry.fancy.views.DividerItemDecoration;
  * Created by Henry on 2/8/2016.
  * Remastered Detail Fragment that consumes a SingleQuote object to
  * instantiate a RecyclerViewAdapter to feed the RecyclerView.
+ * Floating Action Button allows the user to track if not tracking, or un-track if tracking.
+ * Second FAB packs up the Quote object in an intent to share through email.
  */
 public class DetailQuoteFragment extends Fragment implements StockPresenter.PersistentSymbolsChangedListener {
 

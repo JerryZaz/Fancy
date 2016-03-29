@@ -22,6 +22,13 @@ import us.hnry.fancy.models.Single;
  * a single item is queried.
  */
 public interface StockService {
+    /**
+     * Endpoint to query the server with a built query containing multiple companies
+     * @param builtQuery use the QuoteQueryBuilder to build the query
+     * @param env dataTables provider. Constant in the buildConfig
+     * @param format constant value in the BuildConfig
+     * @return Retrofit.Response object containing a object of the Quote class
+     */
     @GET("v1/public/yql?")
     Call<Quote> getQuotes(
             @Query("q") String builtQuery,
@@ -29,6 +36,13 @@ public interface StockService {
             @Query("format") String format
     );
 
+    /**
+     * Endpoint to query the server with a built query containing only one company
+     * @param builtQuery use the QuoteQueryBuilder to build the query
+     * @param env dataTables provider. Constant in the buildConfig
+     * @param format constant value in the BuildConfig
+     * @return Retrofit.Response object containing a object of the Single class
+     */
     @GET("v1/public/yql?")
     Call<Single> getSingleQuote(
             @Query("q") String builtQuery,
@@ -36,7 +50,15 @@ public interface StockService {
             @Query("format") String format
     );
 
+    /**
+     * Class that embodies the instantiation of Retrofit
+     */
     class Implementation extends BaseRetrofit{
+        /**
+         * Get a Retrofit instance to query the server
+         * @param baseUrl constant in BuildConfig
+         * @return an Retrofit instance of the StockService class
+         */
         public static StockService get(String baseUrl){
             setBaseUrl(baseUrl);
             return getBuilder().build().create(StockService.class);
