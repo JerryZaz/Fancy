@@ -1,10 +1,12 @@
 package us.hnry.fancy.data;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import us.hnry.fancy.models.Quote;
-import us.hnry.fancy.models.Single;
+import us.hnry.fancy.data.model.Quote;
+import us.hnry.fancy.data.model.SingleQuote;
 
 /**
  * Created by Henry on 2/7/2016.
@@ -12,7 +14,7 @@ import us.hnry.fancy.models.Single;
  * that the server can handle.
  */
 
-/**
+/*
  * Retrofit will turn the HTTP API into a Java interface that
  * contains the Endpoints that the server can handle.
  * Each HTTP Request is an Endpoint.
@@ -24,13 +26,14 @@ import us.hnry.fancy.models.Single;
 public interface StockService {
     /**
      * Endpoint to query the server with a built query containing multiple companies
+     *
      * @param builtQuery use the QuoteQueryBuilder to build the query
-     * @param env dataTables provider. Constant in the buildConfig
-     * @param format constant value in the BuildConfig
+     * @param env        dataTables provider. Constant in the buildConfig
+     * @param format     constant value in the BuildConfig
      * @return Retrofit.Response object containing a object of the Quote class
      */
     @GET("v1/public/yql?")
-    Call<Quote> getQuotes(
+    Call<Quote<List<SingleQuote>>> getQuotes(
             @Query("q") String builtQuery,
             @Query("env") String env,
             @Query("format") String format
@@ -38,13 +41,14 @@ public interface StockService {
 
     /**
      * Endpoint to query the server with a built query containing only one company
+     *
      * @param builtQuery use the QuoteQueryBuilder to build the query
-     * @param env dataTables provider. Constant in the buildConfig
-     * @param format constant value in the BuildConfig
+     * @param env        dataTables provider. Constant in the buildConfig
+     * @param format     constant value in the BuildConfig
      * @return Retrofit.Response object containing a object of the Single class
      */
     @GET("v1/public/yql?")
-    Call<Single> getSingleQuote(
+    Call<Quote<SingleQuote>> getSingleQuote(
             @Query("q") String builtQuery,
             @Query("env") String env,
             @Query("format") String format
@@ -53,13 +57,14 @@ public interface StockService {
     /**
      * Class that embodies the instantiation of Retrofit
      */
-    class Implementation extends BaseRetrofit{
+    class Implementation extends BaseRetrofit {
         /**
          * Get a Retrofit instance to query the server
+         *
          * @param baseUrl constant in BuildConfig
          * @return an Retrofit instance of the StockService class
          */
-        public static StockService get(String baseUrl){
+        public static StockService get(String baseUrl) {
             setBaseUrl(baseUrl);
             return getBuilder().build().create(StockService.class);
         }

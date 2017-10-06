@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import us.hnry.fancy.deprecated.Stock;
-import us.hnry.fancy.models.Quote;
+import us.hnry.fancy.data.model.SingleQuote;
 
 /**
  * Created by Henry on 2/1/2016.
@@ -59,7 +58,7 @@ public class Utility {
      * @param quote being prepared.
      * @return positive if the quote went up, negative if it went down; default double if NaN
      */
-    public static double compareAskOpen(Quote.SingleQuote quote) {
+    public static double compareAskOpen(SingleQuote quote) {
         try {
             double currentAsk = Double.parseDouble(quote.getAsk());
             double open = Double.parseDouble(quote.getOpen());
@@ -182,8 +181,7 @@ public class Utility {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static String consumeParcelableQuote(Quote.SingleQuote quote)
-            throws InvocationTargetException, IllegalAccessException {
+    public static String consumeParcelableQuote(SingleQuote quote) throws InvocationTargetException, IllegalAccessException {
         ArrayList<String> keys = new ArrayList<>();
         Method[] methods = quote.getClass().getMethods();
         Map<String, String> map = new HashMap<>();
@@ -220,53 +218,6 @@ public class Utility {
                 builder.append(Utility.splitCamelCase(key)).append(": ").append(value).append("\n");
             }
         }
-        return builder.toString();
-    }
-
-    /**
-     * Deprecated when the Stock model class was deprecated in favor of th Quote class.
-     * <p/>
-     * Takes a Stock object and makes a Map with the name of the method and
-     * its corresponding instance value. Then it takes the keys and values and arranges
-     * them in a printable String that's assembled when the user taps the Share button.
-     *
-     * @param stock the Stock to be consumed
-     * @return Printable String representation of the Stock
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     */
-    @Deprecated
-    public static String consumeParcelableStock(Stock stock)
-            throws InvocationTargetException, IllegalAccessException {
-
-        ArrayList<String> keys = new ArrayList<>();
-        Method[] methods = stock.getClass().getMethods();
-        Map<String, String> map = new HashMap<>();
-
-        for (Method m : methods) {
-            if (m.getName().startsWith("get")) {
-                String value = String.valueOf(m.invoke(stock));
-                String name = m.getName().substring(3);
-                if (!name.equals("Class")) {
-                    map.put(name, value);
-                    keys.add(name);
-                }
-            }
-        }
-
-        StringBuilder builder = new StringBuilder();
-
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            String key = splitCamelCase(entry.getKey());
-            String value;
-            try {
-                value = formatDouble(entry.getValue());
-            } catch (NumberFormatException e) {
-                value = entry.getValue();
-            }
-            builder.append(key).append(": ").append(value).append("\n");
-        }
-
         return builder.toString();
     }
 }

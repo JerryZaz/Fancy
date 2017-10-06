@@ -14,9 +14,8 @@ import java.util.ArrayList;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.data.StockPresenter.PersistentSymbolsChangedListener;
-import us.hnry.fancy.models.Quote;
-import us.hnry.fancy.models.Quote.SingleQuote;
-import us.hnry.fancy.models.Symbol;
+import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.data.model.Symbol;
 import us.hnry.fancy.utils.Utility;
 import us.hnry.fancy.views.MainItemTouchCallback.ItemTouchHelperListener;
 
@@ -51,13 +50,10 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
     public RetroQuoteViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
         final View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_main_card, parent, false);
-        return new RetroQuoteViewHolder(itemView, new RetroQuoteViewHolder.RetroQuoteViewHolderClicks() {
-            @Override
-            public void OnItemClick(View caller) {
-                Intent launchDetail = new Intent(caller.getContext(), DetailActivity.class);
-                launchDetail.putExtra(Utility.QUOTE_INTENT, (SingleQuote) itemView.getTag());
-                caller.getContext().startActivity(launchDetail);
-            }
+        return new RetroQuoteViewHolder(itemView, caller -> {
+            Intent launchDetail = new Intent(caller.getContext(), DetailActivity.class);
+            launchDetail.putExtra(Utility.QUOTE_INTENT, (SingleQuote) itemView.getTag());
+            caller.getContext().startActivity(launchDetail);
         });
     }
 
@@ -94,7 +90,7 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
      *
      * @param param the new information to be displayed
      */
-    public void swapList(ArrayList<Quote.SingleQuote> param) {
+    public void swapList(ArrayList<SingleQuote> param) {
         if (mResults != null) {
             mResults.clear();
             mResults.addAll(param);
@@ -135,11 +131,11 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
          */
         public RetroQuoteViewHolder(View itemView, RetroQuoteViewHolderClicks listener) {
             super(itemView);
-            symbolTextView = (TextView) itemView.findViewById(R.id.single_row_text_view_symbol);
-            nameTextView = (TextView) itemView.findViewById(R.id.single_row_text_view_name);
-            closeTextView = (TextView) itemView.findViewById(R.id.single_row_text_view_close);
-            openTextView = (TextView) itemView.findViewById(R.id.single_row_text_view_open);
-            askTextView = (TextView) itemView.findViewById(R.id.single_row_text_view_ask);
+            symbolTextView = itemView.findViewById(R.id.single_row_text_view_symbol);
+            nameTextView = itemView.findViewById(R.id.single_row_text_view_name);
+            closeTextView = itemView.findViewById(R.id.single_row_text_view_close);
+            openTextView = itemView.findViewById(R.id.single_row_text_view_open);
+            askTextView = itemView.findViewById(R.id.single_row_text_view_ask);
             mListener = listener;
             itemView.setOnClickListener(this);
         }

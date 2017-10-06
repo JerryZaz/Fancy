@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import us.hnry.fancy.MainActivity;
 import us.hnry.fancy.R;
@@ -33,8 +34,8 @@ import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
 import us.hnry.fancy.data.StockPresenter;
 import us.hnry.fancy.data.StockPresenter.PersistentSymbolsChangedListener;
-import us.hnry.fancy.models.Quote;
-import us.hnry.fancy.models.Symbol;
+import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.data.model.Symbol;
 import us.hnry.fancy.services.Refresh;
 import us.hnry.fancy.utils.ObservableObject;
 import us.hnry.fancy.utils.Utility;
@@ -50,25 +51,23 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
 
     private static final String LOG_TAG = MainFragmentService.class.getSimpleName();
 
-    @Bind(R.id.fragment_main_recycler_view)
+    @BindView(R.id.fragment_main_recycler_view)
     RecyclerView mRecyclerView;
-
+    UpdateReceiver receiver;
     private FloatingActionButton mSearchFab;
-
-    private ArrayList<Quote.SingleQuote> mQuotes;
+    private ArrayList<SingleQuote> mQuotes;
     private RetroQuoteRecycler mAdapter;
     private StockPresenter mPresenter;
     private Refresh mRefreshService;
     private Refresh.LocalBinder binder;
     private boolean connected;
     private ProgressDialog mProgressDialog;
-
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            if(binder != null) binder = null;
+            if (binder != null) binder = null;
             binder = (Refresh.LocalBinder) service;
-            if(mRefreshService != null) mRefreshService.stop();
+            if (mRefreshService != null) mRefreshService.stop();
             mRefreshService = binder.getService();
             connected = true;
             mProgressDialog.setTitle("Refreshing your data...");
@@ -92,6 +91,11 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
     @Override
     public void onStop() {
         super.onStop();
+
+        if (receiver != null) {
+            getActivity().unregisterReceiver(receiver);
+        }
+
         unbind();
         Log.v(LOG_TAG, "onStop");
     }
@@ -100,7 +104,7 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
      * Checks if the Refresh Service is bound or binding. If not, it binds the service.
      */
     public void bind() {
-        if(connected || MainActivity.sRefresherBinding) return;
+        if (connected || MainActivity.sRefresherBinding) return;
         MainActivity.sRefresherBinding = true;
         Log.v(LOG_TAG, "binding...");
         mProgressDialog.setTitle("Service Connected!");
@@ -108,6 +112,11 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
         Intent bindingIntent = new Intent(getActivity(), Refresh.class);
         getActivity().bindService(bindingIntent, mConnection, Context.BIND_AUTO_CREATE);
         getActivity().startService(bindingIntent);
+
+        if (receiver == null) {
+            receiver = new UpdateReceiver();
+        }
+        getActivity().registerReceiver(receiver, new IntentFilter("us.hnry.fancy.refresher"));
     }
 
     /**
@@ -134,14 +143,9 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
         mPresenter = new StockPresenter(getActivity(), this);
         ObservableObject.getInstance().addObserver(this);
 
-        mSearchFab = (FloatingActionButton) getActivity().findViewById(R.id.search_fab);
-        mSearchFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), SearchActivity.class)
-                        .putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
-            }
-        });
+        mSearchFab = getActivity().findViewById(R.id.search_fab);
+        mSearchFab.setOnClickListener(v -> startActivity(new Intent(getActivity(), SearchActivity.class)
+                .putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH)));
 
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setTitle("Setting up something fancy!");
@@ -164,12 +168,6 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
-    }
-
-    @Override
     public void onSymbolAdded(Symbol symbol) {
         Snackbar.make(mRecyclerView,
                 symbol.getSymbol() + " will be visible after the next update",
@@ -179,15 +177,10 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
 
     @Override
     public void onSymbolRemoved(final Symbol symbol) {
-        if(mPresenter.isTracked(symbol)){
-            if(mPresenter.removeSymbol(symbol)){
+        if (mPresenter.isTracked(symbol)) {
+            if (mPresenter.removeSymbol(symbol)) {
                 Snackbar.make(mRecyclerView, "Symbol removed from Favorites", Snackbar.LENGTH_LONG)
-                        .setAction("Undo", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mPresenter.addSymbol(symbol);
-                            }
-                        })
+                        .setAction("Undo", v -> mPresenter.addSymbol(symbol))
                         .show();
             }
         }
@@ -195,21 +188,21 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
 
     @Override
     public void update(Observable observable, Object data) {
-        ArrayList<Quote.SingleQuote> retrievedData = (ArrayList<Quote.SingleQuote>) data;
+        ArrayList<SingleQuote> retrievedData = (ArrayList<SingleQuote>) data;
         mAdapter.swapList(retrievedData);
-        if(mProgressDialog != null) mProgressDialog.dismiss();
+        if (mProgressDialog != null) mProgressDialog.dismiss();
     }
 
     /**
      * Broadcast Receiver for the Refresh Service, which broadcasts the data fetched
      * from the server
      */
-    public static class UpdateReceiver extends BroadcastReceiver{
+    public static class UpdateReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(final Context context, final Intent intent) {
 
-            ArrayList<Quote.SingleQuote> data = intent.getParcelableArrayListExtra(StockPresenter.QUOTE_INTENT);
+            ArrayList<SingleQuote> data = intent.getParcelableArrayListExtra(StockPresenter.QUOTE_INTENT);
             ObservableObject.getInstance().updateValue(data);
             MainActivity.sRefresherBinding = false;
         }

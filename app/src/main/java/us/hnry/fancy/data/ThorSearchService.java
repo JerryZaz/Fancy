@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
-import us.hnry.fancy.models.Symbol;
+import us.hnry.fancy.data.model.Symbol;
 
 /**
  * Created by Henry on 2/8/2016.

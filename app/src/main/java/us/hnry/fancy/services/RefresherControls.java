@@ -2,7 +2,8 @@ package us.hnry.fancy.services;
 
 import java.util.ArrayList;
 
-import us.hnry.fancy.models.Quote.SingleQuote;
+import us.hnry.fancy.data.model.SingleQuote;
+
 
 /**
  * Created by Henry on 2/17/2016.

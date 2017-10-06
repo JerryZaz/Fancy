@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import us.hnry.fancy.data.StockPresenter;
-import us.hnry.fancy.models.Quote;
-import us.hnry.fancy.models.Quote.SingleQuote;
+import us.hnry.fancy.data.model.SingleQuote;
 import us.hnry.fancy.utils.Utility;
 
 /**
@@ -71,14 +70,11 @@ public class Refresh extends Service implements RefresherControls, StockPresente
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        start(new UpdateListener() {
-            @Override
-            public void onUpdate(ArrayList<Quote.SingleQuote> newData) {
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction(Utility.BROADCAST);
-                broadcastIntent.putExtra(Utility.QUOTE_INTENT, newData);
-                sendBroadcast(broadcastIntent);
-            }
+        start(newData -> {
+            Intent broadcastIntent = new Intent();
+            broadcastIntent.setAction(Utility.BROADCAST);
+            broadcastIntent.putExtra(Utility.QUOTE_INTENT, newData);
+            sendBroadcast(broadcastIntent);
         });
 
         if (mHandler == null) {
@@ -118,7 +114,7 @@ public class Refresh extends Service implements RefresherControls, StockPresente
     }
 
     @Override
-    public void warnListeners(ArrayList<Quote.SingleQuote> newData) {
+    public void warnListeners(ArrayList<SingleQuote> newData) {
         mLock.lock();
         for (UpdateListener listener : mListeners) {
             listener.onUpdate(newData);
