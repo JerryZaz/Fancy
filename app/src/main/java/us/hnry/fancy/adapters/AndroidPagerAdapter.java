@@ -102,10 +102,6 @@ public abstract class AndroidPagerAdapter extends PagerAdapter {
             mCurTransaction.add(container.getId(), fragment,
                     makeFragmentName(container.getId(), itemId));
         }
-        /*if (fragment != mCurrentPrimaryItem) {
-            FragmentCompat.setMenuVisibility(fragment, false);
-            FragmentCompat.setUserVisibleHint(fragment, false);
-        }*/
         return fragment;
     }
 
@@ -118,22 +114,6 @@ public abstract class AndroidPagerAdapter extends PagerAdapter {
                 + " v=" + ((Fragment) object).getView());
         mCurTransaction.detach((Fragment) object);
     }
-
-    /*@Override
-    public void setPrimaryItem(ViewGroup container, int position, Object object) {
-        Fragment fragment = (Fragment) object;
-        if (fragment != mCurrentPrimaryItem) {
-            if (mCurrentPrimaryItem != null) {
-                FragmentCompat.setMenuVisibility(mCurrentPrimaryItem, false);
-                FragmentCompat.setUserVisibleHint(mCurrentPrimaryItem, false);
-            }
-            if (fragment != null) {
-                FragmentCompat.setMenuVisibility(fragment, true);
-                FragmentCompat.setUserVisibleHint(fragment, true);
-            }
-            mCurrentPrimaryItem = fragment;
-        }
-    }*/
 
     @Override
     public void finishUpdate(ViewGroup container) {

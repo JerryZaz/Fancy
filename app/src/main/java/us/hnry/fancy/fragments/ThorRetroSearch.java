@@ -84,70 +84,68 @@ public class ThorRetroSearch extends Fragment {
         //Use the retrofit object to generate an implementation of the THOR interface
         final THOR thor = retrofit.create(THOR.class);
 
-        mButtonSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                //This code snippet hides the soft keyboard
-                //When implemented in a fragment, it must be instantiated in onActivityCreated
-                mInputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+        mButtonSearch.setOnClickListener(v -> {
+            //This code snippet hides the soft keyboard
+            //When implemented in a fragment, it must be instantiated in onActivityCreated
+            mInputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
 
-                // Thor doesn't react too well to multi-word requests, so I make use of a Utility
-                // method to fetch the first word and get rid of anything else
-                // @TODO: Validate against the user entering symbols and numbers
-                String search = Utility.getStringBeforeBlank(mEditTextSearch.getText().toString());
-                // Replace the text, a sort of warning to the user.
-                mEditTextSearch.setText(search);
+            // Thor doesn't react too well to multi-word requests, so I make use of a Utility
+            // method to fetch the first word and get rid of anything else
+            // @TODO: Validate against the user entering symbols and numbers
+            String search = Utility.getStringBeforeBlank(mEditTextSearch.getText().toString());
+            // Replace the text, a sort of warning to the user.
+            mEditTextSearch.setText(search);
 
-                if (!search.equals("")) {
+            if (!search.equals("")) {
 
-                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    progressDialog.setTitle("Collecting Results");
-                    progressDialog.setMessage("We're almost there!");
-                    progressDialog.setCancelable(false);
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.show();
+                final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setTitle("Collecting Results");
+                progressDialog.setMessage("We're almost there!");
+                progressDialog.setCancelable(false);
+                progressDialog.setIndeterminate(true);
+                progressDialog.show();
 
-                    //Call to the service to make an HTTP request to the server
-                    call = thor.getSymbols(search);
+                //Call to the service to make an HTTP request to the server
+                call = thor.getSymbols(search);
 
-                    // Execute the request asynchronously with a callback listener to fetch the
-                    // response or the error message (if any) while talking to the server,
-                    // creating the request, or processing the response.
-                    call.enqueue(new Callback<ArrayList<Symbol>>() {
-                        /**
-                         * From the interface: Invoked for a received HTTP response.
-                         * @param response call .isSuccess to determine if the response indicates
-                         *                 success.
-                         */
-                        @Override
-                        public void onResponse(Call<ArrayList<Symbol>> call, Response<ArrayList<Symbol>> response) {
-                            if (response != null && response.body() != null) {
-                                mResults = response.body();
-                                searchAdapter.swapList(mResults);
-                            } else if (response != null) {
-                                if (response.code() == 401) {
-                                    Toast.makeText(getActivity(), "Unauthenticated", Toast.LENGTH_SHORT).show();
-                                } else if (response.code() >= 400) {
-                                    Toast.makeText(getActivity(), "Client error "
-                                            + response.code() + " " + response.message(), Toast.LENGTH_SHORT).show();
-                                }
+                // Execute the request asynchronously with a callback listener to fetch the
+                // response or the error message (if any) while talking to the server,
+                // creating the request, or processing the response.
+                call.enqueue(new Callback<ArrayList<Symbol>>() {
+                    /**
+                     * From the interface: Invoked for a received HTTP response.
+                     *
+                     * @param response call .isSuccess to determine if the response indicates
+                     *                 success.
+                     */
+                    @Override
+                    public void onResponse(Call<ArrayList<Symbol>> call, Response<ArrayList<Symbol>> response) {
+                        if (response != null && response.body() != null) {
+                            mResults = response.body();
+                            searchAdapter.swapList(mResults);
+                        } else if (response != null) {
+                            if (response.code() == 401) {
+                                Toast.makeText(getActivity(), "Unauthenticated", Toast.LENGTH_SHORT).show();
+                            } else if (response.code() >= 400) {
+                                Toast.makeText(getActivity(), "Client error "
+                                        + response.code() + " " + response.message(), Toast.LENGTH_SHORT).show();
                             }
-
-                            if (response != null && !response.isSuccessful()) {
-                                Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
-                            }
-                            progressDialog.dismiss();
                         }
 
-                        @Override
-                        public void onFailure(Call<ArrayList<Symbol>> call, Throwable t) {
-                            Log.e("getSymbols threw ", "" + t.getMessage());
+                        if (response != null && !response.isSuccessful()) {
+                            Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
                         }
-                    });
-                } else {
-                    Snackbar.make(v, "Please enter a search term", Snackbar.LENGTH_SHORT).show();
-                }
+                        progressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ArrayList<Symbol>> call, Throwable t) {
+                        Log.e("getSymbols threw ", "" + t.getMessage());
+                    }
+                });
+            } else {
+                Snackbar.make(v, "Please enter a search term", Snackbar.LENGTH_SHORT).show();
             }
         });
         return layout;

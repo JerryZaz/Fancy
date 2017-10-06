@@ -58,88 +58,86 @@ public class SymbolRetroSearch extends Fragment {
         mButtonSearch = layout.findViewById(R.id.search_button);
 
         mButtonSearch = layout.findViewById(R.id.search_button);
-        mButtonSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                //This code snippet hides the soft keyboard
-                //When implemented in a fragment, it must be instantiated in onActivityCreated
-                mInputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+        mButtonSearch.setOnClickListener(v -> {
+            //This code snippet hides the soft keyboard
+            //When implemented in a fragment, it must be instantiated in onActivityCreated
+            mInputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
 
-                final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setTitle("Collecting Results");
-                progressDialog.setMessage("We're almost there!");
-                progressDialog.setCancelable(false);
-                progressDialog.setIndeterminate(true);
-                progressDialog.show();
+            final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setTitle("Collecting Results");
+            progressDialog.setMessage("We're almost there!");
+            progressDialog.setCancelable(false);
+            progressDialog.setIndeterminate(true);
+            progressDialog.show();
 
-                final String userInput = mEditTextSearch.getText().toString();
-                if (!userInput.equals("")) {
-                    //@TODO: Validate against numbers and symbols
-                    String query = userInput.toUpperCase();
+            final String userInput = mEditTextSearch.getText().toString();
+            if (!userInput.equals("")) {
+                //@TODO: Validate against numbers and symbols
+                String query = userInput.toUpperCase();
 
-                    //Call the Utility QuoteQueryBuilder class to build
-                    // a query with the user input
-                    QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(query);
-                    String builtQuery = queryBuilder.build();
+                //Call the Utility QuoteQueryBuilder class to build
+                // a query with the user input
+                QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(query);
+                String builtQuery = queryBuilder.build();
 
-                    final String BASE_URL = BuildConfig.BASE_API_URL;
-                    final String ENV = BuildConfig.ENV;
-                    final String FORMAT = "json";
+                final String BASE_URL = BuildConfig.BASE_API_URL;
+                final String ENV = BuildConfig.ENV;
+                final String FORMAT = "json";
 
-                    // Call to the service to make an HTTP request to the server
-                    Call<Single> call = StockService.Implementation.get(BASE_URL)
-                            .getSingleQuote(builtQuery, ENV, FORMAT);
+                // Call to the service to make an HTTP request to the server
+                Call<Single> call = StockService.Implementation.get(BASE_URL)
+                        .getSingleQuote(builtQuery, ENV, FORMAT);
 
-                    // Execute the request asynchronously with a callback listener to fetch the
-                    // response or the error message (if any) while talking to the server,
-                    // creating the request, or processing the response.
-                    call.enqueue(new Callback<Single>() {
-                        /**
-                         * From the interface: Invoked for a received HTTP response.
-                         * @param response call .isSuccess to determine if the response indicates
-                         *                 success.
-                         */
-                        @Override
-                        public void onResponse(Call<Single> call, Response<Single> response) {
-                            if (response != null) {
-                                Single single = response.body();
-                                if (single != null && single.query != null && single.query.count > 0) {
-                                    // Dig into the response, which holds an instance of the Single
-                                    // model class, to fetch the actual Quote.
-                                    Quote.SingleQuote quote = single.query.results.getQuote();
+                // Execute the request asynchronously with a callback listener to fetch the
+                // response or the error message (if any) while talking to the server,
+                // creating the request, or processing the response.
+                call.enqueue(new Callback<Single>() {
+                    /**
+                     * From the interface: Invoked for a received HTTP response.
+                     *
+                     * @param response call .isSuccess to determine if the response indicates
+                     *                 success.
+                     */
+                    @Override
+                    public void onResponse(Call<Single> call, Response<Single> response) {
+                        if (response != null) {
+                            Single single = response.body();
+                            if (single != null && single.query != null && single.query.count > 0) {
+                                // Dig into the response, which holds an instance of the Single
+                                // model class, to fetch the actual Quote.
+                                Quote.SingleQuote quote = single.query.results.getQuote();
 
-                                    mLaunchDetail = new Intent(v.getContext(), DetailActivity.class);
-                                    mLaunchDetail.putExtra(Utility.QUOTE_INTENT, quote);
-                                    v.getContext().startActivity(mLaunchDetail);
-                                } else if (single != null && single.query != null && single.query.count <= 0) {
-                                    Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
-                                } else {
-                                    if (response.code() == 401) {
-                                        Log.e(TAG, "><ServiceReturned: Unauthenticated>");
-                                    } else if (response.code() >= 400) {
-                                        Log.e(TAG, "><ServiceReturned: Client error "
-                                                + response.code() + " " + response.message() + ">");
-                                    }
+                                mLaunchDetail = new Intent(v.getContext(), DetailActivity.class);
+                                mLaunchDetail.putExtra(Utility.QUOTE_INTENT, quote);
+                                v.getContext().startActivity(mLaunchDetail);
+                            } else if (single != null && single.query != null && single.query.count <= 0) {
+                                Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
+                            } else {
+                                if (response.code() == 401) {
+                                    Log.e(TAG, "><ServiceReturned: Unauthenticated>");
+                                } else if (response.code() >= 400) {
+                                    Log.e(TAG, "><ServiceReturned: Client error "
+                                            + response.code() + " " + response.message() + ">");
                                 }
                             }
-
-                            if (response != null && !response.isSuccessful()) {
-                                Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
-                            }
-                            progressDialog.dismiss();
                         }
 
-                        @Override
-                        public void onFailure(Call<Single> call, Throwable t) {
-                            Log.e(TAG, "><ServiceReturned: >" + t.getMessage());
-                            progressDialog.dismiss();
+                        if (response != null && !response.isSuccessful()) {
+                            Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
                         }
-                    });
-                } else {
-                    Snackbar.make(v, "Please enter a search term", Snackbar.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
-                }
+                        progressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Single> call, Throwable t) {
+                        Log.e(TAG, "><ServiceReturned: >" + t.getMessage());
+                        progressDialog.dismiss();
+                    }
+                });
+            } else {
+                Snackbar.make(v, "Please enter a search term", Snackbar.LENGTH_SHORT).show();
+                progressDialog.dismiss();
             }
         });
         return layout;

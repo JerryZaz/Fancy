@@ -51,13 +51,10 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
     public RetroQuoteViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
         final View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_main_card, parent, false);
-        return new RetroQuoteViewHolder(itemView, new RetroQuoteViewHolder.RetroQuoteViewHolderClicks() {
-            @Override
-            public void OnItemClick(View caller) {
-                Intent launchDetail = new Intent(caller.getContext(), DetailActivity.class);
-                launchDetail.putExtra(Utility.QUOTE_INTENT, (SingleQuote) itemView.getTag());
-                caller.getContext().startActivity(launchDetail);
-            }
+        return new RetroQuoteViewHolder(itemView, caller -> {
+            Intent launchDetail = new Intent(caller.getContext(), DetailActivity.class);
+            launchDetail.putExtra(Utility.QUOTE_INTENT, (SingleQuote) itemView.getTag());
+            caller.getContext().startActivity(launchDetail);
         });
     }
 
@@ -135,11 +132,11 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
          */
         public RetroQuoteViewHolder(View itemView, RetroQuoteViewHolderClicks listener) {
             super(itemView);
-            symbolTextView = (TextView) itemView.findViewById(R.id.single_row_text_view_symbol);
-            nameTextView = (TextView) itemView.findViewById(R.id.single_row_text_view_name);
-            closeTextView = (TextView) itemView.findViewById(R.id.single_row_text_view_close);
-            openTextView = (TextView) itemView.findViewById(R.id.single_row_text_view_open);
-            askTextView = (TextView) itemView.findViewById(R.id.single_row_text_view_ask);
+            symbolTextView = itemView.findViewById(R.id.single_row_text_view_symbol);
+            nameTextView = itemView.findViewById(R.id.single_row_text_view_name);
+            closeTextView = itemView.findViewById(R.id.single_row_text_view_close);
+            openTextView = itemView.findViewById(R.id.single_row_text_view_open);
+            askTextView = itemView.findViewById(R.id.single_row_text_view_ask);
             mListener = listener;
             itemView.setOnClickListener(this);
         }

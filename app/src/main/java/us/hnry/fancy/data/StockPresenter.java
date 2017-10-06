@@ -187,7 +187,7 @@ public class StockPresenter {
                             public void onResponse(Call<Single> call, Response<Single> response) {
                                 if (response != null) {
                                     Single single = response.body();
-                                    if (single != null) {
+                                    if (single != null && single.query != null) {
                                         SingleQuote quote = single.query.results.getQuote();
                                         ArrayList<SingleQuote> result = new ArrayList<>();
                                         result.add(quote);

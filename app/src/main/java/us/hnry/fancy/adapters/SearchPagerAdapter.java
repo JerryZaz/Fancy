@@ -1,13 +1,14 @@
 package us.hnry.fancy.adapters;
 
 import android.app.Fragment;
-import android.content.Context;
+import android.app.FragmentManager;
 
 import us.hnry.fancy.fragments.SymbolRetroSearch;
 import us.hnry.fancy.fragments.ThorRetroSearch;
 
 /**
- * Created by Henry on 2/16/2016.
+ * @author Henry
+ * 2/16/2016
  */
 public class SearchPagerAdapter extends AndroidPagerAdapter {
 
@@ -16,11 +17,9 @@ public class SearchPagerAdapter extends AndroidPagerAdapter {
             "Thor Search",
             "Symbol Search"
     };
-    private Context context;
 
-    public SearchPagerAdapter(android.app.FragmentManager fm, Context context) {
+    public SearchPagerAdapter(FragmentManager fm) {
         super(fm);
-        this.context = context;
     }
 
     @Override

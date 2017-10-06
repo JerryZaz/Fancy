@@ -181,8 +181,7 @@ public class Utility {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static String consumeParcelableQuote(Quote.SingleQuote quote)
-            throws InvocationTargetException, IllegalAccessException {
+    public static String consumeParcelableQuote(Quote.SingleQuote quote) throws InvocationTargetException, IllegalAccessException {
         ArrayList<String> keys = new ArrayList<>();
         Method[] methods = quote.getClass().getMethods();
         Map<String, String> map = new HashMap<>();

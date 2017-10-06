@@ -144,13 +144,8 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
         ObservableObject.getInstance().addObserver(this);
 
         mSearchFab = getActivity().findViewById(R.id.search_fab);
-        mSearchFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), SearchActivity.class)
-                        .putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH));
-            }
-        });
+        mSearchFab.setOnClickListener(v -> startActivity(new Intent(getActivity(), SearchActivity.class)
+                .putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH)));
 
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setTitle("Setting up something fancy!");
@@ -185,12 +180,7 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
         if (mPresenter.isTracked(symbol)) {
             if (mPresenter.removeSymbol(symbol)) {
                 Snackbar.make(mRecyclerView, "Symbol removed from Favorites", Snackbar.LENGTH_LONG)
-                        .setAction("Undo", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mPresenter.addSymbol(symbol);
-                            }
-                        })
+                        .setAction("Undo", v -> mPresenter.addSymbol(symbol))
                         .show();
             }
         }

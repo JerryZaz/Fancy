@@ -73,8 +73,8 @@ public class DetailQuoteFragment extends Fragment implements StockPresenter.Pers
         View layout = inflater.inflate(R.layout.fragment_detail, container, false);
 
         mPresenter = new StockPresenter(getActivity(), this);
-        FloatingActionButton shareFab = (FloatingActionButton) getActivity().findViewById(R.id.share_fab);
-        mTrackedFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        FloatingActionButton shareFab = getActivity().findViewById(R.id.share_fab);
+        mTrackedFab = getActivity().findViewById(R.id.fab);
 
         fromIntent = getActivity().getIntent().getParcelableExtra(Utility.QUOTE_INTENT);
         if (fromIntent != null) {
@@ -88,12 +88,9 @@ public class DetailQuoteFragment extends Fragment implements StockPresenter.Pers
                 public void run() {
                     try {
                         final DetailRecycler detailAdapter = consumeParcelableQuoteFromIntent(fromIntent);
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDetailRecyclerView.setAdapter(detailAdapter);
-                                mProgressDialog.dismiss();
-                            }
+                        getActivity().runOnUiThread(() -> {
+                            mDetailRecyclerView.setAdapter(detailAdapter);
+                            mProgressDialog.dismiss();
                         });
                     } catch (InvocationTargetException | IllegalAccessException e) {
                         e.printStackTrace();
@@ -108,70 +105,55 @@ public class DetailQuoteFragment extends Fragment implements StockPresenter.Pers
             getActivity().finish();
         }
 
-        shareFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                final ProgressDialog shareIntentProgressBar = new ProgressDialog(getActivity());
-                shareIntentProgressBar.setMessage("Putting your data in a nice envelope");
-                shareIntentProgressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                shareIntentProgressBar.setCancelable(false);
-                shareIntentProgressBar.setIndeterminate(true);
-                shareIntentProgressBar.show();
+        shareFab.setOnClickListener(v -> {
+            final ProgressDialog shareIntentProgressBar = new ProgressDialog(getActivity());
+            shareIntentProgressBar.setMessage("Putting your data in a nice envelope");
+            shareIntentProgressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            shareIntentProgressBar.setCancelable(false);
+            shareIntentProgressBar.setIndeterminate(true);
+            shareIntentProgressBar.show();
 
-                new Thread() {
-                    @Override
-                    public void run() {
-                        mShareDetail = new Intent(Intent.ACTION_SEND);
-                        mShareDetail.setData(Uri.parse("mailto:"));
-                        mShareDetail.putExtra(Intent.EXTRA_SUBJECT, "Market Stalker - Shared Stock Data");
-                        try {
-                            mShareDetail.putExtra(Intent.EXTRA_TEXT, Utility.consumeParcelableQuote(fromIntent));
-                            mShareDetail.setType("message/rfc822");
+            new Thread() {
+                @Override
+                public void run() {
+                    mShareDetail = new Intent(Intent.ACTION_SEND);
+                    mShareDetail.setData(Uri.parse("mailto:"));
+                    mShareDetail.putExtra(Intent.EXTRA_SUBJECT, "Market Stalker - Shared Stock Data");
+                    try {
+                        mShareDetail.putExtra(Intent.EXTRA_TEXT, Utility.consumeParcelableQuote(fromIntent));
+                        mShareDetail.setType("message/rfc822");
 
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    shareIntentProgressBar.dismiss();
-                                    PackageManager packageManager = getActivity().getPackageManager();
-                                    List<ResolveInfo> appList = packageManager.queryIntentActivities(mShareDetail, PackageManager.MATCH_ALL);
-                                    if (appList.size() > 0) {
-                                        startActivity(mShareDetail);
-                                    }
-                                }
-                            });
-                        } catch (InvocationTargetException | IllegalAccessException e) {
-                            e.printStackTrace();
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Snackbar.make(v, "Something went wrong.", Snackbar.LENGTH_LONG).show();
-                                }
-                            });
-                        }
+                        getActivity().runOnUiThread(() -> {
+                            shareIntentProgressBar.dismiss();
+                            PackageManager packageManager = getActivity().getPackageManager();
+                            List<ResolveInfo> appList = packageManager.queryIntentActivities(mShareDetail, PackageManager.MATCH_ALL);
+                            if (appList.size() > 0) {
+                                startActivity(mShareDetail);
+                            }
+                        });
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        e.printStackTrace();
+                        getActivity().runOnUiThread(() -> Snackbar.make(v, "Something went wrong.", Snackbar.LENGTH_LONG).show());
                     }
-                }.start();
+                }
+            }.start();
+        });
+
+        mTrackedFab.setOnClickListener(view -> {
+            if (fromIntent != null) {
+                if (mPresenter.isTracked(mFromIntentSymbol)) {
+                    mPresenter.removeSymbol(mFromIntentSymbol);
+                    Snackbar.make(view, "Removed from Favorites", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    mPresenter.addSymbol(mFromIntentSymbol);
+                    Snackbar.make(view, "Added to Favorites", Snackbar.LENGTH_SHORT).show();
+                }
+            } else {
+                Snackbar.make(view, "Invalid data from server.", Snackbar.LENGTH_LONG).show();
             }
         });
 
-        mTrackedFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (fromIntent != null) {
-                    if (mPresenter.isTracked(mFromIntentSymbol)) {
-                        mPresenter.removeSymbol(mFromIntentSymbol);
-                        Snackbar.make(view, "Removed from Favorites", Snackbar.LENGTH_SHORT).show();
-                    } else {
-                        mPresenter.addSymbol(mFromIntentSymbol);
-                        Snackbar.make(view, "Added to Favorites", Snackbar.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    Snackbar.make(view, "Invalid data from server.", Snackbar.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        mDetailRecyclerView = (RecyclerView) layout.findViewById(R.id.content_detail_list_view);
+        mDetailRecyclerView = layout.findViewById(R.id.content_detail_list_view);
         mDetailRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mDetailRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mDetailRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));

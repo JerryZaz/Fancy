@@ -36,11 +36,8 @@ public class DetailRecycler extends RecyclerView.Adapter<DetailRecycler.DetailRe
     public DetailRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_detail, parent, false);
-        return new DetailRecyclerViewHolder(v, new DetailRecyclerViewHolder.DetailViewHolderClicks() {
-            @Override
-            public void onItemClick(View caller) {
-
-            }
+        return new DetailRecyclerViewHolder(v, caller -> {
+            // nothing to do here
         });
     }
 
@@ -76,8 +73,8 @@ public class DetailRecycler extends RecyclerView.Adapter<DetailRecycler.DetailRe
 
         public DetailRecyclerViewHolder(View itemView, DetailViewHolderClicks listener) {
             super(itemView);
-            keyTextView = (TextView) itemView.findViewById(R.id.detail_single_item_key);
-            valueTextView = (TextView) itemView.findViewById(R.id.detail_single_item_value);
+            keyTextView = itemView.findViewById(R.id.detail_single_item_key);
+            valueTextView = itemView.findViewById(R.id.detail_single_item_value);
             mListener = listener;
             itemView.setOnClickListener(this);
         }

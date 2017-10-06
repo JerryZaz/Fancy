@@ -71,14 +71,11 @@ public class Refresh extends Service implements RefresherControls, StockPresente
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        start(new UpdateListener() {
-            @Override
-            public void onUpdate(ArrayList<Quote.SingleQuote> newData) {
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction(Utility.BROADCAST);
-                broadcastIntent.putExtra(Utility.QUOTE_INTENT, newData);
-                sendBroadcast(broadcastIntent);
-            }
+        start(newData -> {
+            Intent broadcastIntent = new Intent();
+            broadcastIntent.setAction(Utility.BROADCAST);
+            broadcastIntent.putExtra(Utility.QUOTE_INTENT, newData);
+            sendBroadcast(broadcastIntent);
         });
 
         if (mHandler == null) {
