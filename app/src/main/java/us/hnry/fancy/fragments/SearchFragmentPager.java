@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.SearchPagerAdapter;
@@ -22,9 +22,9 @@ import us.hnry.fancy.utils.Utility;
  */
 public class SearchFragmentPager extends Fragment {
 
-    @Bind(R.id.activity_search_pager)
+    @BindView(R.id.activity_search_pager)
     ViewPager activitySearchPager;
-    @Bind(R.id.fragment_search_sliding_tabs)
+    @BindView(R.id.fragment_search_sliding_tabs)
     TabLayout mSlidingTabs;
 
     @Nullable
@@ -38,11 +38,5 @@ public class SearchFragmentPager extends Fragment {
         int searchSelector = getActivity().getIntent().getIntExtra(Utility.SEARCH_INTENT, 0);
         activitySearchPager.setCurrentItem(searchSelector, true);
         return layout;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 }

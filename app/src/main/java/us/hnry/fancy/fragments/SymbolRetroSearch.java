@@ -53,11 +53,11 @@ public class SymbolRetroSearch extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_search_recycler, container, false);
 
-        mEditTextSearch = (EditText) layout.findViewById(R.id.search_edit_text);
+        mEditTextSearch = layout.findViewById(R.id.search_edit_text);
         mEditTextSearch.setHint("Company Symbol (e.g. AMZN)");
-        mButtonSearch = (Button) layout.findViewById(R.id.search_button);
+        mButtonSearch = layout.findViewById(R.id.search_button);
 
-        mButtonSearch = (Button) layout.findViewById(R.id.search_button);
+        mButtonSearch = layout.findViewById(R.id.search_button);
         mButtonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -95,43 +95,43 @@ public class SymbolRetroSearch extends Fragment {
                     // response or the error message (if any) while talking to the server,
                     // creating the request, or processing the response.
                     call.enqueue(new Callback<Single>() {
-
                         /**
                          * From the interface: Invoked for a received HTTP response.
                          * @param response call .isSuccess to determine if the response indicates
                          *                 success.
                          */
                         @Override
-                        public void onResponse(Response<Single> response) {
-                            try {
-                                // Dig into the response, which holds an instance of the Single
-                                // model class, to fetch the actual Quote.
-                                Quote.SingleQuote quote = response.body().query.results.getQuote();
+                        public void onResponse(Call<Single> call, Response<Single> response) {
+                            if (response != null) {
+                                Single single = response.body();
+                                if (single != null && single.query != null && single.query.count > 0) {
+                                    // Dig into the response, which holds an instance of the Single
+                                    // model class, to fetch the actual Quote.
+                                    Quote.SingleQuote quote = single.query.results.getQuote();
 
-                                mLaunchDetail = new Intent(v.getContext(), DetailActivity.class);
-                                mLaunchDetail.putExtra(Utility.QUOTE_INTENT, quote);
-                                v.getContext().startActivity(mLaunchDetail);
-
-                            } catch (NullPointerException e) {
-                                if (response.body().query.count <= 0) {
+                                    mLaunchDetail = new Intent(v.getContext(), DetailActivity.class);
+                                    mLaunchDetail.putExtra(Utility.QUOTE_INTENT, quote);
+                                    v.getContext().startActivity(mLaunchDetail);
+                                } else if (single != null && single.query != null && single.query.count <= 0) {
                                     Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
+                                } else {
+                                    if (response.code() == 401) {
+                                        Log.e(TAG, "><ServiceReturned: Unauthenticated>");
+                                    } else if (response.code() >= 400) {
+                                        Log.e(TAG, "><ServiceReturned: Client error "
+                                                + response.code() + " " + response.message() + ">");
+                                    }
                                 }
-                                if (response.code() == 401) {
-                                    Log.e(TAG, "><ServiceReturned: Unauthenticated>");
-                                } else if (response.code() >= 400) {
-                                    Log.e(TAG, "><ServiceReturned: Client error "
-                                            + response.code() + " " + response.message() + ">");
-                                }
-                            } finally {
-                                if (!response.isSuccess()) {
-                                    Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
-                                }
-                                progressDialog.dismiss();
                             }
+
+                            if (response != null && !response.isSuccessful()) {
+                                Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
+                            }
+                            progressDialog.dismiss();
                         }
 
                         @Override
-                        public void onFailure(Throwable t) {
+                        public void onFailure(Call<Single> call, Throwable t) {
                             Log.e(TAG, "><ServiceReturned: >" + t.getMessage());
                             progressDialog.dismiss();
                         }

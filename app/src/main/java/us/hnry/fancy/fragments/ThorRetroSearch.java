@@ -22,9 +22,9 @@ import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.SearchRecycler;
@@ -38,7 +38,7 @@ import us.hnry.fancy.views.DividerItemDecoration;
  * Refactoring Thor Search to make use of Retrofit and RecyclerView,
  * hence the inclusion of "Retro" to distinguish this class from RetroSearch
  * which made requests to the Thor server using ASyncTask.
- *
+ * <p>
  * The Thor service is used to find companies based on an input, it returns company names
  * that match the search, along with their registered <b>Symbol</b>. This symbol is then
  * used to do a <b>StockService</b> request to get the data related to this company.
@@ -63,12 +63,12 @@ public class ThorRetroSearch extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_search_recycler, container, false);
-        mEditTextSearch = (EditText) layout.findViewById(R.id.search_edit_text);
+        mEditTextSearch = layout.findViewById(R.id.search_edit_text);
         mEditTextSearch.setHint("Company Lookup (e.g. Amazon)");
-        mButtonSearch = (Button) layout.findViewById(R.id.search_button);
+        mButtonSearch = layout.findViewById(R.id.search_button);
 
         searchAdapter = new SearchRecycler(mResults);
-        mRecyclerViewSearch = (RecyclerView) layout.findViewById(R.id.search_recycler_view);
+        mRecyclerViewSearch = layout.findViewById(R.id.search_recycler_view);
         mRecyclerViewSearch.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerViewSearch.setItemAnimator(new DefaultItemAnimator());
         mRecyclerViewSearch.addItemDecoration(new DividerItemDecoration(getActivity(), null));
@@ -115,39 +115,33 @@ public class ThorRetroSearch extends Fragment {
                     // response or the error message (if any) while talking to the server,
                     // creating the request, or processing the response.
                     call.enqueue(new Callback<ArrayList<Symbol>>() {
-
                         /**
                          * From the interface: Invoked for a received HTTP response.
                          * @param response call .isSuccess to determine if the response indicates
                          *                 success.
                          */
                         @Override
-                        public void onResponse(Response<ArrayList<Symbol>> response) {
-                            try {
+                        public void onResponse(Call<ArrayList<Symbol>> call, Response<ArrayList<Symbol>> response) {
+                            if (response != null && response.body() != null) {
                                 mResults = response.body();
                                 searchAdapter.swapList(mResults);
-                            } catch (NullPointerException e) {
-                                Log.v("Catch", "Reached.");
-                                Toast toast = null;
+                            } else if (response != null) {
                                 if (response.code() == 401) {
-                                    toast = Toast.makeText(getActivity(), "Unauthenticated", Toast.LENGTH_SHORT);
+                                    Toast.makeText(getActivity(), "Unauthenticated", Toast.LENGTH_SHORT).show();
                                 } else if (response.code() >= 400) {
-                                    toast = Toast.makeText(getActivity(), "Client error "
-                                            + response.code() + " " + response.message(), Toast.LENGTH_SHORT);
+                                    Toast.makeText(getActivity(), "Client error "
+                                            + response.code() + " " + response.message(), Toast.LENGTH_SHORT).show();
                                 }
-                                if (toast != null) {
-                                    toast.show();
-                                }
-                            } finally {
-                                if(!response.isSuccess()){
-                                    Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
-                                }
-                                progressDialog.dismiss();
                             }
+
+                            if (response != null && !response.isSuccessful()) {
+                                Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
+                            }
+                            progressDialog.dismiss();
                         }
 
                         @Override
-                        public void onFailure(Throwable t) {
+                        public void onFailure(Call<ArrayList<Symbol>> call, Throwable t) {
                             Log.e("getSymbols threw ", "" + t.getMessage());
                         }
                     });

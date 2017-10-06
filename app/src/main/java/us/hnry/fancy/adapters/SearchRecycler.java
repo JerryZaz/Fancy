@@ -36,6 +36,7 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
 
     /**
      * Adapter constructor.
+     *
      * @param param The results of a Thor Search.
      */
     public SearchRecycler(ArrayList<Symbol> param) {
@@ -80,46 +81,40 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
                         // response or the error message (if any) while talking to the server,
                         // creating the request, or processing the response.
                         call.enqueue(new Callback<Single>() {
-
                             /**
                              * From the interface: Invoked for a received HTTP response.
                              * @param response call .isSuccess to determine if the response indicates
                              *                 success.
                              */
                             @Override
-                            public void onResponse(Response<Single> response) {
-                                try {
-                                    // Dig into the response, which holds an instance of the Single
-                                    // model class, to fetch the actual Quote.
-                                    Quote.SingleQuote quote = response.body().query.results
-                                            .getQuote();
+                            public void onResponse(Call<Single> call, Response<Single> response) {
+                                if (response != null) {
+                                    Single single = response.body();
+                                    if (single != null && single.query != null && single.query.count > 0) {
+                                        // Dig into the response, which holds an instance of the Single
+                                        // model class, to fetch the actual Quote.
+                                        Quote.SingleQuote quote = single.query.results.getQuote();
 
-                                    Intent launchDetail
-                                            = new Intent(caller.getContext(), DetailActivity.class);
-                                    launchDetail.putExtra(Utility.QUOTE_INTENT, quote);
-                                    caller.getContext().startActivity(launchDetail);
-
-                                } catch (NullPointerException e) {
-                                    Log.v("Catch", "Reached.");
-                                    Toast toast = null;
-                                    if (response.code() == 401) {
-                                        toast = Toast.makeText(caller.getContext(),
-                                                "Unauthenticated", Toast.LENGTH_SHORT);
-                                    } else if (response.code() >= 400) {
-                                        toast = Toast.makeText(caller.getContext(), "Client error "
-                                                + response.code() + " " + response.message(),
-                                                Toast.LENGTH_SHORT);
+                                        Intent launchDetail
+                                                = new Intent(caller.getContext(), DetailActivity.class);
+                                        launchDetail.putExtra(Utility.QUOTE_INTENT, quote);
+                                        caller.getContext().startActivity(launchDetail);
+                                    } else {
+                                        if (response.code() == 401) {
+                                            Toast.makeText(caller.getContext(),
+                                                    "Unauthenticated", Toast.LENGTH_SHORT).show();
+                                        } else if (response.code() >= 400) {
+                                            Toast.makeText(caller.getContext(), "Client error "
+                                                            + response.code() + " " + response.message(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                    if (toast != null) {
-                                        toast.show();
-                                    }
-                                } finally {
-                                    fetchingProgress.dismiss();
                                 }
+                                fetchingProgress.dismiss();
                             }
 
                             @Override
-                            public void onFailure(Throwable t) {
+                            public void onFailure(Call<Single> call, Throwable t) {
                                 Log.e("getQuotes threw ", t.getMessage());
                                 fetchingProgress.dismiss();
                             }
@@ -145,6 +140,7 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
 
     /**
      * Helper method that updates the data displayed in the recycler view
+     *
      * @param param the new information to be displayed
      */
     public void swapList(ArrayList<Symbol> param) {
@@ -164,8 +160,8 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
 
         public SearchRecyclerViewHolder(View itemView, ThorViewHolderClicks listener) {
             super(itemView);
-            symbolTextView = (TextView) itemView.findViewById(R.id.search_single_row_symbol);
-            companyTextView = (TextView) itemView.findViewById(R.id.search_single_row_company);
+            symbolTextView = itemView.findViewById(R.id.search_single_row_symbol);
+            companyTextView = itemView.findViewById(R.id.search_single_row_company);
             mListener = listener;
             itemView.setOnClickListener(this);
         }
