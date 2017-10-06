@@ -19,9 +19,9 @@ import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.data.StockService;
-import us.hnry.fancy.models.Quote;
-import us.hnry.fancy.models.Single;
-import us.hnry.fancy.models.Symbol;
+import us.hnry.fancy.data.model.Quote;
+import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.data.model.Symbol;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
@@ -72,13 +72,13 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
                     String builtQuery = queryBuilder.build();
 
                     //Call to the service to make an HTTP request to the server
-                    Call<Single> call = StockService.Implementation.get(BuildConfig.BASE_API_URL)
+                    Call<Quote<SingleQuote>> call = StockService.Implementation.get(BuildConfig.BASE_API_URL)
                             .getSingleQuote(builtQuery, ENV, FORMAT);
 
                     // Execute the request asynchronously with a callback listener to fetch the
                     // response or the error message (if any) while talking to the server,
                     // creating the request, or processing the response.
-                    call.enqueue(new Callback<Single>() {
+                    call.enqueue(new Callback<Quote<SingleQuote>>() {
                         /**
                          * From the interface: Invoked for a received HTTP response.
                          *
@@ -86,13 +86,14 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
                          *                 success.
                          */
                         @Override
-                        public void onResponse(Call<Single> call, Response<Single> response) {
+                        public void onResponse(Call<Quote<SingleQuote>> call, Response<Quote<SingleQuote>> response) {
                             if (response != null) {
-                                Single single = response.body();
-                                if (single != null && single.query != null && single.query.count > 0) {
+                                Quote<SingleQuote> single = response.body();
+                                if (single != null && single.getQuery() != null && single.getQuery().getCount() > 0) {
                                     // Dig into the response, which holds an instance of the Single
                                     // model class, to fetch the actual Quote.
-                                    Quote.SingleQuote quote = single.query.results.getQuote();
+
+                                    SingleQuote quote = single.getQuery().getResults().getQuote();
 
                                     Intent launchDetail
                                             = new Intent(caller.getContext(), DetailActivity.class);
@@ -113,7 +114,7 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
                         }
 
                         @Override
-                        public void onFailure(Call<Single> call, Throwable t) {
+                        public void onFailure(Call<Quote<SingleQuote>> call, Throwable t) {
                             Log.e("getQuotes threw ", t.getMessage());
                             fetchingProgress.dismiss();
                         }

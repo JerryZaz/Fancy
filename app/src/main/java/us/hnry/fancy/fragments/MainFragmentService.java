@@ -34,8 +34,8 @@ import us.hnry.fancy.SearchActivity;
 import us.hnry.fancy.adapters.RetroQuoteRecycler;
 import us.hnry.fancy.data.StockPresenter;
 import us.hnry.fancy.data.StockPresenter.PersistentSymbolsChangedListener;
-import us.hnry.fancy.models.Quote;
-import us.hnry.fancy.models.Symbol;
+import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.data.model.Symbol;
 import us.hnry.fancy.services.Refresh;
 import us.hnry.fancy.utils.ObservableObject;
 import us.hnry.fancy.utils.Utility;
@@ -55,7 +55,7 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
     RecyclerView mRecyclerView;
     UpdateReceiver receiver;
     private FloatingActionButton mSearchFab;
-    private ArrayList<Quote.SingleQuote> mQuotes;
+    private ArrayList<SingleQuote> mQuotes;
     private RetroQuoteRecycler mAdapter;
     private StockPresenter mPresenter;
     private Refresh mRefreshService;
@@ -188,7 +188,7 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
 
     @Override
     public void update(Observable observable, Object data) {
-        ArrayList<Quote.SingleQuote> retrievedData = (ArrayList<Quote.SingleQuote>) data;
+        ArrayList<SingleQuote> retrievedData = (ArrayList<SingleQuote>) data;
         mAdapter.swapList(retrievedData);
         if (mProgressDialog != null) mProgressDialog.dismiss();
     }
@@ -202,7 +202,7 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
         @Override
         public void onReceive(final Context context, final Intent intent) {
 
-            ArrayList<Quote.SingleQuote> data = intent.getParcelableArrayListExtra(StockPresenter.QUOTE_INTENT);
+            ArrayList<SingleQuote> data = intent.getParcelableArrayListExtra(StockPresenter.QUOTE_INTENT);
             ObservableObject.getInstance().updateValue(data);
             MainActivity.sRefresherBinding = false;
         }

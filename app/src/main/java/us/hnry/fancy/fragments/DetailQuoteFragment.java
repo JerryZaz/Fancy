@@ -28,8 +28,8 @@ import java.util.Map;
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.DetailRecycler;
 import us.hnry.fancy.data.StockPresenter;
-import us.hnry.fancy.models.Quote.SingleQuote;
-import us.hnry.fancy.models.Symbol;
+import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.data.model.Symbol;
 import us.hnry.fancy.utils.Utility;
 import us.hnry.fancy.views.DividerItemDecoration;
 

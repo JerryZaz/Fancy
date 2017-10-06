@@ -29,7 +29,7 @@ import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.SearchRecycler;
 import us.hnry.fancy.data.ThorSearchService.THOR;
-import us.hnry.fancy.models.Symbol;
+import us.hnry.fancy.data.model.Symbol;
 import us.hnry.fancy.utils.Utility;
 import us.hnry.fancy.views.DividerItemDecoration;
 
@@ -100,7 +100,7 @@ public class ThorRetroSearch extends Fragment {
 
                 final ProgressDialog progressDialog = new ProgressDialog(getActivity());
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setTitle("Collecting Results");
+                progressDialog.setTitle("Collecting SingleResult");
                 progressDialog.setMessage("We're almost there!");
                 progressDialog.setCancelable(false);
                 progressDialog.setIndeterminate(true);

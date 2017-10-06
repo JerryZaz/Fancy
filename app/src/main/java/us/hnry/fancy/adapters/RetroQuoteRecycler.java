@@ -14,9 +14,8 @@ import java.util.ArrayList;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.data.StockPresenter.PersistentSymbolsChangedListener;
-import us.hnry.fancy.models.Quote;
-import us.hnry.fancy.models.Quote.SingleQuote;
-import us.hnry.fancy.models.Symbol;
+import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.data.model.Symbol;
 import us.hnry.fancy.utils.Utility;
 import us.hnry.fancy.views.MainItemTouchCallback.ItemTouchHelperListener;
 
@@ -91,7 +90,7 @@ public class RetroQuoteRecycler extends RecyclerView.Adapter<RetroQuoteRecycler.
      *
      * @param param the new information to be displayed
      */
-    public void swapList(ArrayList<Quote.SingleQuote> param) {
+    public void swapList(ArrayList<SingleQuote> param) {
         if (mResults != null) {
             mResults.clear();
             mResults.addAll(param);

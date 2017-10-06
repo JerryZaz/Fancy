@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import us.hnry.fancy.data.StockPresenter;
-import us.hnry.fancy.models.Quote;
-import us.hnry.fancy.models.Quote.SingleQuote;
+import us.hnry.fancy.data.model.SingleQuote;
 import us.hnry.fancy.utils.Utility;
 
 /**
@@ -115,7 +114,7 @@ public class Refresh extends Service implements RefresherControls, StockPresente
     }
 
     @Override
-    public void warnListeners(ArrayList<Quote.SingleQuote> newData) {
+    public void warnListeners(ArrayList<SingleQuote> newData) {
         mLock.lock();
         for (UpdateListener listener : mListeners) {
             listener.onUpdate(newData);

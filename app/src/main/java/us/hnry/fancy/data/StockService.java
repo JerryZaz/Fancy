@@ -1,10 +1,12 @@
 package us.hnry.fancy.data;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import us.hnry.fancy.models.Quote;
-import us.hnry.fancy.models.Single;
+import us.hnry.fancy.data.model.Quote;
+import us.hnry.fancy.data.model.SingleQuote;
 
 /**
  * Created by Henry on 2/7/2016.
@@ -31,7 +33,7 @@ public interface StockService {
      * @return Retrofit.Response object containing a object of the Quote class
      */
     @GET("v1/public/yql?")
-    Call<Quote> getQuotes(
+    Call<Quote<List<SingleQuote>>> getQuotes(
             @Query("q") String builtQuery,
             @Query("env") String env,
             @Query("format") String format
@@ -46,7 +48,7 @@ public interface StockService {
      * @return Retrofit.Response object containing a object of the Single class
      */
     @GET("v1/public/yql?")
-    Call<Single> getSingleQuote(
+    Call<Quote<SingleQuote>> getSingleQuote(
             @Query("q") String builtQuery,
             @Query("env") String env,
             @Query("format") String format

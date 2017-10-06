@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import us.hnry.fancy.models.Quote;
+import us.hnry.fancy.data.model.SingleQuote;
 
 /**
  * Created by Henry on 2/1/2016.
@@ -58,7 +58,7 @@ public class Utility {
      * @param quote being prepared.
      * @return positive if the quote went up, negative if it went down; default double if NaN
      */
-    public static double compareAskOpen(Quote.SingleQuote quote) {
+    public static double compareAskOpen(SingleQuote quote) {
         try {
             double currentAsk = Double.parseDouble(quote.getAsk());
             double open = Double.parseDouble(quote.getOpen());
@@ -181,7 +181,7 @@ public class Utility {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static String consumeParcelableQuote(Quote.SingleQuote quote) throws InvocationTargetException, IllegalAccessException {
+    public static String consumeParcelableQuote(SingleQuote quote) throws InvocationTargetException, IllegalAccessException {
         ArrayList<String> keys = new ArrayList<>();
         Method[] methods = quote.getClass().getMethods();
         Map<String, String> map = new HashMap<>();

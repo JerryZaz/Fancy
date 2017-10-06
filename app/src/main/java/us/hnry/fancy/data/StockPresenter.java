@@ -14,10 +14,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import us.hnry.fancy.BuildConfig;
-import us.hnry.fancy.models.Quote;
-import us.hnry.fancy.models.Quote.SingleQuote;
-import us.hnry.fancy.models.Single;
-import us.hnry.fancy.models.Symbol;
+import us.hnry.fancy.data.model.Quote;
+import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.data.model.Symbol;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
@@ -152,13 +151,13 @@ public class StockPresenter {
 
                 StockService.Implementation.get(BuildConfig.BASE_API_URL)
                         .getQuotes(builtQuery, BuildConfig.ENV, BuildConfig.FORMAT)
-                        .enqueue(new Callback<Quote>() {
+                        .enqueue(new Callback<Quote<List<SingleQuote>>>() {
                             @Override
-                            public void onResponse(Call<Quote> call, Response<Quote> response) {
+                            public void onResponse(Call<Quote<List<SingleQuote>>> call, Response<Quote<List<SingleQuote>>> response) {
                                 if (response != null) {
-                                    Quote quote = response.body();
-                                    if (quote != null) {
-                                        List<SingleQuote> asList = quote.query.results.getQuote();
+                                    Quote<List<SingleQuote>> quote = response.body();
+                                    if (quote != null && quote.getQuery() != null) {
+                                        List<SingleQuote> asList = quote.getQuery().getResults().getQuote();
                                         listener.newDataAvailable(new ArrayList<>(asList));
                                     } else {
                                         if (response.code() == 401) {
@@ -174,21 +173,20 @@ public class StockPresenter {
                             }
 
                             @Override
-                            public void onFailure(Call<Quote> call, Throwable t) {
+                            public void onFailure(Call<Quote<List<SingleQuote>>> call, Throwable t) {
                                 Log.e("getQuotes threw ", t.getMessage());
                             }
                         });
-            }
-            if (countOfSymbols == 1) {
+            } else if (countOfSymbols == 1) {
                 StockService.Implementation.get(BuildConfig.BASE_API_URL)
                         .getSingleQuote(builtQuery, BuildConfig.ENV, BuildConfig.FORMAT)
-                        .enqueue(new Callback<Single>() {
+                        .enqueue(new Callback<Quote<SingleQuote>>() {
                             @Override
-                            public void onResponse(Call<Single> call, Response<Single> response) {
+                            public void onResponse(Call<Quote<SingleQuote>> call, Response<Quote<SingleQuote>> response) {
                                 if (response != null) {
-                                    Single single = response.body();
-                                    if (single != null && single.query != null) {
-                                        SingleQuote quote = single.query.results.getQuote();
+                                    Quote<SingleQuote> single = response.body();
+                                    if (single != null && single.getQuery() != null) {
+                                        SingleQuote quote = single.getQuery().getResults().getQuote();
                                         ArrayList<SingleQuote> result = new ArrayList<>();
                                         result.add(quote);
                                         listener.newDataAvailable(result);
@@ -204,7 +202,7 @@ public class StockPresenter {
                             }
 
                             @Override
-                            public void onFailure(Call<Single> call, Throwable t) {
+                            public void onFailure(Call<Quote<SingleQuote>> call, Throwable t) {
                                 Log.e("getQuotes threw ", t.getMessage());
                             }
                         });
