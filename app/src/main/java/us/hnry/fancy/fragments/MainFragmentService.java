@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -187,7 +188,7 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
 
     @Override
     public void update(Observable observable, Object data) {
-        ArrayList<SingleQuote> retrievedData = (ArrayList<SingleQuote>) data;
+        List<SingleQuote> retrievedData = (List<SingleQuote>) data;
         mAdapter.swapList(retrievedData);
         if (mProgressDialog != null) mProgressDialog.dismiss();
     }
