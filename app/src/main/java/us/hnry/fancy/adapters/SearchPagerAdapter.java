@@ -12,7 +12,7 @@ import us.hnry.fancy.fragments.ThorRetroSearch;
  */
 public class SearchPagerAdapter extends AndroidPagerAdapter {
 
-    final int PAGE_COUNT = 2;
+    private final int PAGE_COUNT = 2;
     private String tabTitles[] = new String[] {
             "Thor Search",
             "Symbol Search"

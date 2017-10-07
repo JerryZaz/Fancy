@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 import us.hnry.fancy.MainActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.SearchActivity;
-import us.hnry.fancy.adapters.RetroQuoteRecycler;
+import us.hnry.fancy.adapters.QuotesAdapter;
 import us.hnry.fancy.data.StockPresenter;
 import us.hnry.fancy.data.StockPresenter.PersistentSymbolsChangedListener;
 import us.hnry.fancy.data.model.SingleQuote;
@@ -54,9 +54,8 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
     @BindView(R.id.fragment_main_recycler_view)
     RecyclerView mRecyclerView;
     UpdateReceiver receiver;
-    private FloatingActionButton mSearchFab;
-    private ArrayList<SingleQuote> mQuotes;
-    private RetroQuoteRecycler mAdapter;
+
+    private QuotesAdapter mAdapter;
     private StockPresenter mPresenter;
     private Refresh mRefreshService;
     private Refresh.LocalBinder binder;
@@ -143,8 +142,8 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
         mPresenter = new StockPresenter(getActivity(), this);
         ObservableObject.getInstance().addObserver(this);
 
-        mSearchFab = getActivity().findViewById(R.id.search_fab);
-        mSearchFab.setOnClickListener(v -> startActivity(new Intent(getActivity(), SearchActivity.class)
+        FloatingActionButton searchFab = getActivity().findViewById(R.id.search_fab);
+        searchFab.setOnClickListener(v -> startActivity(new Intent(getActivity(), SearchActivity.class)
                 .putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH)));
 
         mProgressDialog = new ProgressDialog(getActivity());
@@ -155,7 +154,7 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.show();
 
-        mAdapter = new RetroQuoteRecycler(mQuotes, getActivity(), this);
+        mAdapter = new QuotesAdapter(getActivity(), this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setHasFixedSize(true);

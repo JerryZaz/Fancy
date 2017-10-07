@@ -2,7 +2,6 @@ package us.hnry.fancy.fragments;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -13,12 +12,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,9 +26,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.R;
-import us.hnry.fancy.adapters.SearchRecycler;
+import us.hnry.fancy.adapters.SearchAdapter;
 import us.hnry.fancy.data.ThorSearchService.THOR;
 import us.hnry.fancy.data.model.Symbol;
+import us.hnry.fancy.utils.SystemUtil;
 import us.hnry.fancy.utils.Utility;
 import us.hnry.fancy.views.DividerItemDecoration;
 
@@ -46,33 +46,25 @@ import us.hnry.fancy.views.DividerItemDecoration;
 public class ThorRetroSearch extends Fragment {
 
     private EditText mEditTextSearch;
-    private Button mButtonSearch;
-    private RecyclerView mRecyclerViewSearch;
-    private SearchRecycler searchAdapter;
+    private SearchAdapter searchAdapter;
     private Call<ArrayList<Symbol>> call;
-    private ArrayList<Symbol> mResults;
-    private InputMethodManager mInputMethodManager;
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mInputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-    }
+    private List<Symbol> mResults;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_search_recycler, container, false);
+
         mEditTextSearch = layout.findViewById(R.id.search_edit_text);
         mEditTextSearch.setHint("Company Lookup (e.g. Amazon)");
-        mButtonSearch = layout.findViewById(R.id.search_button);
 
-        searchAdapter = new SearchRecycler(mResults);
-        mRecyclerViewSearch = layout.findViewById(R.id.search_recycler_view);
-        mRecyclerViewSearch.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerViewSearch.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerViewSearch.addItemDecoration(new DividerItemDecoration(getActivity(), null));
-        mRecyclerViewSearch.setAdapter(searchAdapter);
+        searchAdapter = new SearchAdapter(getActivity());
+
+        RecyclerView recyclerView = layout.findViewById(R.id.search_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
+        recyclerView.setAdapter(searchAdapter);
 
         //Instantiate retrofit with the known attributes, the API URL
         // and the GSonConverter because I know I'll be receiving a JSON back.
@@ -84,10 +76,10 @@ public class ThorRetroSearch extends Fragment {
         //Use the retrofit object to generate an implementation of the THOR interface
         final THOR thor = retrofit.create(THOR.class);
 
-        mButtonSearch.setOnClickListener(v -> {
-            //This code snippet hides the soft keyboard
-            //When implemented in a fragment, it must be instantiated in onActivityCreated
-            mInputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+        Button searchButton = layout.findViewById(R.id.search_button);
+        searchButton.setOnClickListener(v -> {
+
+            SystemUtil.hideSoftKeyboard(getActivity(), getView());
 
             // Thor doesn't react too well to multi-word requests, so I make use of a Utility
             // method to fetch the first word and get rid of anything else
