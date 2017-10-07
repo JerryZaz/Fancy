@@ -1,11 +1,11 @@
-package us.hnry.fancy.data;
+package us.hnry.fancy.network;
 
 import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
-import us.hnry.fancy.data.model.Symbol;
+import us.hnry.fancy.network.model.Symbol;
 
 /**
  * Created by Henry on 2/8/2016.

@@ -1,4 +1,4 @@
-package us.hnry.fancy.data.model;
+package us.hnry.fancy.network.model;
 
 import android.support.annotation.Nullable;
 

@@ -1,4 +1,4 @@
-package us.hnry.fancy.data;
+package us.hnry.fancy.network;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,9 +14,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import us.hnry.fancy.BuildConfig;
-import us.hnry.fancy.data.model.Quote;
-import us.hnry.fancy.data.model.SingleQuote;
-import us.hnry.fancy.data.model.Symbol;
+import us.hnry.fancy.network.model.Quote;
+import us.hnry.fancy.network.model.SingleQuote;
+import us.hnry.fancy.network.model.Symbol;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 

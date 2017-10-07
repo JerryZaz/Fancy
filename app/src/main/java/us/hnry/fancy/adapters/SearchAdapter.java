@@ -17,10 +17,10 @@ import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.holders.SearchViewHolder;
-import us.hnry.fancy.data.StockService;
-import us.hnry.fancy.data.model.Quote;
-import us.hnry.fancy.data.model.SingleQuote;
-import us.hnry.fancy.data.model.Symbol;
+import us.hnry.fancy.network.StockService;
+import us.hnry.fancy.network.model.Quote;
+import us.hnry.fancy.network.model.SingleQuote;
+import us.hnry.fancy.network.model.Symbol;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 

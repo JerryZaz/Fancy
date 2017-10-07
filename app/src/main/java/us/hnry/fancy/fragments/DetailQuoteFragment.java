@@ -27,9 +27,9 @@ import java.util.Map;
 
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.QuoteDetailsAdapter;
-import us.hnry.fancy.data.StockPresenter;
-import us.hnry.fancy.data.model.SingleQuote;
-import us.hnry.fancy.data.model.Symbol;
+import us.hnry.fancy.network.StockPresenter;
+import us.hnry.fancy.network.model.SingleQuote;
+import us.hnry.fancy.network.model.Symbol;
 import us.hnry.fancy.utils.Utility;
 import us.hnry.fancy.views.DividerItemDecoration;
 

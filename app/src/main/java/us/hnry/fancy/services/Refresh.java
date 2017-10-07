@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import us.hnry.fancy.data.StockPresenter;
-import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.network.StockPresenter;
+import us.hnry.fancy.network.model.SingleQuote;
 import us.hnry.fancy.utils.Utility;
 
 /**

@@ -2,7 +2,7 @@ package us.hnry.fancy.services;
 
 import java.util.ArrayList;
 
-import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.network.model.SingleQuote;
 
 
 /**

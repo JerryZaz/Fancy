@@ -1,12 +1,12 @@
-package us.hnry.fancy.data;
+package us.hnry.fancy.network;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import us.hnry.fancy.data.model.Quote;
-import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.network.model.Quote;
+import us.hnry.fancy.network.model.SingleQuote;
 
 /**
  * Created by Henry on 2/7/2016.
