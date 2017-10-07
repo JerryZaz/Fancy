@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.network.model.SingleQuote;
 
 /**
  * Created by Henry on 2/1/2016.

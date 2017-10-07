@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import us.hnry.fancy.R;
-import us.hnry.fancy.adapters.DetailRecycler;
-import us.hnry.fancy.data.StockPresenter;
-import us.hnry.fancy.data.model.SingleQuote;
-import us.hnry.fancy.data.model.Symbol;
+import us.hnry.fancy.adapters.QuoteDetailsAdapter;
+import us.hnry.fancy.network.StockPresenter;
+import us.hnry.fancy.network.model.SingleQuote;
+import us.hnry.fancy.network.model.Symbol;
 import us.hnry.fancy.utils.Utility;
 import us.hnry.fancy.views.DividerItemDecoration;
 
@@ -87,7 +87,7 @@ public class DetailQuoteFragment extends Fragment implements StockPresenter.Pers
                 @Override
                 public void run() {
                     try {
-                        final DetailRecycler detailAdapter = consumeParcelableQuoteFromIntent(fromIntent);
+                        final QuoteDetailsAdapter detailAdapter = consumeParcelableQuoteFromIntent(fromIntent);
                         getActivity().runOnUiThread(() -> {
                             mDetailRecyclerView.setAdapter(detailAdapter);
                             mProgressDialog.dismiss();
@@ -170,7 +170,7 @@ public class DetailQuoteFragment extends Fragment implements StockPresenter.Pers
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    private DetailRecycler consumeParcelableQuoteFromIntent(SingleQuote quote)
+    private QuoteDetailsAdapter consumeParcelableQuoteFromIntent(SingleQuote quote)
             throws InvocationTargetException, IllegalAccessException {
         ArrayList<String> keys = new ArrayList<>();
         Method[] methods = quote.getClass().getMethods();
@@ -194,7 +194,7 @@ public class DetailQuoteFragment extends Fragment implements StockPresenter.Pers
                 }
             }
         }
-        return new DetailRecycler(keys, map);
+        return new QuoteDetailsAdapter(keys, map);
     }
 
     @Override

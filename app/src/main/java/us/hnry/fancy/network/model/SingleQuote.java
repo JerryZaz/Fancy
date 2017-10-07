@@ -1,4 +1,4 @@
-package us.hnry.fancy.data.model;
+package us.hnry.fancy.network.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -2,7 +2,6 @@ package us.hnry.fancy.fragments;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -21,10 +19,11 @@ import retrofit2.Response;
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
-import us.hnry.fancy.data.StockService;
-import us.hnry.fancy.data.model.Quote;
-import us.hnry.fancy.data.model.SingleQuote;
+import us.hnry.fancy.network.StockService;
+import us.hnry.fancy.network.model.Quote;
+import us.hnry.fancy.network.model.SingleQuote;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
+import us.hnry.fancy.utils.SystemUtil;
 import us.hnry.fancy.utils.Utility;
 
 /**
@@ -37,31 +36,18 @@ import us.hnry.fancy.utils.Utility;
 public class SymbolRetroSearch extends Fragment {
 
     final static String TAG = SymbolRetroSearch.class.getSimpleName();
-    private EditText mEditTextSearch;
-    private Button mButtonSearch;
-    private Intent mLaunchDetail;
-    private InputMethodManager mInputMethodManager;
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mInputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_search_recycler, container, false);
 
-        mEditTextSearch = layout.findViewById(R.id.search_edit_text);
-        mEditTextSearch.setHint("Company Symbol (e.g. AMZN)");
-        mButtonSearch = layout.findViewById(R.id.search_button);
+        final EditText searchEditText = layout.findViewById(R.id.search_edit_text);
+        searchEditText.setHint("Company Symbol (e.g. AMZN)");
 
-        mButtonSearch = layout.findViewById(R.id.search_button);
-        mButtonSearch.setOnClickListener(v -> {
-            //This code snippet hides the soft keyboard
-            //When implemented in a fragment, it must be instantiated in onActivityCreated
-            mInputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+        Button searchButton = layout.findViewById(R.id.search_button);
+        searchButton.setOnClickListener(v -> {
+            SystemUtil.hideSoftKeyboard(getActivity(), getView());
 
             final ProgressDialog progressDialog = new ProgressDialog(getActivity());
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -71,7 +57,7 @@ public class SymbolRetroSearch extends Fragment {
             progressDialog.setIndeterminate(true);
             progressDialog.show();
 
-            final String userInput = mEditTextSearch.getText().toString();
+            final String userInput = searchEditText.getText().toString();
             if (!userInput.equals("")) {
                 //@TODO: Validate against numbers and symbols
                 String query = userInput.toUpperCase();
@@ -108,9 +94,9 @@ public class SymbolRetroSearch extends Fragment {
                                 // model class, to fetch the actual Quote.
                                 SingleQuote quote = single.getQuery().getResults().getQuote();
 
-                                mLaunchDetail = new Intent(v.getContext(), DetailActivity.class);
-                                mLaunchDetail.putExtra(Utility.QUOTE_INTENT, quote);
-                                v.getContext().startActivity(mLaunchDetail);
+                                Intent launchDetail = new Intent(v.getContext(), DetailActivity.class);
+                                launchDetail.putExtra(Utility.QUOTE_INTENT, quote);
+                                v.getContext().startActivity(launchDetail);
                             } else if (single != null && single.getQuery() != null && single.getQuery().getCount() <= 0) {
                                 Snackbar.make(v, "Your search returned no results", Snackbar.LENGTH_SHORT).show();
                             } else {

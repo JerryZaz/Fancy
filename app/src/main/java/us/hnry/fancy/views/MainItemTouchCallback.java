@@ -3,7 +3,7 @@ package us.hnry.fancy.views;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
-import us.hnry.fancy.adapters.RetroQuoteRecycler;
+import us.hnry.fancy.adapters.QuotesAdapter;
 
 /**
  * Created by Henry on 3/18/2016.
@@ -11,7 +11,7 @@ import us.hnry.fancy.adapters.RetroQuoteRecycler;
 public class MainItemTouchCallback extends ItemTouchHelper.Callback {
     private ItemTouchHelperListener mListener;
 
-    public MainItemTouchCallback(RetroQuoteRecycler adapter) {
+    public MainItemTouchCallback(QuotesAdapter adapter) {
         mListener = adapter;
     }
 

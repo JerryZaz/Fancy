@@ -1,16 +1,14 @@
 package us.hnry.fancy.adapters;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,10 +16,11 @@ import retrofit2.Response;
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
-import us.hnry.fancy.data.StockService;
-import us.hnry.fancy.data.model.Quote;
-import us.hnry.fancy.data.model.SingleQuote;
-import us.hnry.fancy.data.model.Symbol;
+import us.hnry.fancy.adapters.holders.SearchViewHolder;
+import us.hnry.fancy.network.StockService;
+import us.hnry.fancy.network.model.Quote;
+import us.hnry.fancy.network.model.SingleQuote;
+import us.hnry.fancy.network.model.Symbol;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
 import us.hnry.fancy.utils.Utility;
 
@@ -30,26 +29,18 @@ import us.hnry.fancy.utils.Utility;
  * Remastered SearchAdapter to handle Recycler View and its Click events.
  * Implements RecyclerView Adapter and RecyclerView ViewHolder
  */
-public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRecyclerViewHolder> {
+public class SearchAdapter extends BaseAdapter<Symbol, SearchViewHolder> {
 
-    private ArrayList<Symbol> mResults;
-
-    /**
-     * Adapter constructor.
-     *
-     * @param param The results of a Thor Search.
-     */
-    public SearchRecycler(ArrayList<Symbol> param) {
-        this.mResults = param;
+    public SearchAdapter(@NonNull Context context) {
+        super(context);
     }
 
-
     @Override
-    public SearchRecyclerViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+    public SearchViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         final View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_row_search, parent, false);
 
-        return new SearchRecyclerViewHolder(
+        return new SearchViewHolder(
                 itemView,
                 caller -> {
 
@@ -125,56 +116,10 @@ public class SearchRecycler extends RecyclerView.Adapter<SearchRecycler.SearchRe
     }
 
     @Override
-    public void onBindViewHolder(SearchRecyclerViewHolder holder, int position) {
-        Symbol symbol = mResults.get(position);
-        holder.symbolTextView.setText(symbol.getSymbol());
-        holder.companyTextView.setText(symbol.getCompany());
+    public void onBindViewHolder(SearchViewHolder holder, int position) {
+        Symbol symbol = getItems().get(position);
+        holder.getSymbolTextView().setText(symbol.getSymbol());
+        holder.getCompanyTextView().setText(symbol.getCompany());
         holder.itemView.setTag(symbol);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mResults != null ? mResults.size() : 0;
-    }
-
-    /**
-     * Helper method that updates the data displayed in the recycler view
-     *
-     * @param param the new information to be displayed
-     */
-    public void swapList(ArrayList<Symbol> param) {
-        if (mResults != null) {
-            mResults.clear();
-            mResults.addAll(param);
-        } else {
-            mResults = param;
-        }
-        notifyDataSetChanged();
-    }
-
-    public static class SearchRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView symbolTextView;
-        public TextView companyTextView;
-        ThorViewHolderClicks mListener;
-
-        public SearchRecyclerViewHolder(View itemView, ThorViewHolderClicks listener) {
-            super(itemView);
-            symbolTextView = itemView.findViewById(R.id.search_single_row_symbol);
-            companyTextView = itemView.findViewById(R.id.search_single_row_company);
-            mListener = listener;
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            mListener.onItemClick(v);
-        }
-
-        /**
-         * Interface to define the OnClick events of the recycler view
-         */
-        public interface ThorViewHolderClicks {
-            void onItemClick(View caller);
-        }
     }
 }

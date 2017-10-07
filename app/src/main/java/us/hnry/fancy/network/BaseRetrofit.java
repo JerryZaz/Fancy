@@ -1,4 +1,4 @@
-package us.hnry.fancy.data;
+package us.hnry.fancy.network;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
