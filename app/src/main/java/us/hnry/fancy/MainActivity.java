@@ -11,7 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import us.hnry.fancy.fragments.MainFragmentService;
+import us.hnry.fancy.fragments.MainFragment;
 import us.hnry.fancy.utils.Utility;
 
 public class MainActivity extends AppCompatActivity
@@ -36,9 +36,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        MainFragmentService mainFragment;
+        MainFragment mainFragment;
         if (savedInstanceState == null) {
-            mainFragment = new MainFragmentService();
+            mainFragment = new MainFragment();
             getFragmentManager()
                     .beginTransaction()
                     .add(R.id.content_main_list_container,

@@ -20,24 +20,34 @@ class QuotesViewHolder(itemView: View, private val listener: RetroQuoteViewHolde
         itemView.setOnClickListener(this)
     }
 
-    fun setSymbol(symbol: String) {
-        symbolTextView.text = symbol
+    fun setSymbol(symbol: String?) {
+        if (symbol != null) {
+            symbolTextView.text = symbol
+        }
     }
 
-    fun setSymbolName(name: String) {
-        nameTextView.text = name
+    fun setSymbolName(name: String?) {
+        if (name != null) {
+            nameTextView.text = name
+        }
     }
 
-    fun setCloseValue(closeValue: String) {
-        closeTextView.text = closeValue
+    fun setCloseValue(closeValue: String?) {
+        if (closeValue != null) {
+            closeTextView.text = closeValue
+        }
     }
 
-    fun setOpenValue(openValue: String) {
-        openTextView.text = openValue
+    fun setOpenValue(openValue: String?) {
+        if (openValue != null) {
+            openTextView.text = openValue
+        }
     }
 
-    fun setAskValue(askValue: String) {
-        askTextView.text = askValue
+    fun setAskValue(askValue: String?) {
+        if (askValue != null) {
+            askTextView.text = askValue
+        }
     }
 
     override fun onClick(v: View) {
