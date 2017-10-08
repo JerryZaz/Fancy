@@ -11,11 +11,11 @@ import android.view.ViewGroup;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.holders.QuotesViewHolder;
-import us.hnry.fancy.network.StockPresenter.PersistentSymbolsChangedListener;
+import us.hnry.fancy.fragments.PersistentSymbolsChangedListener;
 import us.hnry.fancy.network.model.SingleQuote;
 import us.hnry.fancy.network.model.Symbol;
+import us.hnry.fancy.ui.MainItemTouchCallback.ItemTouchHelperListener;
 import us.hnry.fancy.utils.Utility;
-import us.hnry.fancy.views.MainItemTouchCallback.ItemTouchHelperListener;
 
 /**
  * Created by Henry on 2/8/2016.

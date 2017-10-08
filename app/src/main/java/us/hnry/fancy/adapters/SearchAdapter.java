@@ -17,7 +17,7 @@ import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.holders.SearchViewHolder;
-import us.hnry.fancy.network.StockService;
+import us.hnry.fancy.network.StockServiceImpl;
 import us.hnry.fancy.network.model.Quote;
 import us.hnry.fancy.network.model.SingleQuote;
 import us.hnry.fancy.network.model.Symbol;
@@ -63,7 +63,7 @@ public class SearchAdapter extends BaseAdapter<Symbol, SearchViewHolder> {
                     String builtQuery = queryBuilder.build();
 
                     //Call to the service to make an HTTP request to the server
-                    Call<Quote<SingleQuote>> call = StockService.Implementation.get(BuildConfig.BASE_API_URL)
+                    Call<Quote<SingleQuote>> call = StockServiceImpl.Companion.get()
                             .getSingleQuote(builtQuery, ENV, FORMAT);
 
                     // Execute the request asynchronously with a callback listener to fetch the

@@ -27,11 +27,11 @@ import java.util.Map;
 
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.QuoteDetailsAdapter;
-import us.hnry.fancy.network.StockPresenter;
 import us.hnry.fancy.network.model.SingleQuote;
 import us.hnry.fancy.network.model.Symbol;
+import us.hnry.fancy.ui.DividerItemDecoration;
+import us.hnry.fancy.utils.SymbolsHelper;
 import us.hnry.fancy.utils.Utility;
-import us.hnry.fancy.views.DividerItemDecoration;
 
 /**
  * Created by Henry on 2/8/2016.
@@ -40,7 +40,7 @@ import us.hnry.fancy.views.DividerItemDecoration;
  * Floating Action Button allows the user to track if not tracking, or un-track if tracking.
  * Second FAB packs up the Quote object in an intent to share through email.
  */
-public class DetailQuoteFragment extends Fragment implements StockPresenter.PersistentSymbolsChangedListener {
+public class DetailQuoteFragment extends Fragment implements PersistentSymbolsChangedListener {
 
     private RecyclerView mDetailRecyclerView;
     private FloatingActionButton mTrackedFab;
@@ -52,7 +52,7 @@ public class DetailQuoteFragment extends Fragment implements StockPresenter.Pers
 
     private ProgressDialog mProgressDialog;
 
-    private StockPresenter mPresenter;
+    private SymbolsHelper symbolsHelper;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -72,7 +72,7 @@ public class DetailQuoteFragment extends Fragment implements StockPresenter.Pers
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        mPresenter = new StockPresenter(getActivity(), this);
+        symbolsHelper = new SymbolsHelper(getActivity(), this);
         FloatingActionButton shareFab = getActivity().findViewById(R.id.share_fab);
         mTrackedFab = getActivity().findViewById(R.id.fab);
 
@@ -80,7 +80,7 @@ public class DetailQuoteFragment extends Fragment implements StockPresenter.Pers
         if (fromIntent != null) {
             getActivity().setTitle(fromIntent.getName());
             mFromIntentSymbol = new Symbol(fromIntent.getName(), fromIntent.getSymbol());
-            if(mPresenter.isTracked(mFromIntentSymbol)){
+            if (symbolsHelper.isTracked(mFromIntentSymbol)) {
                 mTrackedFab.setImageResource(R.drawable.ic_check_circle_white_24dp);
             }
             new Thread() {
@@ -141,11 +141,11 @@ public class DetailQuoteFragment extends Fragment implements StockPresenter.Pers
 
         mTrackedFab.setOnClickListener(view -> {
             if (fromIntent != null) {
-                if (mPresenter.isTracked(mFromIntentSymbol)) {
-                    mPresenter.removeSymbol(mFromIntentSymbol);
+                if (symbolsHelper.isTracked(mFromIntentSymbol)) {
+                    symbolsHelper.removeSymbol(mFromIntentSymbol);
                     Snackbar.make(view, "Removed from Favorites", Snackbar.LENGTH_SHORT).show();
                 } else {
-                    mPresenter.addSymbol(mFromIntentSymbol);
+                    symbolsHelper.addSymbol(mFromIntentSymbol);
                     Snackbar.make(view, "Added to Favorites", Snackbar.LENGTH_SHORT).show();
                 }
             } else {

@@ -1,4 +1,4 @@
-package us.hnry.fancy.views;
+package us.hnry.fancy.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;

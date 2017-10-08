@@ -1,4 +1,4 @@
-package us.hnry.fancy.views;
+package us.hnry.fancy.ui;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
