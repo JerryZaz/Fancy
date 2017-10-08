@@ -28,7 +28,7 @@ import java.util.concurrent.Executors
  * 10/8/2017
  */
 class MainFragment : Fragment(), StockView {
-    private val defaultSymbols = arrayOf("SQ", "TWLO")
+    private val defaultSymbols = arrayOf("SQ")
 
     private lateinit var presenter: StockPresenter
     private var recyclerView: RecyclerView? = null
@@ -74,7 +74,6 @@ class MainFragment : Fragment(), StockView {
     }
 
     override fun displayStockData(listOfQuotes: List<SingleQuote>) {
-        logMessage("calling swapList with ${listOfQuotes.size} items")
         adapter.swapList(listOfQuotes)
     }
 

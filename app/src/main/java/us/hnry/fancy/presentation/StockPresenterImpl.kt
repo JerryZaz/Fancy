@@ -21,26 +21,21 @@ class StockPresenterImpl(repository: StockRepository, observeOn: Scheduler, subs
     private val subscription by lazy {
         useCase.execute(useCaseParams).subscribeBy(
                 onNext = {
-                    mView.logMessage("onNext")
                     mView.displayStockData(it)
                 },
                 onError = {
                     mView.logMessage("onError(${it.localizedMessage})")
-                },
-                onComplete = { mView.logMessage("onComplete") }
+                }
         )
     }
 
     override fun attachView(view: StockView) {
         mView = view
-        mView.logMessage("attachView")
         disposables.addAll(subscription)
     }
 
     override fun detachView() {
-        mView.logMessage("detachView")
         if (!disposables.isDisposed) {
-            mView.logMessage("un-subscribing")
             disposables.dispose()
         }
     }

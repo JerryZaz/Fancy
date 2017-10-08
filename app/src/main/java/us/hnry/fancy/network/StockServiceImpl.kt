@@ -70,13 +70,13 @@ class StockServiceImpl internal constructor(baseUrl: String) : BaseRetrofit(base
                 @Query("q") builtQuery: String,
                 @Query("env") env: String,
                 @Query("format") format: String
-        ): Observable<List<SingleQuote>>
+        ): Observable<Quote<List<SingleQuote>>>
 
         @GET("v1/public/yql?")
         fun singleQuotesStreamer(
                 @Query("q") builtQuery: String,
                 @Query("env") env: String,
                 @Query("format") format: String
-        ): Observable<SingleQuote>
+        ): Observable<Quote<SingleQuote>>
     }
 }

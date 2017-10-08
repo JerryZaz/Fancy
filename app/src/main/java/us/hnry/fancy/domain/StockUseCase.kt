@@ -1,6 +1,5 @@
 package us.hnry.fancy.domain
 
-import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import us.hnry.fancy.network.model.SingleQuote
@@ -13,9 +12,8 @@ import java.util.concurrent.TimeUnit
  */
 class StockUseCase(private val stockRepository: StockRepository, private val subscribeOn: Scheduler, private val observeOn: Scheduler) {
     fun execute(params: Params): Observable<List<SingleQuote>> {
-        return Observable.interval(20, TimeUnit.SECONDS, subscribeOn)
+        return Observable.interval(30, TimeUnit.SECONDS, subscribeOn)
                 .flatMap {
-                    Log.v("Henry ~", "refreshing...")
                     stockRepository.getQuotes(params)
                 }
                 .subscribeOn(subscribeOn).observeOn(observeOn).retry()
