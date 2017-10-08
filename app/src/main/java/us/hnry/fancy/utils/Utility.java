@@ -20,9 +20,15 @@ public class Utility {
 
     public static final String PERSISTENT = "savedData";
 
+    public static final String PERSISTENT_SYMBOLS_SET = "key.symbols.set";
+    // If no user-preferences are found, a query will be built using this defaults
+    public static final String[] DEFAULT_SYMBOLS = new String[]{"GOOG", "MSFT", "AAPL", "AMZN",
+            "FB", "TSLA", "T", "TMUS", "YHOO", "NFLX"};
+
     // The detail view only opens QUOTE_INTENT intents.
     public static final String QUOTE_INTENT = "intent_parcelable_quote";
     public static final String SEARCH_INTENT = "intent_search_type_selector";
+
     public static final int THOR_SEARCH = 0;
     public static final int SYMBOL_SEARCH = 1;
 

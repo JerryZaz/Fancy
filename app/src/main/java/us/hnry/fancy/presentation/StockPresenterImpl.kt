@@ -2,10 +2,10 @@ package us.hnry.fancy.presentation
 
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import us.hnry.fancy.domain.StockRepository
 import us.hnry.fancy.domain.StockUseCase
-import us.hnry.fancy.network.model.Symbol
 import us.hnry.fancy.presentation.view.StockView
 
 /**
@@ -15,18 +15,11 @@ import us.hnry.fancy.presentation.view.StockView
 class StockPresenterImpl(repository: StockRepository, observeOn: Scheduler, subscribeOn: Scheduler, vararg symbols: String) : StockPresenter {
     private lateinit var mView: StockView
 
-    private val useCaseParams by lazy { StockUseCase.Params(*symbols) }
+    private val defaultParams by lazy { StockUseCase.Params(*symbols) }
     private val useCase by lazy { StockUseCase(repository, subscribeOn, observeOn) }
     private val disposables by lazy { CompositeDisposable() }
     private val subscription by lazy {
-        useCase.execute(useCaseParams).subscribeBy(
-                onNext = {
-                    mView.displayStockData(it)
-                },
-                onError = {
-                    mView.logMessage("onError(${it.localizedMessage})")
-                }
-        )
+        buildSubscription(defaultParams)
     }
 
     override fun attachView(view: StockView) {
@@ -40,11 +33,23 @@ class StockPresenterImpl(repository: StockRepository, observeOn: Scheduler, subs
         }
     }
 
-    override fun onSymbolAdded(symbol: Symbol?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun symbolSetChanged(vararg symbols: String) {
+        if (!disposables.isDisposed) {
+            disposables.dispose()
+        }
+
+        val temporaryParams = StockUseCase.Params(*symbols)
+        disposables.addAll(buildSubscription(temporaryParams))
     }
 
-    override fun onSymbolRemoved(symbol: Symbol?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private fun buildSubscription(params: StockUseCase.Params): Disposable {
+        return useCase.execute(params).subscribeBy(
+                onNext = {
+                    mView.displayStockData(it)
+                },
+                onError = {
+                    mView.logMessage("onError(${it.localizedMessage})")
+                }
+        )
     }
 }
