@@ -30,8 +30,8 @@ import us.hnry.fancy.adapters.QuoteDetailsAdapter;
 import us.hnry.fancy.network.StockPresenter;
 import us.hnry.fancy.network.model.SingleQuote;
 import us.hnry.fancy.network.model.Symbol;
+import us.hnry.fancy.ui.DividerItemDecoration;
 import us.hnry.fancy.utils.Utility;
-import us.hnry.fancy.views.DividerItemDecoration;
 
 /**
  * Created by Henry on 2/8/2016.

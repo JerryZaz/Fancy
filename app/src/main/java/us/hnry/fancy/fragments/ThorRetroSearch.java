@@ -22,16 +22,13 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.SearchAdapter;
-import us.hnry.fancy.network.ThorSearchService.THOR;
+import us.hnry.fancy.network.ThorSearchService;
 import us.hnry.fancy.network.model.Symbol;
+import us.hnry.fancy.ui.DividerItemDecoration;
 import us.hnry.fancy.utils.SystemUtil;
 import us.hnry.fancy.utils.Utility;
-import us.hnry.fancy.views.DividerItemDecoration;
 
 /**
  * Created by Henry on 2/8/2016.
@@ -68,18 +65,18 @@ public class ThorRetroSearch extends Fragment {
 
         //Instantiate retrofit with the known attributes, the API URL
         // and the GSonConverter because I know I'll be receiving a JSON back.
-        Retrofit retrofit = new Retrofit.Builder()
+        /*Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BuildConfig.THOR_BASE_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         //Use the retrofit object to generate an implementation of the THOR interface
-        final THOR thor = retrofit.create(THOR.class);
+        final THOR thor = retrofit.create(THOR.class);*/
 
         Button searchButton = layout.findViewById(R.id.search_button);
         searchButton.setOnClickListener(v -> {
 
-            SystemUtil.hideSoftKeyboard(getActivity(), getView());
+            SystemUtil.INSTANCE.hideSoftKeyboard(getActivity(), getView());
 
             // Thor doesn't react too well to multi-word requests, so I make use of a Utility
             // method to fetch the first word and get rid of anything else
@@ -99,7 +96,7 @@ public class ThorRetroSearch extends Fragment {
                 progressDialog.show();
 
                 //Call to the service to make an HTTP request to the server
-                call = thor.getSymbols(search);
+                call = ThorSearchService.Companion.get().getSymbols(search);
 
                 // Execute the request asynchronously with a callback listener to fetch the
                 // response or the error message (if any) while talking to the server,

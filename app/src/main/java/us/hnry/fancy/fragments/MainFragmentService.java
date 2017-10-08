@@ -38,9 +38,9 @@ import us.hnry.fancy.network.StockPresenter.PersistentSymbolsChangedListener;
 import us.hnry.fancy.network.model.SingleQuote;
 import us.hnry.fancy.network.model.Symbol;
 import us.hnry.fancy.services.Refresh;
+import us.hnry.fancy.ui.MainItemTouchCallback;
 import us.hnry.fancy.utils.ObservableObject;
 import us.hnry.fancy.utils.Utility;
-import us.hnry.fancy.views.MainItemTouchCallback;
 
 /**
  * Created by Henry on 2/17/2016.
@@ -116,7 +116,7 @@ public class MainFragmentService extends Fragment implements PersistentSymbolsCh
         if (receiver == null) {
             receiver = new UpdateReceiver();
         }
-        getActivity().registerReceiver(receiver, new IntentFilter("us.hnry.fancy.refresher"));
+        getActivity().registerReceiver(receiver, new IntentFilter(Utility.BROADCAST));
     }
 
     /**

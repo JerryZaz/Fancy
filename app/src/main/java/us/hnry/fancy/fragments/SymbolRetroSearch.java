@@ -19,7 +19,7 @@ import retrofit2.Response;
 import us.hnry.fancy.BuildConfig;
 import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
-import us.hnry.fancy.network.StockService;
+import us.hnry.fancy.network.StockServiceImpl;
 import us.hnry.fancy.network.model.Quote;
 import us.hnry.fancy.network.model.SingleQuote;
 import us.hnry.fancy.utils.QuoteQueryBuilder;
@@ -47,7 +47,7 @@ public class SymbolRetroSearch extends Fragment {
 
         Button searchButton = layout.findViewById(R.id.search_button);
         searchButton.setOnClickListener(v -> {
-            SystemUtil.hideSoftKeyboard(getActivity(), getView());
+            SystemUtil.INSTANCE.hideSoftKeyboard(getActivity(), getView());
 
             final ProgressDialog progressDialog = new ProgressDialog(getActivity());
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -67,12 +67,11 @@ public class SymbolRetroSearch extends Fragment {
                 QuoteQueryBuilder queryBuilder = new QuoteQueryBuilder(query);
                 String builtQuery = queryBuilder.build();
 
-                final String BASE_URL = BuildConfig.BASE_API_URL;
                 final String ENV = BuildConfig.ENV;
                 final String FORMAT = "json";
 
                 // Call to the service to make an HTTP request to the server
-                Call<Quote<SingleQuote>> call = StockService.Implementation.get(BASE_URL)
+                Call<Quote<SingleQuote>> call = StockServiceImpl.Companion.get()
                         .getSingleQuote(builtQuery, ENV, FORMAT);
 
                 // Execute the request asynchronously with a callback listener to fetch the

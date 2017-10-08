@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,10 +19,6 @@ import us.hnry.fancy.network.model.SingleQuote;
 public class Utility {
 
     public static final String PERSISTENT = "savedData";
-    public static final String PERSISTENT_SYMBOLS_SET = "key.symbols.set";
-
-    @Deprecated
-    public static final String STOCK_INTENT;
 
     // The detail view only opens QUOTE_INTENT intents.
     public static final String QUOTE_INTENT = "intent_parcelable_quote";
@@ -29,16 +26,9 @@ public class Utility {
     public static final int THOR_SEARCH = 0;
     public static final int SYMBOL_SEARCH = 1;
 
-    // If no user-preferences are found, a query will be build using this defaults
-    public static final String[] DEFAULT_SYMBOLS = new String[]{"GOOG", "MSFT", "AAPL", "AMZN",
-            "FB", "TSLA", "T", "TMUS", "YHOO", "NFLX"};
     public static final double DEFAULT_DOUBLE = -1.23;
-    public static final long DEFAULT_LONG = -1;
-    public static final String BROADCAST = "us.hnry.fancy.refresher";
 
-    static {
-        STOCK_INTENT = "intent_parcelable_stock";
-    }
+    public static final String BROADCAST = "us.hnry.fancy.refresher";
 
     /**
      * Method called when initializing the main page. An if-else chooses which
@@ -76,8 +66,9 @@ public class Utility {
      */
     public static String formatDouble(double original) {
         if (original == DEFAULT_DOUBLE) return "N/A";
-        if (original > 999999) return String.format("%#,.2f", (original / 1000000)) + "M";
-        return String.format("%#,.2f", original);
+        if (original > 999999)
+            return String.format(Locale.US, "%#,.2f", (original / 1000000)) + "M";
+        return String.format(Locale.US, "%#,.2f", original);
     }
 
     /**
@@ -91,8 +82,9 @@ public class Utility {
         if (original != null) {
             double fetched = Double.parseDouble(original);
             if (fetched == -1.23) return "N/A";
-            if (fetched > 999999) return String.format("%#,.2f", (fetched / 1000000)) + "M";
-            return String.format("%#,.2f", fetched);
+            if (fetched > 999999)
+                return String.format(Locale.US, "%#,.2f", (fetched / 1000000)) + "M";
+            return String.format(Locale.US, "%#,.2f", fetched);
         }
         return "N/A";
     }
@@ -178,8 +170,6 @@ public class Utility {
      *
      * @param quote the SingleQuote to be consumed
      * @return Printable String representation of the SingleQuote
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     public static String consumeParcelableQuote(SingleQuote quote) throws InvocationTargetException, IllegalAccessException {
         ArrayList<String> keys = new ArrayList<>();
