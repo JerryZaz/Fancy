@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import us.hnry.fancy.network.model.SingleQuote;
 
@@ -33,20 +32,6 @@ public class Utility {
     public static final int SYMBOL_SEARCH = 1;
 
     public static final double DEFAULT_DOUBLE = -1.23;
-
-    public static final String BROADCAST = "us.hnry.fancy.refresher";
-
-    /**
-     * Method called when initializing the main page. An if-else chooses which
-     * Set to send here.
-     *
-     * @param fromSharedPreferences or the default array of symbols.
-     * @return an array representation of the symbols to query
-     */
-    @Deprecated
-    public static String[] getSymbols(Set<String> fromSharedPreferences) {
-        return fromSharedPreferences.toArray(new String[fromSharedPreferences.size()]);
-    }
 
     /**
      * Used by the Main adapter to determine what color to use on the current ask.

@@ -1,7 +1,6 @@
 package us.hnry.fancy.fragments
 
 import android.app.Fragment
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -28,17 +27,16 @@ import us.hnry.fancy.presentation.StockPresenter
 import us.hnry.fancy.presentation.StockPresenterImpl
 import us.hnry.fancy.presentation.view.StockView
 import us.hnry.fancy.ui.MainItemTouchCallback
+import us.hnry.fancy.utils.SymbolsHelper
 import us.hnry.fancy.utils.Utility
-import java.util.*
 import java.util.concurrent.Executors
-import kotlin.collections.HashSet
 
 /**
  * @author Henry
  * 10/8/2017
  */
 class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
-    private val mPreferences by lazy { activity.getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE) }
+    private val symbolsHelper by lazy { SymbolsHelper(activity, this) }
 
     private lateinit var presenter: StockPresenter
     private var recyclerView: RecyclerView? = null
@@ -74,7 +72,7 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     private fun initPresenter() {
         presenter = StockPresenterImpl(
                 StockRepositoryImpl(StockServiceImpl.get()), AndroidSchedulers.mainThread(),
-                Schedulers.from(Executors.newSingleThreadExecutor()), *getSymbolsAsArray()
+                Schedulers.from(Executors.newSingleThreadExecutor()), *symbolsHelper.getPersistentSymbolsSetAsArray()
         )
     }
 
@@ -100,16 +98,6 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
         adapter.swapList(listOfQuotes)
     }
 
-    override fun addSymbol(symbol: Symbol) {
-        val symbolsArray = addSymbolAndGet(symbol)
-        presenter.symbolSetChanged(*symbolsArray)
-    }
-
-    override fun removeSymbol(symbol: Symbol) {
-        val symbolsArray = removeSymbolAndGet(symbol)
-        presenter.symbolSetChanged(*symbolsArray)
-    }
-
     override fun logMessage(message: String) {
         Log.v("Henry ~", message)
 
@@ -118,51 +106,21 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     }
 
     override fun onSymbolAdded(symbol: Symbol) {
+        presenter.symbolSetChanged(*symbolsHelper.getPersistentSymbolsSetAsArray())
+
         recyclerView?.let {
             Snackbar.make(it, "${symbol.symbol} will be visible after the next update",
                     Snackbar.LENGTH_SHORT).show()
         }
-        addSymbol(symbol)
     }
 
     override fun onSymbolRemoved(symbol: Symbol) {
-        removeSymbol(symbol)
+        presenter.symbolSetChanged(*symbolsHelper.getPersistentSymbolsSetAsArray())
 
         recyclerView?.let {
             Snackbar.make(it, "Symbol removed from Favorites", Snackbar.LENGTH_LONG)
-                    .setAction("Undo") { addSymbol(symbol) }
+                    .setAction("Undo") { symbolsHelper.addSymbol(symbol) }
                     .show()
         }
-    }
-
-    private fun addSymbolAndGet(symbol: Symbol): Array<String> {
-        val symbolsSet = HashSet<String>(getPersistentSymbolsSet())
-        if (symbolsSet.contains(symbol.symbol)) {
-            return symbolsSet.toTypedArray()
-        }
-
-        symbolsSet.add(symbol.symbol)
-        mPreferences.edit().putStringSet(Utility.PERSISTENT_SYMBOLS_SET, symbolsSet).apply()
-        return getSymbolsAsArray()
-    }
-
-    private fun removeSymbolAndGet(symbol: Symbol): Array<String> {
-        val symbolsSet = HashSet<String>(getPersistentSymbolsSet())
-        if (!symbolsSet.contains(symbol.symbol)) {
-            return symbolsSet.toTypedArray()
-        }
-
-        symbolsSet.remove(symbol.symbol)
-        mPreferences.edit().putStringSet(Utility.PERSISTENT_SYMBOLS_SET, symbolsSet).apply()
-        return getSymbolsAsArray()
-    }
-
-    private fun getPersistentSymbolsSet(): MutableSet<String> {
-        return mPreferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                HashSet(Arrays.asList(*Utility.DEFAULT_SYMBOLS)))
-    }
-
-    private fun getSymbolsAsArray(): Array<String> {
-        return getPersistentSymbolsSet().toTypedArray()
     }
 }
