@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -198,12 +199,12 @@ public class DetailQuoteFragment extends Fragment implements PersistentSymbolsCh
     }
 
     @Override
-    public void onSymbolAdded(Symbol symbol) {
+    public void onSymbolAdded(@NonNull Symbol symbol) {
         mTrackedFab.setImageResource(R.drawable.ic_check_circle_white_24dp);
     }
 
     @Override
-    public void onSymbolRemoved(Symbol symbol) {
+    public void onSymbolRemoved(@NonNull Symbol symbol) {
         mTrackedFab.setImageResource(R.drawable.ic_favorite_white_24dp);
     }
 }

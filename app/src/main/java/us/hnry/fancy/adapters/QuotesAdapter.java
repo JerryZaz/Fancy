@@ -15,6 +15,7 @@ import us.hnry.fancy.fragments.PersistentSymbolsChangedListener;
 import us.hnry.fancy.network.model.SingleQuote;
 import us.hnry.fancy.network.model.Symbol;
 import us.hnry.fancy.ui.MainItemTouchCallback.ItemTouchHelperListener;
+import us.hnry.fancy.utils.SymbolsHelper;
 import us.hnry.fancy.utils.Utility;
 
 /**
@@ -27,8 +28,7 @@ import us.hnry.fancy.utils.Utility;
 public class QuotesAdapter extends BaseAdapter<SingleQuote, QuotesViewHolder>
         implements ItemTouchHelperListener {
 
-    @NonNull
-    private PersistentSymbolsChangedListener mListener;
+    private SymbolsHelper symbolsHelper;
 
     /**
      * @param context  Used only to fetch resource items.
@@ -37,7 +37,7 @@ public class QuotesAdapter extends BaseAdapter<SingleQuote, QuotesViewHolder>
      */
     public QuotesAdapter(@NonNull Context context, @NonNull PersistentSymbolsChangedListener listener) {
         super(context);
-        mListener = listener;
+        symbolsHelper = new SymbolsHelper(context, listener);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class QuotesAdapter extends BaseAdapter<SingleQuote, QuotesViewHolder>
     public void onItemSwiped(int adapterPosition) {
         SingleQuote quote = getItems().get(adapterPosition);
         getItems().remove(quote);
-        mListener.onSymbolRemoved(new Symbol(quote.getName(), quote.getSymbol()));
+        symbolsHelper.removeSymbol(new Symbol(quote.getName(), quote.getSymbol()));
         notifyDataSetChanged();
     }
 
