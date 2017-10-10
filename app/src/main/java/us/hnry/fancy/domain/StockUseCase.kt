@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
  */
 class StockUseCase(private val stockRepository: StockRepository, private val subscribeOn: Scheduler, private val observeOn: Scheduler) {
     fun execute(params: Params): Observable<List<SingleQuote>> {
-        return Observable.interval(15, TimeUnit.SECONDS, subscribeOn)
+        return Observable.interval(0, 15, TimeUnit.SECONDS, subscribeOn)
                 .flatMap { stockRepository.getQuotes(params) }
                 .subscribeOn(subscribeOn).observeOn(observeOn).retry()
     }

@@ -11,11 +11,16 @@ import kotlin.collections.HashSet
  * 10/8/2017
  */
 class SymbolsHelper(private val context: Context, private val listener: PersistentSymbolsChangedListener) {
-    private val sharedPreferences by lazy { context.getSharedPreferences(Utility.PERSISTENT, Context.MODE_PRIVATE) }
+    private val persistentStoreKey by lazy { "savedData" }
+    private val sharedPreferences by lazy { context.getSharedPreferences(persistentStoreKey, Context.MODE_PRIVATE) }
+    private val defaultSymbols by lazy {
+        arrayOf("GOOG", "MSFT", "AAPL", "AMZN", "FB", "TSLA", "T", "TMUS", "YHOO", "NFLX")
+    }
+    private val persistentSymbolsSetKey by lazy { "key.symbols.set" }
 
     private fun getPersistentSymbolsSet(): MutableSet<String> {
-        return HashSet(sharedPreferences.getStringSet(Utility.PERSISTENT_SYMBOLS_SET,
-                HashSet(Arrays.asList(*Utility.DEFAULT_SYMBOLS))))
+        return HashSet(sharedPreferences.getStringSet(persistentSymbolsSetKey,
+                HashSet(Arrays.asList(*defaultSymbols))))
     }
 
     fun getPersistentSymbolsSetAsArray(): Array<String> {
@@ -30,7 +35,7 @@ class SymbolsHelper(private val context: Context, private val listener: Persiste
         symbol.takeIf { !isTracked(symbol) }?.let {
             val symbolsSet = getPersistentSymbolsSet()
             symbolsSet.add(symbol.symbol)
-            sharedPreferences.edit().putStringSet(Utility.PERSISTENT_SYMBOLS_SET, symbolsSet).apply()
+            sharedPreferences.edit().putStringSet(persistentSymbolsSetKey, symbolsSet).apply()
             listener.onSymbolAdded(symbol)
         }
     }
@@ -39,7 +44,7 @@ class SymbolsHelper(private val context: Context, private val listener: Persiste
         symbol.takeIf { isTracked(symbol) }?.let {
             val symbolsSet = getPersistentSymbolsSet()
             symbolsSet.remove(symbol.symbol)
-            sharedPreferences.edit().putStringSet(Utility.PERSISTENT_SYMBOLS_SET, symbolsSet).apply()
+            sharedPreferences.edit().putStringSet(persistentSymbolsSetKey, symbolsSet).apply()
             listener.onSymbolRemoved(symbol)
         }
     }
