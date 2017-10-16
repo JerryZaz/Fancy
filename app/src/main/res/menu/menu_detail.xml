@@ -1,5 +1,5 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
-    tools:context="us.hnry.fancy.DetailActivity">
+    tools:context="us.hnry.fancy.activity.DetailActivity">
     <!--<item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

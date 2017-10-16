@@ -5,13 +5,15 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="true"
+        android:name=".Core"
+        android:allowBackup="false"
         android:icon="@mipmap/adaptive_icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/adaptive_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashActivity"
+        <activity
+            android:name=".activity.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,23 +22,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".DetailActivity"
+            android:name=".activity.DetailActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="us.hnry.fancy.MainActivity" />
+                android:value="us.hnry.fancy.activity.MainActivity" />
         </activity>
-        <activity android:name=".SearchActivity"
+        <activity
+            android:name=".activity.SearchActivity"
             android:label="Search"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".activity.MainActivity" />
     </application>
 
 </manifest>

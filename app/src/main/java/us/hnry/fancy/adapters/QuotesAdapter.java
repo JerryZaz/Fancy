@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import us.hnry.fancy.DetailActivity;
 import us.hnry.fancy.R;
+import us.hnry.fancy.activity.DetailActivity;
 import us.hnry.fancy.adapters.holders.QuotesViewHolder;
 import us.hnry.fancy.fragments.PersistentSymbolsChangedListener;
 import us.hnry.fancy.network.model.SingleQuote;

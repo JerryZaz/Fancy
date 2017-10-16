@@ -9,7 +9,6 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ import android.widget.Toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import us.hnry.fancy.R
-import us.hnry.fancy.SearchActivity
+import us.hnry.fancy.activity.SearchActivity
 import us.hnry.fancy.adapters.QuotesAdapter
 import us.hnry.fancy.data.StockRepositoryImpl
 import us.hnry.fancy.network.StockServiceImpl
@@ -99,8 +98,6 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     }
 
     override fun logMessage(message: String) {
-        Log.v("Henry ~", message)
-
         //TODO remove
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }

@@ -1,4 +1,4 @@
-package us.hnry.fancy;
+package us.hnry.fancy.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import us.hnry.fancy.R;
 import us.hnry.fancy.fragments.MainFragment;
 import us.hnry.fancy.utils.Utility;
 
@@ -18,7 +19,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static final String FRAGMENT_TAG_MAIN_LIST = "fragment_main_list";
-    public static boolean sRefresherBinding = false;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
