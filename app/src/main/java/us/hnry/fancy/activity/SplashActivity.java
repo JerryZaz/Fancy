@@ -1,4 +1,4 @@
-package us.hnry.fancy;
+package us.hnry.fancy.activity;
 
 import android.content.Intent;
 import android.os.Bundle;

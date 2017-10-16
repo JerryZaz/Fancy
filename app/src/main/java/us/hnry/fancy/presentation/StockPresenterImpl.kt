@@ -1,5 +1,6 @@
 package us.hnry.fancy.presentation
 
+import com.google.firebase.crash.FirebaseCrash
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -48,6 +49,7 @@ class StockPresenterImpl(repository: StockRepository, observeOn: Scheduler, subs
                     mView.displayStockData(it)
                 },
                 onError = {
+                    FirebaseCrash.report(it)
                     mView.logMessage("onError(${it.localizedMessage})")
                 }
         )

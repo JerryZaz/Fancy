@@ -1,9 +1,10 @@
-package us.hnry.fancy;
+package us.hnry.fancy.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import us.hnry.fancy.R;
 import us.hnry.fancy.fragments.DetailQuoteFragment;
 
 public class DetailActivity extends AppCompatActivity {

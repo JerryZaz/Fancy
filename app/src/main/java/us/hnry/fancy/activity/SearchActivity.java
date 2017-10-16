@@ -1,8 +1,9 @@
-package us.hnry.fancy;
+package us.hnry.fancy.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import us.hnry.fancy.R;
 import us.hnry.fancy.fragments.SearchFragmentPager;
 
 public class SearchActivity extends AppCompatActivity {
@@ -15,7 +16,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         SearchFragmentPager searchFragment;
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             searchFragment = new SearchFragmentPager();
             getFragmentManager()
                     .beginTransaction()
