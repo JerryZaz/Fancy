@@ -63,16 +63,6 @@ public class ThorRetroSearch extends Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
         recyclerView.setAdapter(searchAdapter);
 
-        //Instantiate retrofit with the known attributes, the API URL
-        // and the GSonConverter because I know I'll be receiving a JSON back.
-        /*Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BuildConfig.THOR_BASE_API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        //Use the retrofit object to generate an implementation of the THOR interface
-        final THOR thor = retrofit.create(THOR.class);*/
-
         Button searchButton = layout.findViewById(R.id.search_button);
         searchButton.setOnClickListener(v -> {
 

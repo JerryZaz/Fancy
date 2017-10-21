@@ -1,9 +1,7 @@
 package us.hnry.fancy.fragments
 
 import android.app.Fragment
-import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -12,11 +10,10 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import com.google.firebase.crash.FirebaseCrash
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import us.hnry.fancy.R
-import us.hnry.fancy.activity.SearchActivity
 import us.hnry.fancy.adapters.QuotesAdapter
 import us.hnry.fancy.data.StockRepositoryImpl
 import us.hnry.fancy.network.StockServiceImpl
@@ -25,9 +22,8 @@ import us.hnry.fancy.network.model.Symbol
 import us.hnry.fancy.presentation.StockPresenter
 import us.hnry.fancy.presentation.StockPresenterImpl
 import us.hnry.fancy.presentation.view.StockView
-import us.hnry.fancy.ui.MainItemTouchCallback
+import us.hnry.fancy.ui.ItemTouchCallback
 import us.hnry.fancy.utils.SymbolsHelper
-import us.hnry.fancy.utils.Utility
 import java.util.concurrent.Executors
 
 /**
@@ -41,18 +37,12 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     private var recyclerView: RecyclerView? = null
 
     private lateinit var adapter: QuotesAdapter
-    private var searchFab: FloatingActionButton? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         retainInstance = true
 
         val layout: View = inflater!!.inflate(R.layout.fragment_main_recycler, container, false)
         recyclerView = layout.findViewById(R.id.fragment_main_recycler_view)
-
-        searchFab = activity.findViewById(R.id.search_fab)
-        searchFab?.setOnClickListener({
-            startActivity(Intent(activity, SearchActivity::class.java).putExtra(Utility.SEARCH_INTENT, Utility.THOR_SEARCH))
-        })
 
         initPresenter()
         adapter = QuotesAdapter(activity, this)
@@ -62,7 +52,7 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
         recyclerView!!.itemAnimator = DefaultItemAnimator()
         recyclerView!!.setHasFixedSize(true)
 
-        val callback: ItemTouchHelper.Callback = MainItemTouchCallback(adapter)
+        val callback: ItemTouchHelper.Callback = ItemTouchCallback(adapter)
         val itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
         return layout
@@ -98,8 +88,7 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     }
 
     override fun logMessage(message: String) {
-        //TODO remove
-        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
+        FirebaseCrash.log(message)
     }
 
     override fun onSymbolAdded(symbol: Symbol) {

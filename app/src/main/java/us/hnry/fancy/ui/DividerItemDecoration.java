@@ -11,9 +11,12 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
+/**
+ * @author Henry
+ */
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
-    int mOrientation = -1;
+    private int mOrientation = -1;
     private Drawable mDivider;
     private boolean mShowFirstDivider = false;
     private boolean mShowLastDivider = false;
@@ -67,8 +70,9 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             return;
         }
 
-        if (mOrientation == -1)
+        if (mOrientation == -1) {
             getOrientation(parent);
+        }
 
         if (mOrientation == LinearLayoutManager.VERTICAL) {
             outRect.top = mDivider.getIntrinsicHeight();
