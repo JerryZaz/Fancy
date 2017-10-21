@@ -1,5 +1,7 @@
 package us.hnry.fancy.utils;
 
+import android.support.annotation.NonNull;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class Utility {
      * @param quote being prepared.
      * @return positive if the quote went up, negative if it went down; default double if NaN
      */
-    public static double compareAskOpen(SingleQuote quote) {
+    public static double compareAskOpen(@NonNull SingleQuote quote) {
         try {
             double currentAsk = Double.parseDouble(quote.getAsk());
             double open = Double.parseDouble(quote.getOpen());
