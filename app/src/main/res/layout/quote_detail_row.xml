@@ -1,31 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="4dp"
-    android:layout_marginStart="4dp"
-    card_view:cardCornerRadius="4dp"
-    card_view:cardUseCompatPadding="true">
+    android:layout_height="wrap_content">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.v7.widget.CardView
+        android:id="@+id/quote_detail_card"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/content_padding">
+        android:layout_height="160dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
+        android:backgroundTint="@color/transparent"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardUseCompatPadding="true">
 
-        <TextView
-            android:id="@+id/quote_detail_row_header"
-            style="@style/Text.Large.Bold"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/quote_detail_header_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="Square, Inc. (SQ)" />
+            android:backgroundTint="@color/transparent"
+            android:orientation="vertical"
+            android:padding="@dimen/content_padding">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/quote_detail_row_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/quote_detail_row_header"
+                style="@style/Text.Large.Bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Square, Inc. (SQ)" />
 
-    </LinearLayout>
-</android.support.v7.widget.CardView>
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/quote_detail_row_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="@dimen/content_padding" />
+
+
+</RelativeLayout>

@@ -11,4 +11,5 @@
     <color name="currentAskRed">#ff0000</color>
 
     <color name="tabIndicatorColor">#50000000</color>
+    <color name="transparent">#00ffffff</color>
 </resources>

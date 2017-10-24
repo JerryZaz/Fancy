@@ -8,7 +8,6 @@ import us.hnry.fancy.R
 import us.hnry.fancy.adapters.QuoteDetailAdapter
 import us.hnry.fancy.presentation.model.StockDetail
 import us.hnry.fancy.presentation.transform.QuoteDetailRowItemTransform
-import us.hnry.fancy.ui.DividerItemDecoration
 
 /**
  * @author Henry
@@ -23,7 +22,6 @@ class QuotesViewHolder(itemView: View, private val listener: RetroQuoteViewHolde
         itemView.setOnClickListener(this)
         recyclerView.layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.setHasFixedSize(true)
-        recyclerView.addItemDecoration(DividerItemDecoration(itemView.context, null))
         recyclerView.adapter = adapter
     }
 

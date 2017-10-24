@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "us.hnry.fancy"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 9
         versionName "0.7.7"
