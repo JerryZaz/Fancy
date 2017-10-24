@@ -18,7 +18,6 @@ import us.hnry.fancy.network.model.SingleQuote;
  * format, set-up the information.
  */
 public class Utility {
-    // The detail view only opens QUOTE_INTENT intents.
     public static final String QUOTE_INTENT = "intent_parcelable_quote";
     public static final String SEARCH_INTENT = "intent_search_type_selector";
 
@@ -50,9 +49,12 @@ public class Utility {
      * @return Formatted version for printing, or "N/A".
      */
     public static String formatDouble(double original) {
-        if (original == DEFAULT_DOUBLE) return "N/A";
-        if (original > 999999)
+        if (original == DEFAULT_DOUBLE) {
+            return "N/A";
+        }
+        if (original > 999999) {
             return String.format(Locale.US, "%#,.2f", (original / 1000000)) + "M";
+        }
         return String.format(Locale.US, "%#,.2f", original);
     }
 
@@ -66,9 +68,12 @@ public class Utility {
             throws NumberFormatException {
         if (original != null) {
             double fetched = Double.parseDouble(original);
-            if (fetched == -1.23) return "N/A";
-            if (fetched > 999999)
+            if (fetched == -1.23) {
+                return "N/A";
+            }
+            if (fetched > 999999) {
                 return String.format(Locale.US, "%#,.2f", (fetched / 1000000)) + "M";
+            }
             return String.format(Locale.US, "%#,.2f", fetched);
         }
         return "N/A";

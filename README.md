@@ -1,4 +1,4 @@
-# ![alt text](https://github.com/JerryZaz/Fancy/blob/master/app/src/main/res/mipmap-xhdpi/moco_black.png "Market Stalker") Market Stalker
+# ![alt text](https://github.com/JerryZaz/Fancy/blob/master/app/src/main/res/mipmap-xhdpi/moco_black.webp "Market Stalker") Market Stalker
 ----------
 
 Android application for the Stock Market called **Market Stalker**

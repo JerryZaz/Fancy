@@ -1,0 +1,22 @@
+package us.hnry.fancy.presentation.transform
+
+import io.reactivex.functions.Function
+import us.hnry.fancy.network.model.SingleQuote
+import us.hnry.fancy.presentation.model.StockDetail
+
+/**
+ * @author Henry
+ * 10/21/2017
+ */
+class QuoteTransform : Function<SingleQuote, StockDetail> {
+    override fun apply(t: SingleQuote): StockDetail {
+        val quote = StockDetail()
+        quote.symbol = t.symbol
+        quote.symbolName = t.name
+        quote.previousClose = t.previousClose
+        quote.open = t.open
+        quote.currentAsk = t.ask
+        quote.change = t.changePercentChange
+        return quote
+    }
+}
