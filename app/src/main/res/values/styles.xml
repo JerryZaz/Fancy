@@ -32,10 +32,35 @@
         <item name="tabTextAppearance">@style/MyCustomTabTextAppearance</item>
         <item name="tabSelectedTextColor">@color/colorWhite</item>
     </style>
+
     <style name="MyCustomTabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/colorWhite</item>
         <item name="textAllCaps">true</item>
+    </style>
+
+    <style name="SingleCarouselItem">
+        <item name="android:padding">@dimen/content_padding</item>
+        <item name="android:layout_width">160dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Text" />
+
+    <style name="Text.Small">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Text.Medium">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Text.Large">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Text.Large.Bold">
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

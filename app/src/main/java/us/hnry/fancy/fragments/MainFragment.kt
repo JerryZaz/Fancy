@@ -17,10 +17,10 @@ import us.hnry.fancy.R
 import us.hnry.fancy.adapters.QuotesAdapter
 import us.hnry.fancy.data.StockRepositoryImpl
 import us.hnry.fancy.network.StockServiceImpl
-import us.hnry.fancy.network.model.SingleQuote
 import us.hnry.fancy.network.model.Symbol
 import us.hnry.fancy.presentation.StockPresenter
 import us.hnry.fancy.presentation.StockPresenterImpl
+import us.hnry.fancy.presentation.model.StockDetail
 import us.hnry.fancy.presentation.view.StockView
 import us.hnry.fancy.ui.ItemTouchCallback
 import us.hnry.fancy.utils.SymbolsHelper
@@ -34,7 +34,7 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     private val symbolsHelper by lazy { SymbolsHelper(activity, this) }
 
     private lateinit var presenter: StockPresenter
-    private var recyclerView: RecyclerView? = null
+    private lateinit var recyclerView: RecyclerView
 
     private lateinit var adapter: QuotesAdapter
 
@@ -46,11 +46,11 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
 
         initPresenter()
         adapter = QuotesAdapter(activity, this)
-        recyclerView!!.adapter = adapter
+        recyclerView.adapter = adapter
 
-        recyclerView!!.layoutManager = LinearLayoutManager(activity)
-        recyclerView!!.itemAnimator = DefaultItemAnimator()
-        recyclerView!!.setHasFixedSize(true)
+        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.setHasFixedSize(true)
 
         val callback: ItemTouchHelper.Callback = ItemTouchCallback(adapter)
         val itemTouchHelper = ItemTouchHelper(callback)
@@ -83,7 +83,7 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
         presenter.detachView()
     }
 
-    override fun displayStockData(listOfQuotes: List<SingleQuote>) {
+    override fun displayStockData(listOfQuotes: List<StockDetail>) {
         adapter.swapList(listOfQuotes)
     }
 
@@ -94,7 +94,7 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     override fun onSymbolAdded(symbol: Symbol) {
         presenter.symbolSetChanged(*symbolsHelper.getPersistentSymbolsSetAsArray())
 
-        recyclerView?.let {
+        recyclerView.let {
             Snackbar.make(it, "${symbol.symbol} will be visible after the next update",
                     Snackbar.LENGTH_SHORT).show()
         }
@@ -103,7 +103,7 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     override fun onSymbolRemoved(symbol: Symbol) {
         presenter.symbolSetChanged(*symbolsHelper.getPersistentSymbolsSetAsArray())
 
-        recyclerView?.let {
+        recyclerView.let {
             Snackbar.make(it, "Symbol removed from Favorites", Snackbar.LENGTH_LONG)
                     .setAction("Undo") { symbolsHelper.addSymbol(symbol) }
                     .show()

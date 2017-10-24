@@ -9,8 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import us.hnry.fancy.R;
 import us.hnry.fancy.adapters.SearchPagerAdapter;
 import us.hnry.fancy.utils.Utility;
@@ -22,17 +20,17 @@ import us.hnry.fancy.utils.Utility;
  */
 public class SearchFragmentPager extends Fragment {
 
-    @BindView(R.id.activity_search_pager)
     ViewPager activitySearchPager;
-    @BindView(R.id.fragment_search_sliding_tabs)
     TabLayout mSlidingTabs;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_search_pager, container, false);
-        ButterKnife.bind(this, layout);
+        activitySearchPager = layout.findViewById(R.id.activity_search_pager);
         activitySearchPager.setAdapter(new SearchPagerAdapter(getFragmentManager()));
+
+        mSlidingTabs = layout.findViewById(R.id.fragment_search_sliding_tabs);
         mSlidingTabs.setupWithViewPager(activitySearchPager);
         mSlidingTabs.setTabMode(TabLayout.MODE_FIXED);
         int searchSelector = getActivity().getIntent().getIntExtra(Utility.SEARCH_INTENT, 0);

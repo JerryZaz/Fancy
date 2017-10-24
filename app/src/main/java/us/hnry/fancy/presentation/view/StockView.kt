@@ -1,6 +1,6 @@
 package us.hnry.fancy.presentation.view
 
-import us.hnry.fancy.network.model.SingleQuote
+import us.hnry.fancy.presentation.model.StockDetail
 
 /**
  * @author Henry
@@ -9,6 +9,6 @@ import us.hnry.fancy.network.model.SingleQuote
 interface StockView {
     fun attachPresenter()
     fun detachPresenter()
-    fun displayStockData(listOfQuotes: List<SingleQuote>)
+    fun displayStockData(listOfQuotes: List<StockDetail>)
     fun logMessage(message: String)
 }

@@ -28,6 +28,6 @@ class ItemTouchCallback(private val listener: ItemTouchHelperListener) : ItemTou
     }
 
     override fun isItemViewSwipeEnabled(): Boolean {
-        return true
+        return false
     }
 }

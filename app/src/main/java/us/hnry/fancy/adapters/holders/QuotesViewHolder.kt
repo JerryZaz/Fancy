@@ -1,53 +1,37 @@
 package us.hnry.fancy.adapters.holders
 
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 import us.hnry.fancy.R
+import us.hnry.fancy.adapters.QuoteDetailAdapter
+import us.hnry.fancy.presentation.model.StockDetail
+import us.hnry.fancy.presentation.transform.QuoteDetailRowItemTransform
+import us.hnry.fancy.ui.DividerItemDecoration
 
 /**
  * @author Henry
  * 10/7/2017
  */
 class QuotesViewHolder(itemView: View, private val listener: RetroQuoteViewHolderClicks) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-    private val symbolTextView: TextView = itemView.findViewById(R.id.single_row_text_view_symbol)
-    private val nameTextView: TextView = itemView.findViewById(R.id.single_row_text_view_name)
-    private val closeTextView: TextView = itemView.findViewById(R.id.single_row_text_view_close)
-    private val openTextView: TextView = itemView.findViewById(R.id.single_row_text_view_open)
-    val askTextView: TextView = itemView.findViewById(R.id.single_row_text_view_ask)
+    private val headerView by lazy { itemView.findViewById<TextView>(R.id.quote_detail_row_header) }
+    private val recyclerView by lazy { itemView.findViewById<RecyclerView>(R.id.quote_detail_row_list) }
+    private val adapter by lazy { QuoteDetailAdapter(itemView.context) }
 
     init {
         itemView.setOnClickListener(this)
+        recyclerView.layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.setHasFixedSize(true)
+        recyclerView.addItemDecoration(DividerItemDecoration(itemView.context, null))
+        recyclerView.adapter = adapter
     }
 
-    fun setSymbol(symbol: String?) {
-        if (symbol != null) {
-            symbolTextView.text = symbol
-        }
-    }
+    fun setData(stockDetail: StockDetail) {
+        val label = "${stockDetail.symbolName} (${stockDetail.symbol})"
+        headerView.text = label
 
-    fun setSymbolName(name: String?) {
-        if (name != null) {
-            nameTextView.text = name
-        }
-    }
-
-    fun setCloseValue(closeValue: String?) {
-        if (closeValue != null) {
-            closeTextView.text = closeValue
-        }
-    }
-
-    fun setOpenValue(openValue: String?) {
-        if (openValue != null) {
-            openTextView.text = openValue
-        }
-    }
-
-    fun setAskValue(askValue: String?) {
-        if (askValue != null) {
-            askTextView.text = askValue
-        }
+        adapter.swapList(QuoteDetailRowItemTransform().apply(stockDetail))
     }
 
     override fun onClick(v: View) {
