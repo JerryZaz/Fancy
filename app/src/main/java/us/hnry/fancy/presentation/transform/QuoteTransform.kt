@@ -16,7 +16,14 @@ class QuoteTransform : Function<SingleQuote, StockDetail> {
         quote.previousClose = t.previousClose
         quote.open = t.open
         quote.currentAsk = t.ask
-        quote.change = t.changePercentChange
+        quote.change = t.change
+        quote.percentChange = t.percentChange
+
+        // history
+        quote.dayHigh = t.daysHigh
+        quote.dayLow = t.daysLow
+        quote.yearHigh = t.yearHigh
+        quote.yearLow = t.yearLow
         return quote
     }
 }

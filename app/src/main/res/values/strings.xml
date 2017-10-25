@@ -5,4 +5,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="title_activity_detail">Details</string>
+
+    <string name="quote_history_year_high">Year High</string>
+    <string name="quote_history_year_low">Year Low</string>
+    <string name="quote_history_day_high">Day High</string>
+    <string name="quote_history_day_low">Day Low</string>
 </resources>
