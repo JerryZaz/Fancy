@@ -20,4 +20,8 @@ class StockDetail {
     var dayLow: String? = null
     var yearHigh: String? = null
     var yearLow: String? = null
+
+    // EMA
+    var fiftyDayEma: String? = null
+    var twoHundredDayEma: String? = null
 }

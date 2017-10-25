@@ -6,14 +6,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import us.hnry.fancy.R
 import us.hnry.fancy.adapters.holders.BaseQuoteViewHolder
+import us.hnry.fancy.adapters.holders.QuoteEmaViewHolder
 import us.hnry.fancy.adapters.holders.QuoteHistoryViewHolder
 import us.hnry.fancy.adapters.holders.QuoteSummaryViewHolder
 import us.hnry.fancy.adapters.util.QuoteAdapterRowTypes
+import us.hnry.fancy.databinding.QuoteEmaItemBinding
 import us.hnry.fancy.databinding.QuoteHistoryItemBinding
 import us.hnry.fancy.databinding.QuoteSummaryItemBinding
 import us.hnry.fancy.presentation.model.Summary
 import us.hnry.fancy.presentation.wrapper.BaseQuoteRowItem
 import us.hnry.fancy.presentation.wrapper.HistoryRowItem
+import us.hnry.fancy.presentation.wrapper.MovingAverageRowItem
 import us.hnry.fancy.presentation.wrapper.SummaryRowItem
 import us.hnry.fancy.utils.Utility
 
@@ -38,6 +41,13 @@ class QuoteDetailAdapter(context: Context) : BaseAdapter<BaseQuoteRowItem<*>, Ba
                     return holder
                 }
             }
+            QuoteAdapterRowTypes.EMA -> {
+                parent?.let {
+                    val holder = QuoteEmaViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.quote_ema_item, parent, false))
+                    holder.binding = QuoteEmaItemBinding.bind(holder.itemView)
+                    return holder
+                }
+            }
         }
         return QuoteSummaryViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.quote_summary_item, parent, false))
     }
@@ -54,6 +64,9 @@ class QuoteDetailAdapter(context: Context) : BaseAdapter<BaseQuoteRowItem<*>, Ba
         } else if (holder is QuoteHistoryViewHolder && item is HistoryRowItem) {
             val binding = holder.binding as QuoteHistoryItemBinding
             binding.quoteHistory = item
+        } else if (holder is QuoteEmaViewHolder && item is MovingAverageRowItem) {
+            val binding = holder.binding as QuoteEmaItemBinding
+            binding.quoteEma = item
         }
     }
 
