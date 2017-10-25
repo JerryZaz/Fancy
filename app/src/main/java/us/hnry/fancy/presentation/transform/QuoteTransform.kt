@@ -24,6 +24,10 @@ class QuoteTransform : Function<SingleQuote, StockDetail> {
         quote.dayLow = t.daysLow
         quote.yearHigh = t.yearHigh
         quote.yearLow = t.yearLow
+
+        // ema
+        quote.fiftyDayEma = t.fiftyDaysMovingAverage
+        quote.twoHundredDayEma = t.twoHundredDaysMovingAverage
         return quote
     }
 }
