@@ -11,9 +11,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import us.hnry.fancy.network.model.SingleQuote;
+import us.hnry.fancy.presentation.model.Summary;
 
 /**
- * Created by Henry on 2/1/2016.
+ * @author Henry
+ * @date 2/1/2016
+ * <p>
  * Constants' holder and Support methods used app-wide to validate,
  * format, set-up the information.
  */
@@ -32,13 +35,13 @@ public class Utility {
      * @param quote being prepared.
      * @return positive if the quote went up, negative if it went down; default double if NaN
      */
-    public static double compareAskOpen(@NonNull SingleQuote quote) {
+    public static double compareAskOpen(@NonNull Summary quote) {
         try {
-            double currentAsk = Double.parseDouble(quote.getAsk());
+            double currentAsk = Double.parseDouble(quote.getCurrentAsk());
             double open = Double.parseDouble(quote.getOpen());
             return currentAsk - open;
-        } catch (NumberFormatException e) {
-            return Utility.DEFAULT_DOUBLE;
+        } catch (NumberFormatException | NullPointerException e) {
+            return 0.00;
         }
     }
 
@@ -68,7 +71,7 @@ public class Utility {
             throws NumberFormatException {
         if (original != null) {
             double fetched = Double.parseDouble(original);
-            if (fetched == -1.23) {
+            if (fetched == DEFAULT_DOUBLE) {
                 return "N/A";
             }
             if (fetched > 999999) {
@@ -170,7 +173,7 @@ public class Utility {
             if (m.getName().startsWith("get")) {
 
                 String name = m.getName().substring(3);
-                if (!name.equals("Class")) {
+                if (!"Class".equals(name)) {
                     String value = String.valueOf(m.invoke(quote));
                     map.put(name, value);
                     keys.add(name);
@@ -184,12 +187,12 @@ public class Utility {
 
         for (String key : keys) {
             String value;
-            if (!key.equals("LastTradeWithTime")) {
+            if (!"LastTradeWithTime".equals(key)) {
                 value = map.get(key);
             } else {
                 value = Utility.removeXMLTagsFromLastTradeWithTime(map.get(key));
             }
-            if (!value.equals("null")) {
+            if (!"null".equals(value)) {
                 try {
                     value = Utility.formatDouble(value);
                 } catch (NumberFormatException ignored) {

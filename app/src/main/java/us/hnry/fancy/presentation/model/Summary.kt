@@ -9,4 +9,5 @@ class Summary {
     var open: String? = null
     var currentAsk: String? = null
     var change: String? = null
+    var percentChange: String? = null
 }

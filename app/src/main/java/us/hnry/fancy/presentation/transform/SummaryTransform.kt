@@ -15,6 +15,7 @@ class SummaryTransform : Function<StockDetail, Summary> {
         summary.open = t.open
         summary.currentAsk = t.currentAsk
         summary.change = t.change
+        summary.percentChange = t.percentChange
         return summary
     }
 }

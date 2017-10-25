@@ -8,9 +8,6 @@ import us.hnry.fancy.presentation.model.Summary
  * 10/21/2017
  */
 class SummaryRowItem(summary: Summary) : BaseQuoteRowItem<Summary>(summary) {
-    private val defaultValue = "N/A"
-    private val defaultEmpty = "--"
-
     init {
         rowType = QuoteAdapterRowTypes.SUMMARY
     }
@@ -28,6 +25,8 @@ class SummaryRowItem(summary: Summary) : BaseQuoteRowItem<Summary>(summary) {
     }
 
     fun getChange(): String {
-        return item.change ?: defaultEmpty
+        val change = item.change ?: defaultEmpty
+        val percentChange = item.percentChange ?: defaultEmpty
+        return "$change ($percentChange)"
     }
 }

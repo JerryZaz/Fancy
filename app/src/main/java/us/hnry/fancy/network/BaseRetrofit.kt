@@ -13,6 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 open class BaseRetrofit(baseUrl: String) {
     var builder: Retrofit.Builder = Retrofit.Builder().baseUrl(baseUrl)
+            .client(buildLogger())
             .addConverterFactory(buildConverterFactory())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 
@@ -21,7 +22,7 @@ open class BaseRetrofit(baseUrl: String) {
     }
 
     private fun buildLogger(): OkHttpClient {
-        val interceptor: HttpLoggingInterceptor = HttpLoggingInterceptor()
+        val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BASIC
         return OkHttpClient.Builder().addInterceptor(interceptor).build()
     }
