@@ -7,4 +7,5 @@ package us.hnry.fancy.adapters.util
 object QuoteAdapterRowTypes {
     const val SUMMARY = 1
     const val HISTORY = 2
+    const val EMA = 3
 }
