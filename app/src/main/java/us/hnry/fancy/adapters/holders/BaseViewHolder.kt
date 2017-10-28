@@ -8,6 +8,6 @@ import android.view.View
  * @author Henry
  * 10/21/2017
  */
-open class BaseQuoteViewHolder<B : ViewDataBinding>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+open class BaseViewHolder<B : ViewDataBinding>(itemView: View) : RecyclerView.ViewHolder(itemView) {
     var binding: B? = null
 }

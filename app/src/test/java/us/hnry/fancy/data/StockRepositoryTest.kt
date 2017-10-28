@@ -1,6 +1,6 @@
 package us.hnry.fancy.data
 
-import junit.framework.Assert
+import org.junit.Assert
 import org.junit.Before
 import org.junit.runner.RunWith
 import org.mockito.Mock

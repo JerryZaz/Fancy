@@ -1,6 +1,7 @@
 package us.hnry.fancy.domain
 
 import io.reactivex.Observable
+import us.hnry.fancy.domain.interactor.StockUseCase
 import us.hnry.fancy.network.model.SingleQuote
 
 /**

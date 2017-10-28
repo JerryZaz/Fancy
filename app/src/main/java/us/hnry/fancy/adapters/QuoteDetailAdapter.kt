@@ -5,7 +5,7 @@ import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import us.hnry.fancy.R
-import us.hnry.fancy.adapters.holders.BaseQuoteViewHolder
+import us.hnry.fancy.adapters.holders.BaseViewHolder
 import us.hnry.fancy.adapters.holders.QuoteEmaViewHolder
 import us.hnry.fancy.adapters.holders.QuoteHistoryViewHolder
 import us.hnry.fancy.adapters.holders.QuoteSummaryViewHolder
@@ -24,8 +24,8 @@ import us.hnry.fancy.utils.Utility
  * @author Henry
  * 10/22/2017
  */
-class QuoteDetailAdapter(context: Context) : BaseAdapter<BaseQuoteRowItem<*>, BaseQuoteViewHolder<*>>(context) {
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BaseQuoteViewHolder<*> {
+class QuoteDetailAdapter(context: Context) : BaseAdapter<BaseQuoteRowItem<*>, BaseViewHolder<*>>(context) {
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder<*> {
         when (viewType) {
             QuoteAdapterRowTypes.SUMMARY -> {
                 parent?.let {
@@ -52,7 +52,7 @@ class QuoteDetailAdapter(context: Context) : BaseAdapter<BaseQuoteRowItem<*>, Ba
         return QuoteSummaryViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.quote_summary_item, parent, false))
     }
 
-    override fun onBindViewHolder(holder: BaseQuoteViewHolder<*>?, position: Int) {
+    override fun onBindViewHolder(holder: BaseViewHolder<*>?, position: Int) {
         val item = items[position]
         if (holder is QuoteSummaryViewHolder && item is SummaryRowItem) {
             val binding = holder.binding as QuoteSummaryItemBinding

@@ -2,12 +2,11 @@ package us.hnry.fancy.presentation
 
 import com.google.firebase.crash.FirebaseCrash
 import io.reactivex.Scheduler
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
 import io.reactivex.rxkotlin.subscribeBy
 import us.hnry.fancy.domain.StockRepository
-import us.hnry.fancy.domain.StockUseCase
+import us.hnry.fancy.domain.interactor.StockUseCase
 import us.hnry.fancy.network.model.SingleQuote
 import us.hnry.fancy.presentation.model.StockDetail
 import us.hnry.fancy.presentation.transform.QuoteTransform
@@ -17,25 +16,14 @@ import us.hnry.fancy.presentation.view.StockView
  * @author Henry
  * 10/8/2017
  */
-class StockPresenterImpl(repository: StockRepository, observeOn: Scheduler, subscribeOn: Scheduler, vararg symbols: String) : StockPresenter {
-    private lateinit var mView: StockView
-
+class StockPresenterImpl(repository: StockRepository, observeOn: Scheduler, subscribeOn: Scheduler, vararg symbols: String) : StockPresenter, BasePresenterImpl<StockView>() {
     private val defaultParams by lazy { StockUseCase.Params(*symbols) }
     private val useCase by lazy { StockUseCase(repository, subscribeOn, observeOn) }
-    private val disposables by lazy { CompositeDisposable() }
-    private val subscription by lazy {
-        buildSubscription(defaultParams)
-    }
+    private val subscription by lazy { buildSubscription(defaultParams) }
 
     override fun attachView(view: StockView) {
-        mView = view
+        super.attachView(view)
         disposables.addAll(subscription)
-    }
-
-    override fun detachView() {
-        if (!disposables.isDisposed) {
-            disposables.dispose()
-        }
     }
 
     override fun symbolSetChanged(vararg symbols: String) {
@@ -50,11 +38,11 @@ class StockPresenterImpl(repository: StockRepository, observeOn: Scheduler, subs
     private fun buildSubscription(params: StockUseCase.Params): Disposable {
         return useCase.execute(params).subscribeBy(
                 onNext = {
-                    mView.displayStockData(QuoteDetailTransform().apply(it))
+                    mView?.displayStockData(QuoteDetailTransform().apply(it))
                 },
                 onError = {
                     FirebaseCrash.report(it)
-                    mView.logMessage("onError(${it.localizedMessage})")
+                    mView?.logMessage("onError(${it.localizedMessage})")
                 }
         )
     }

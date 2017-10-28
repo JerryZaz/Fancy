@@ -3,7 +3,7 @@ package us.hnry.fancy.data
 import io.reactivex.Observable
 import us.hnry.fancy.BuildConfig
 import us.hnry.fancy.domain.StockRepository
-import us.hnry.fancy.domain.StockUseCase
+import us.hnry.fancy.domain.interactor.StockUseCase
 import us.hnry.fancy.network.StockServiceImpl
 import us.hnry.fancy.network.model.Quote
 import us.hnry.fancy.network.model.SingleQuote
