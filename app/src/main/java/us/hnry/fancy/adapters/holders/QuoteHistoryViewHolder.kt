@@ -7,4 +7,4 @@ import us.hnry.fancy.databinding.QuoteHistoryItemBinding
  * @author Henry
  * 10/24/2017
  */
-class QuoteHistoryViewHolder(itemView: View) : BaseQuoteViewHolder<QuoteHistoryItemBinding>(itemView)
+class QuoteHistoryViewHolder(itemView: View) : BaseViewHolder<QuoteHistoryItemBinding>(itemView)

@@ -7,4 +7,4 @@ import us.hnry.fancy.databinding.QuoteEmaItemBinding
  * @author Henry
  * 10/25/2017
  */
-class QuoteEmaViewHolder(itemView: View) : BaseQuoteViewHolder<QuoteEmaItemBinding>(itemView)
+class QuoteEmaViewHolder(itemView: View) : BaseViewHolder<QuoteEmaItemBinding>(itemView)

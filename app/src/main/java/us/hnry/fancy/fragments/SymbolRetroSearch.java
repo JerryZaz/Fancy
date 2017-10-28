@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +18,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import us.hnry.fancy.BuildConfig;
+import us.hnry.fancy.Core;
 import us.hnry.fancy.R;
 import us.hnry.fancy.activity.DetailActivity;
+import us.hnry.fancy.local.entity.Stock;
 import us.hnry.fancy.network.StockServiceImpl;
 import us.hnry.fancy.network.model.Quote;
 import us.hnry.fancy.network.model.SingleQuote;
@@ -58,7 +61,7 @@ public class SymbolRetroSearch extends Fragment {
             progressDialog.show();
 
             final String userInput = searchEditText.getText().toString();
-            if (!userInput.equals("")) {
+            if (!"".equals(userInput)) {
                 //@TODO: Validate against numbers and symbols
                 String query = userInput.toUpperCase();
 
@@ -92,6 +95,11 @@ public class SymbolRetroSearch extends Fragment {
                                 // Dig into the response, which holds an instance of the Single
                                 // model class, to fetch the actual Quote.
                                 SingleQuote quote = single.getQuery().getResults().getQuote();
+                                new Thread(() -> {
+                                    if (quote != null && !TextUtils.isEmpty(quote.getSymbol()) && !TextUtils.isEmpty(quote.getName())) {
+                                        Core.searchHistoryComponent.dao().insert(new Stock(0, quote.getSymbol(), quote.getName()));
+                                    }
+                                }).start();
 
                                 Intent launchDetail = new Intent(v.getContext(), DetailActivity.class);
                                 launchDetail.putExtra(Utility.QUOTE_INTENT, quote);
