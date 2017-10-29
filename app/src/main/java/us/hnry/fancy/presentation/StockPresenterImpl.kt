@@ -27,12 +27,7 @@ class StockPresenterImpl(repository: StockRepository, observeOn: Scheduler, subs
     }
 
     override fun symbolSetChanged(vararg symbols: String) {
-        if (!disposables.isDisposed) {
-            disposables.dispose()
-        }
-
-        val temporaryParams = StockUseCase.Params(*symbols)
-        disposables.addAll(buildSubscription(temporaryParams))
+        // not implemented yet
     }
 
     private fun buildSubscription(params: StockUseCase.Params): Disposable {

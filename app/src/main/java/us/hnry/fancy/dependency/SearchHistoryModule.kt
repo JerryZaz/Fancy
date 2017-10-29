@@ -1,4 +1,4 @@
-package us.hnry.fancy
+package us.hnry.fancy.dependency
 
 import android.content.Context
 import dagger.Module

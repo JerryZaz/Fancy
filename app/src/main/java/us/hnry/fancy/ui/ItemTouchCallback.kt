@@ -24,7 +24,7 @@ class ItemTouchCallback(private val listener: ItemTouchHelperListener) : ItemTou
     }
 
     override fun isLongPressDragEnabled(): Boolean {
-        return true
+        return false
     }
 
     override fun isItemViewSwipeEnabled(): Boolean {

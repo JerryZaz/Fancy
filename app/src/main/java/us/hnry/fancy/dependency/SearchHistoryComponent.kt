@@ -1,4 +1,4 @@
-package us.hnry.fancy
+package us.hnry.fancy.dependency
 
 import dagger.Component
 import us.hnry.fancy.fragments.SearchHistoryFragment

@@ -33,7 +33,7 @@ import java.util.concurrent.Executors
 class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     private val symbolsHelper by lazy { SymbolsHelper(activity, this) }
 
-    private lateinit var presenter: StockPresenter
+    private var presenter: StockPresenter? = null
     private lateinit var recyclerView: RecyclerView
 
     private lateinit var adapter: QuotesAdapter
@@ -66,6 +66,9 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     }
 
     override fun onResume() {
+        if (presenter == null) {
+            initPresenter()
+        }
         attachPresenter()
         super.onResume()
     }
@@ -76,11 +79,12 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     }
 
     override fun attachPresenter() {
-        presenter.attachView(this)
+        presenter?.attachView(this)
     }
 
     override fun detachPresenter() {
-        presenter.detachView()
+        presenter?.detachView()
+        presenter = null
     }
 
     override fun displayStockData(listOfQuotes: List<StockDetail>) {
@@ -92,7 +96,7 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     }
 
     override fun onSymbolAdded(symbol: Symbol) {
-        presenter.symbolSetChanged(*symbolsHelper.getPersistentSymbolsSetAsArray())
+        presenter?.symbolSetChanged(*symbolsHelper.getPersistentSymbolsSetAsArray())
 
         recyclerView.let {
             Snackbar.make(it, "${symbol.symbol} will be visible after the next update",
@@ -101,7 +105,7 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
     }
 
     override fun onSymbolRemoved(symbol: Symbol) {
-        presenter.symbolSetChanged(*symbolsHelper.getPersistentSymbolsSetAsArray())
+        presenter?.symbolSetChanged(*symbolsHelper.getPersistentSymbolsSetAsArray())
 
         recyclerView.let {
             Snackbar.make(it, "Symbol removed from Favorites", Snackbar.LENGTH_LONG)
