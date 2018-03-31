@@ -69,7 +69,7 @@ class MainFragment : Fragment(), StockView, PersistentSymbolsChangedListener {
         if (presenter == null) {
             initPresenter()
         }
-        attachPresenter()
+        presenter?.startStreaming()
         super.onResume()
     }
 

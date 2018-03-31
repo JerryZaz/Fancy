@@ -26,4 +26,8 @@ class SearchHistoryPresenterImpl @Inject constructor(repository: SearchHistoryRe
             FirebaseCrash.report(it)
         }))
     }
+
+    override fun historyRowItemClicked(symbol: String) {
+        mView?.launchStockDetail(symbol)
+    }
 }

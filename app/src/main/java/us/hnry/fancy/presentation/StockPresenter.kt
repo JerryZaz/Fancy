@@ -8,5 +8,6 @@ import us.hnry.fancy.presentation.wrapper.BasePresenter
  * 10/8/2017
  */
 interface StockPresenter : BasePresenter<StockView> {
+    fun startStreaming()
     fun symbolSetChanged(vararg symbols: String)
 }

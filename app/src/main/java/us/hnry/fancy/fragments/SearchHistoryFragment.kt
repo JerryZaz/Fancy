@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import us.hnry.fancy.Core
 import us.hnry.fancy.R
+import us.hnry.fancy.activity.StockDetailActivity
 import us.hnry.fancy.adapters.SearchHistoryAdapter
 import us.hnry.fancy.domain.model.HistoryEntry
 import us.hnry.fancy.presentation.SearchHistoryPresenterImpl
@@ -41,23 +42,34 @@ class SearchHistoryFragment : Fragment(), SearchHistoryView {
         recyclerView.addItemDecoration(DividerItemDecoration(activity, null))
         recyclerView.adapter = adapter
 
-        presenter.attachView(this)
-
+        attachPresenter()
         return layout
     }
 
-    override fun onDestroy() {
+    override fun attachPresenter() {
+        presenter.attachView(this)
+    }
+
+    override fun detachPresenter() {
         presenter.detachView()
+    }
+
+    override fun onDestroy() {
+        detachPresenter()
         super.onDestroy()
     }
 
     override fun loadHistoryItems(items: List<HistoryEntry>) {
         val asList = mutableListOf<SearchHistoryRowItem>()
-        items.forEach { asList.add(SearchHistoryRowItem(it)) }
+        items.forEach { asList.add(SearchHistoryRowItem(it, presenter)) }
         adapter.swapList(asList)
     }
 
     override fun showErrorMessage(message: String?) {
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
+    }
+
+    override fun launchStockDetail(symbol: String) {
+        activity.startActivity(StockDetailActivity.startIntent(activity, symbol))
     }
 }

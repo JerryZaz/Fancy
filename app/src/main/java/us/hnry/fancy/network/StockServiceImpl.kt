@@ -1,6 +1,7 @@
 package us.hnry.fancy.network
 
 import io.reactivex.Observable
+import io.reactivex.Single
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -64,6 +65,13 @@ class StockServiceImpl internal constructor(baseUrl: String) : BaseRetrofit(base
                 @Query("env") env: String,
                 @Query("format") format: String
         ): Call<Quote<SingleQuote>>
+
+        @GET("v1/public/yql?")
+        fun singleQuote(
+                @Query("q") builtQuery: String,
+                @Query("env") env: String,
+                @Query("format") format: String
+        ): Single<Quote<SingleQuote>>
 
         @GET("v1/public/yql?")
         fun quotesStreamer(

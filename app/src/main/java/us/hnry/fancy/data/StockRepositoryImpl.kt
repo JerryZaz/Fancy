@@ -22,9 +22,11 @@ class StockRepositoryImpl(private val stockService: StockServiceImpl.StockServic
                     })
         } else {
             stockService.quotesStreamer(params.builtQuery, BuildConfig.ENV, BuildConfig.FORMAT)
-                    .flatMap({ quote ->
+                    /*.flatMap({ quote ->
                         Observable.just(MultipleQuoteTransformer().apply(quote))
-                    })
+                    })*/
+                    .filter { it.query?.results?.quote?.size == 0 }
+                    .map { it.query?.results?.quote }
         }
     }
 

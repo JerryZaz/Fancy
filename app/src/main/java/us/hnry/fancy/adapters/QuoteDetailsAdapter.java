@@ -36,7 +36,7 @@ public class QuoteDetailsAdapter extends RecyclerView.Adapter<QuoteDetailsViewHo
     @Override
     public QuoteDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.single_row_detail, parent, false);
+                .inflate(R.layout.stock_detail_item, parent, false);
         return new QuoteDetailsViewHolder(v, caller -> {
             // nothing to do here
         });

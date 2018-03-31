@@ -17,12 +17,12 @@ import us.hnry.fancy.presentation.view.StockView
  * 10/8/2017
  */
 class StockPresenterImpl(repository: StockRepository, observeOn: Scheduler, subscribeOn: Scheduler, vararg symbols: String) : StockPresenter, BasePresenterImpl<StockView>() {
+
     private val defaultParams by lazy { StockUseCase.Params(*symbols) }
     private val useCase by lazy { StockUseCase(repository, subscribeOn, observeOn) }
     private val subscription by lazy { buildSubscription(defaultParams) }
 
-    override fun attachView(view: StockView) {
-        super.attachView(view)
+    override fun startStreaming() {
         disposables.addAll(subscription)
     }
 

@@ -17,13 +17,13 @@ open class BaseRetrofit(baseUrl: String) {
             .addConverterFactory(buildConverterFactory())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 
-    fun buildConverterFactory(): Converter.Factory {
+    private fun buildConverterFactory(): Converter.Factory {
         return GsonConverterFactory.create()
     }
 
     private fun buildLogger(): OkHttpClient {
         val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BASIC
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder().addInterceptor(interceptor).build()
     }
 }
